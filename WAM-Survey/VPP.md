@@ -223,22 +223,22 @@ SVD pretraining is by far the most critical component (−2.34 without it); inte
 ## Related Notes
 
 ### Based On
-- [[Stable Video Diffusion]]: 1.5B VDM used as vision encoder (TVP model)
-- [[CLIP]]: Language conditioning for text-guided video prediction
+- Stable Video Diffusion: 1.5B VDM used as vision encoder (TVP model)
+- CLIP: Language conditioning for text-guided video prediction
 
 ### Compared Against
-- [[GR-1]]: Autoregressive video prediction policy; outperformed 57.4%→68.2% MetaWorld, 3.06→4.33 CALVIN
-- [[RoboUniview]]: 3D-aware policy; outperformed 3.65→4.33 CALVIN
-- [[UniPi]]: Pixel-space video planning; outperformed substantially
+- [GR-1](GR-1.md): Autoregressive video prediction policy; outperformed 57.4%→68.2% MetaWorld, 3.06→4.33 CALVIN
+- RoboUniview: 3D-aware policy; outperformed 3.65→4.33 CALVIN
+- [UniPi](UniPi.md): Pixel-space video planning; outperformed substantially
 
 ### Method Related
-- [[Predictive Visual Representation]]: VDM features encode future state information
-- [[Video Former]]: Spatiotemporal token compression for action conditioning
-- [[Diffusion Transformer]]: Action chunk generation with cross-attention
+- Predictive Visual Representation: VDM features encode future state information
+- Video Former: Spatiotemporal token compression for action conditioning
+- Diffusion Transformer: Action chunk generation with cross-attention
 
 ### Hardware/Data Related
-- [[CALVIN]]: Long-horizon manipulation benchmark (ABC→D)
-- [[MetaWorld]]: 50-task simulation benchmark
+- CALVIN: Long-horizon manipulation benchmark (ABC→D)
+- MetaWorld: 50-task simulation benchmark
 
 ---
 

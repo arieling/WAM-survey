@@ -207,19 +207,19 @@ Object-centric flow provides +30% over grid flow on cross-embodiment tasks.
 ## Related Notes
 
 ### Based On
-- [[Stable Diffusion]]: U-Net backbone for flow generation
-- [[AnimateDiff]]: Motion modules for temporal flow coherence
-- [[Diffusion Policy]]: Action generation backbone
-- [[Grounding DINO]]: Zero-shot object detection for keypoint initialization
+- Stable Diffusion: U-Net backbone for flow generation
+- AnimateDiff: Motion modules for temporal flow coherence
+- Diffusion Policy: Action generation backbone
+- Grounding DINO: Zero-shot object detection for keypoint initialization
 
 ### Compared Against
-- [[ATM]]: Grid-flow method requiring robot training data; outperformed by +40% on cross-embodiment tasks
-- [[Heuristic Policy]]: RANSAC-based pose estimation; outperformed by +25%
+- ATM: Grid-flow method requiring robot training data; outperformed by +40% on cross-embodiment tasks
+- Heuristic Policy: RANSAC-based pose estimation; outperformed by +25%
 
 ### Method Related
-- [[Object-Centric Flow]]: Task-relevant keypoint tracking as cross-domain interface
-- [[Temporal Alignment]]: Latent flow synchronization for online execution
-- [[Sim-to-Real Transfer]]: Simulation-only policy training for real-world deployment
+- Object-Centric Flow: Task-relevant keypoint tracking as cross-domain interface
+- Temporal Alignment: Latent flow synchronization for online execution
+- Sim-to-Real Transfer: Simulation-only policy training for real-world deployment
 
 ---
 

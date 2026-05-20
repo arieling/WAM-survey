@@ -207,19 +207,19 @@ The ablation below confirms that combining text and goal image conditioning outp
 ## Related Notes
 
 ### Based On
-- [[GR-1]]: Policy backbone architecture and Ego4D pre-training
-- [[InstructPix2Pix]]: Goal image generation via text-guided image editing
-- [[T5]]: Text encoder for goal generator conditioning
+- [GR-1](GR-1.md): Policy backbone architecture and Ego4D pre-training
+- InstructPix2Pix: Goal image generation via text-guided image editing
+- T5: Text encoder for goal generator conditioning
 
 ### Compared Against
-- [[GR-1]]: Prior version; outperformed 4.21→4.04 (slight drop but better 5-task SR)
-- [[3D Diffusion Actor]]: Prior CALVIN SOTA; outperformed 3.35→4.04
-- [[SuSIE]]: Goal image generation baseline
+- [GR-1](GR-1.md): Prior version; outperformed 4.21→4.04 (slight drop but better 5-task SR)
+- 3D Diffusion Actor: Prior CALVIN SOTA; outperformed 3.35→4.04
+- SuSIE: Goal image generation baseline
 
 ### Method Related
-- [[Goal-Conditioned Policy]]: Future state image as visual plan
-- [[Partially-Annotated Data]]: Leveraging incomplete annotation data
-- [[Few-Shot Robot Learning]]: Goal image as spatial anchor for minimal-data learning
+- Goal-Conditioned Policy: Future state image as visual plan
+- Partially-Annotated Data: Leveraging incomplete annotation data
+- Few-Shot Robot Learning: Goal image as spatial anchor for minimal-data learning
 
 ---
 

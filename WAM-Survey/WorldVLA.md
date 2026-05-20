@@ -203,18 +203,18 @@ Action-conditioned world model achieves slightly better FVD (250.0 vs. 255.1) �
 ## Related Notes
 
 ### Based On
-- [[Chameleon]]: Mixed-modal early-fusion transformer backbone
-- [[VQ-GAN]]: Discrete image tokenization for unified autoregressive generation
+- Chameleon: Mixed-modal early-fusion transformer backbone
+- VQ-GAN: Discrete image tokenization for unified autoregressive generation
 
 ### Compared Against
-- [[OpenVLA]]: 7B VLA baseline; outperformed 76.5%→81.8% LIBERO
-- [[GR-1]]: Joint video+action baseline; similar concept but different architecture
+- OpenVLA: 7B VLA baseline; outperformed 76.5%→81.8% LIBERO
+- [GR-1](GR-1.md): Joint video+action baseline; similar concept but different architecture
 
 ### Method Related
-- [[Joint Autoregressive Video+Action]]: Unified prediction of future frames and robot actions
-- [[Attention Masking]]: Preventing action error accumulation via selective attention
-- [[Discrete Action Tokenization]]: Action represented as discrete bins in unified vocabulary
-- [[Mutual Enhancement]]: World model and action model improve each other during joint training
+- Joint Autoregressive Video+Action: Unified prediction of future frames and robot actions
+- Attention Masking: Preventing action error accumulation via selective attention
+- Discrete Action Tokenization: Action represented as discrete bins in unified vocabulary
+- Mutual Enhancement: World model and action model improve each other during joint training
 
 ---
 

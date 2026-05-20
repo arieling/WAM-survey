@@ -234,18 +234,18 @@ Cross-attention + low-dimensional context vector fusion provides +15.5% over con
 ## Related Notes
 
 ### Based On
-- [[VQGAN]]: Autoencoder for efficient video latent compression
-- [[DDIM]]: Fast denoising inference for real-time video generation
-- [[Diffusion Policy]]: Action prediction baseline
+- VQGAN: Autoencoder for efficient video latent compression
+- DDIM: Fast denoising inference for real-time video generation
+- Diffusion Policy: Action prediction baseline
 
 ### Compared Against
-- [[UniPi]]: Pixel-space video planning; outperformed 35.3%→56.7% sim, 0%→46.7% real
-- [[Diffusion Policy]]: BC baseline; outperformed 28%→56.7%
+- [UniPi](UniPi.md): Pixel-space video planning; outperformed 35.3%→56.7% sim, 0%→46.7% real
+- Diffusion Policy: BC baseline; outperformed 28%→56.7%
 
 ### Method Related
-- [[Latent Video Diffusion]]: Compact latent space for fast video generation
-- [[Receding Horizon Control]]: Online replanning to reduce open-loop error accumulation
-- [[Multi-View Video Generation]]: Synchronized multi-perspective planning
+- Latent Video Diffusion: Compact latent space for fast video generation
+- Receding Horizon Control: Online replanning to reduce open-loop error accumulation
+- Multi-View Video Generation: Synchronized multi-perspective planning
 
 ---
 

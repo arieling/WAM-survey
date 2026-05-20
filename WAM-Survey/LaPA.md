@@ -202,23 +202,23 @@ Across multiple ablation axes, LAPA shows expected scaling behavior:
 ## Related Notes
 
 ### Based On
-- [[LWM-Chat-1M]]: 7B Large World Model used as VLM backbone
-- [[VQ-VAE]]: Discrete latent codebook for action quantization
-- [[C-ViViT]]: Spatial+temporal transformer encoder for video-level feature extraction
+- LWM-Chat-1M: 7B Large World Model used as VLM backbone
+- VQ-VAE: Discrete latent codebook for action quantization
+- C-ViViT: Spatial+temporal transformer encoder for video-level feature extraction
 
 ### Compared Against
-- [[OpenVLA]]: Supervised VLA baseline; outperformed +6.22% at 30× lower compute
-- [[UniPi]]: Video diffusion policy; outperformed +40% on Language Table
-- [[ActionVLA]]: Same backbone with GT actions; approaches on in-domain tasks
+- OpenVLA: Supervised VLA baseline; outperformed +6.22% at 30× lower compute
+- [UniPi](UniPi.md): Video diffusion policy; outperformed +40% on Language Table
+- ActionVLA: Same backbone with GT actions; approaches on in-domain tasks
 
 ### Method Related
-- [[Latent Action Quantization]]: VQ-VAE discrete action discovery from videos
-- [[Inverse Dynamics Model]]: C-ViViT encodes frame transitions as latent actions
-- [[Low-Rank Adaptation]]: LoRA fine-tuning for action head adaptation
+- Latent Action Quantization: VQ-VAE discrete action discovery from videos
+- Inverse Dynamics Model: C-ViViT encodes frame transitions as latent actions
+- Low-Rank Adaptation: LoRA fine-tuning for action head adaptation
 
 ### Hardware/Data Related
-- [[Open-X]]: Large-scale robot manipulation dataset (no labels needed)
-- [[Something-Something V2]]: Internet human manipulation video dataset
+- Open-X: Large-scale robot manipulation dataset (no labels needed)
+- Something-Something V2: Internet human manipulation video dataset
 
 ---
 

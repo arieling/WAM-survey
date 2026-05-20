@@ -225,14 +225,14 @@ PAD shows monotonic improvement with compute scale — scale matters for joint d
 ## Related Notes
 
 ### Compared Against
-- [[GR-1]]: 57.4% MetaWorld; outperformed +15.1%
-- [[RT-2]]: 52.2% MetaWorld; outperformed +20.3%
+- [GR-1](GR-1.md): 57.4% MetaWorld; outperformed +15.1%
+- RT-2: 52.2% MetaWorld; outperformed +20.3%
 
 ### Method Related
-- [[Joint Diffusion]]: Single diffusion process over all modalities
-- [[Action-Free Pretraining]]: Video pretraining without action labels
-- [[Diffusion Transformer]]: DiT backbone for unified multi-modal denoising
-- [[Depth Integration]]: Multi-modal geometric conditioning
+- Joint Diffusion: Single diffusion process over all modalities
+- Action-Free Pretraining: Video pretraining without action labels
+- Diffusion Transformer: DiT backbone for unified multi-modal denoising
+- Depth Integration: Multi-modal geometric conditioning
 
 ---
 

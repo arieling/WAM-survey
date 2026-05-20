@@ -199,22 +199,22 @@ Even unsupervised pseudo-regions provide +3.3% gain; supervised regions provide 
 ## Related Notes
 
 ### Based On
-- [[Stable Diffusion]]: VAE and UNet backbone for latent video generation
-- [[Co-Tracker]]: Dense point tracking for pseudo-active region extraction
-- [[SAM]]: Segmentation for active region mask generation
+- Stable Diffusion: VAE and UNet backbone for latent video generation
+- Co-Tracker: Dense point tracking for pseudo-active region extraction
+- SAM: Segmentation for active region mask generation
 
 ### Compared Against
-- [[UniPi]]: Pixel-space video planning; outperformed by +17–21% on CLIPort
-- [[Diffuser]]: Trajectory diffusion; outperformed
+- [UniPi](UniPi.md): Pixel-space video planning; outperformed by +17–21% on CLIPort
+- Diffuser: Trajectory diffusion; outperformed
 
 ### Method Related
-- [[Latent Inverse Dynamics Model]]: Action extraction from latent frame pairs without pixel decoding
-- [[Active Region]]: Task-relevant spatial focus for video generation
-- [[Video Diffusion]]: Latent temporal generation backbone
+- Latent Inverse Dynamics Model: Action extraction from latent frame pairs without pixel decoding
+- Active Region: Task-relevant spatial focus for video generation
+- Video Diffusion: Latent temporal generation backbone
 
 ### Hardware/Data Related
-- [[CLIPort]]: Simulated manipulation benchmark
-- [[BridgeData v2]]: Real-world kitchen manipulation dataset
+- CLIPort: Simulated manipulation benchmark
+- BridgeData v2: Real-world kitchen manipulation dataset
 
 ---
 

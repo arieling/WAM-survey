@@ -20,7 +20,7 @@ created: 2026-05-20
 | Institution | Tsinghua University, Shengshu Tech |
 | Date | July 2025 (v4: December 2025) |
 | Project Page | N/A |
-| Baselines | [[UniPi]], VPP, Pi0.5 |
+| Baselines | [UniPi](UniPi.md), VPP, Pi0.5 |
 | Links | [arXiv](https://arxiv.org/abs/2507.12898) / Code: Supplemental materials |
 
 ---
@@ -253,23 +253,23 @@ Both TTS (+22.7% on seen tasks) and MIDM (+40% on unseen tasks vs. w/o MIDM) con
 ## Related Notes
 
 ### Based On
-- [[Rectified Flow]]: Core video generation model (Wan2.2, Vidu 2.0, HunyuanVideo)
-- [[Flow Matching]]: Training objective for velocity field learning
-- [[Inverse Dynamics Model]]: Action extraction approach
+- Rectified Flow: Core video generation model (Wan2.2, Vidu 2.0, HunyuanVideo)
+- Flow Matching: Training objective for velocity field learning
+- Inverse Dynamics Model: Action extraction approach
 
 ### Compared Against
-- [[UniPi]]: Single-platform video + inverse dynamics baseline; outperformed +32% on seen tasks
-- [[VPP]]: Video prediction policy using single denoising step features; outperformed dramatically
+- [UniPi](UniPi.md): Single-platform video + inverse dynamics baseline; outperformed +32% on seen tasks
+- [VPP](VPP.md): Video prediction policy using single denoising step features; outperformed dramatically
 
 ### Method Related
-- [[Test-Time Scaling]]: Compute-scaled inference via rejection sampling
-- [[Unified Observation Space]]: Novel multi-view cross-embodiment conditioning design
-- [[Masked Attention]]: MIDM's sparsity-guided attention to action-relevant regions
+- Test-Time Scaling: Compute-scaled inference via rejection sampling
+- Unified Observation Space: Novel multi-view cross-embodiment conditioning design
+- Masked Attention: MIDM's sparsity-guided attention to action-relevant regions
 
 ### Hardware/Data Related
-- [[ALOHA Robot]]: Target bimanual platform (14-DoF, 3 cameras)
-- [[RoboTwin]]: Simulation benchmark for bimanual manipulation evaluation
-- [[Agibot-World]]: Large-scale embodied pre-training dataset
+- ALOHA Robot: Target bimanual platform (14-DoF, 3 cameras)
+- RoboTwin: Simulation benchmark for bimanual manipulation evaluation
+- Agibot-World: Large-scale embodied pre-training dataset
 
 ---
 

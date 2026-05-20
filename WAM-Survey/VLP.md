@@ -20,14 +20,14 @@ created: 2026-05-20
 | Institution | Google DeepMind, MIT, UC Berkeley |
 | Date | October 2023 |
 | Project Page | https://video-language-planning.github.io/ |
-| Baselines | [[UniPi]], PaLM-E, RT-2, LAVA |
+| Baselines | [UniPi](UniPi.md), PaLM-E, RT-2, LAVA |
 | Links | [arXiv](https://arxiv.org/abs/2310.10625) / Code: N/A |
 
 ---
 
 ## One-Sentence Summary
 
-> VLP synergizes [[Vision-Language Model]] (VLM) and [[Text-to-Video Model]] via forward tree search: the VLM proposes next-step text actions and scores candidate futures, while the video model simulates their outcomes — enabling long-horizon video plans that scale with compute budget across diverse real robot platforms.
+> VLP synergizes Vision-Language Model (VLM) and Text-to-Video Model via forward tree search: the VLM proposes next-step text actions and scores candidate futures, while the video model simulates their outcomes — enabling long-horizon video plans that scale with compute budget across diverse real robot platforms.
 
 ---
 
@@ -212,19 +212,19 @@ Conditioning goal policy on every intermediate frame outperforms both sparse con
 ## Related Notes
 
 ### Based On
-- [[UniPi]]: Direct predecessor; VLP replaces single-pass video generation with tree search
-- [[PaLM-E]]: VLM backbone for both policy and heuristic function
-- [[Video Diffusion Model]]: Core dynamics model for short-horizon rollouts
+- [UniPi](UniPi.md): Direct predecessor; VLP replaces single-pass video generation with tree search
+- PaLM-E: VLM backbone for both policy and heuristic function
+- Video Diffusion Model: Core dynamics model for short-horizon rollouts
 
 ### Compared Against
-- [[UniPi]]: Direct comparison; VLP outperforms by ~10-29x on video plan quality
-- [[RT-2]]: Strong VLA baseline; VLP outperforms significantly on long-horizon tasks
-- [[LAVA]]: Language-conditioned BC baseline
+- [UniPi](UniPi.md): Direct comparison; VLP outperforms by ~10-29x on video plan quality
+- RT-2: Strong VLA baseline; VLP outperforms significantly on long-horizon tasks
+- LAVA: Language-conditioned BC baseline
 
 ### Method Related
-- [[Tree Search]]: Core planning algorithm (parallel hill climbing)
-- [[Receding Horizon Control]]: Replanning strategy for long-horizon execution
-- [[Goal-Conditioned Policy]]: Action execution module
+- Tree Search: Core planning algorithm (parallel hill climbing)
+- Receding Horizon Control: Replanning strategy for long-horizon execution
+- Goal-Conditioned Policy: Action execution module
 
 ---
 

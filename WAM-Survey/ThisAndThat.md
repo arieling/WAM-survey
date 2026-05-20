@@ -20,7 +20,7 @@ created: 2026-05-20
 | Institution | University of Michigan, University of Washington |
 | Date | July 2024 |
 | Project Page | N/A |
-| Baselines | [[AVDC]], SVD, StreamingT2V, DragAnything, ACT |
+| Baselines | [AVDC](AVDC.md), SVD, StreamingT2V, DragAnything, ACT |
 | Links | [arXiv](https://arxiv.org/abs/2407.05530) / Code: N/A |
 
 ---
@@ -246,23 +246,23 @@ Gesture conditioning is critical for out-of-distribution generalization (identic
 ## Related Notes
 
 ### Based On
-- [[Stable Video Diffusion]]: Base video generation model fine-tuned with language and gesture conditioning
-- [[ControlNet]]: Gesture conditioning branch architecture
-- [[FiLM]]: Feature-wise Linear Modulation for language conditioning
-- [[TokenLearner]]: Token compression for efficient vision transformer processing
+- Stable Video Diffusion: Base video generation model fine-tuned with language and gesture conditioning
+- ControlNet: Gesture conditioning branch architecture
+- FiLM: Feature-wise Linear Modulation for language conditioning
+- TokenLearner: Token compression for efficient vision transformer processing
 
 ### Compared Against
-- [[AVDC]]: Video-based policy baseline; outperformed on all video quality metrics and alignment
-- [[DragAnything]]: Trajectory-controlled video generation; outperformed on all metrics
+- [AVDC](AVDC.md): Video-based policy baseline; outperformed on all video quality metrics and alignment
+- DragAnything: Trajectory-controlled video generation; outperformed on all metrics
 
 ### Method Related
-- [[Behavioral Cloning]]: DiVA policy training via imitation learning
-- [[Action Chunking]]: Action prediction strategy ($k=10$ steps)
-- [[Classifier-Free Guidance]]: Gesture conditioning with latent masking for CFG at inference
+- Behavioral Cloning: DiVA policy training via imitation learning
+- Action Chunking: Action prediction strategy ($k=10$ steps)
+- Classifier-Free Guidance: Gesture conditioning with latent masking for CFG at inference
 
 ### Hardware/Data Related
-- [[Bridge Dataset]]: Primary training and evaluation dataset
-- [[IsaacGym]]: Simulation platform for rollout evaluation
+- Bridge Dataset: Primary training and evaluation dataset
+- IsaacGym: Simulation platform for rollout evaluation
 
 ---
 

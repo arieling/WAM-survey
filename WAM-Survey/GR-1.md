@@ -237,22 +237,22 @@ The choice of future prediction offset $\Delta t$ affects how informative the pr
 ## Related Notes
 
 ### Based On
-- [[CLIP]]: Frozen language encoder
-- [[ViT + MAE]]: Frozen vision encoder with Perceiver Resampler
-- [[GPT]]: Causal autoregressive transformer architecture
+- CLIP: Frozen language encoder
+- ViT + MAE: Frozen vision encoder with Perceiver Resampler
+- GPT: Causal autoregressive transformer architecture
 
 ### Compared Against
-- [[HULC]]: Hierarchical manipulation baseline; outperformed 2.52→4.21 CALVIN avg.
-- [[RT-1]]: Language-conditioned BC; outperformed on real robot
+- HULC: Hierarchical manipulation baseline; outperformed 2.52→4.21 CALVIN avg.
+- RT-1: Language-conditioned BC; outperformed on real robot
 
 ### Method Related
-- [[Joint Autoregressive Video+Action]]: Unified prediction of future frames and robot actions
-- [[Video Pre-training]]: Ego4D large-scale video representation learning
-- [[Causal Transformer]]: Autoregressive sequence model for manipulation
+- Joint Autoregressive Video+Action: Unified prediction of future frames and robot actions
+- Video Pre-training: Ego4D large-scale video representation learning
+- Causal Transformer: Autoregressive sequence model for manipulation
 
 ### Hardware/Data Related
-- [[CALVIN]]: Primary evaluation benchmark
-- [[Ego4D]]: Large-scale egocentric video dataset for pre-training
+- CALVIN: Primary evaluation benchmark
+- Ego4D: Large-scale egocentric video dataset for pre-training
 
 ---
 

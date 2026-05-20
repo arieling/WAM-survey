@@ -20,7 +20,7 @@ created: 2026-05-20
 | Institution | UMass Amherst, MIT |
 | Date | April 2025 |
 | Project Page | https://tesseractworld.github.io/ |
-| Baselines | [[UniPi]], Image-BC, OpenSora, CogVideoX, 4D Point-E, Shape of Motion |
+| Baselines | [UniPi](UniPi.md), Image-BC, OpenSora, CogVideoX, 4D Point-E, Shape of Motion |
 | Links | [arXiv](https://arxiv.org/abs/2504.20995) / Code: N/A |
 
 ---
@@ -222,25 +222,25 @@ TesserAct's 4D reconstruction achieves better novel view synthesis quality AND i
 ## Related Notes
 
 ### Based On
-- [[CogVideoX]]: Base DiT video diffusion model fine-tuned for RGB-DN prediction
-- [[PointNet]]: Point cloud encoder for 3D-aware policy
-- [[Optical Flow]]: Used for temporal consistency in 4D reconstruction
-- [[Video Diffusion Model]]: Core generation framework
+- CogVideoX: Base DiT video diffusion model fine-tuned for RGB-DN prediction
+- PointNet: Point cloud encoder for 3D-aware policy
+- Optical Flow: Used for temporal consistency in 4D reconstruction
+- Video Diffusion Model: Core generation framework
 
 ### Compared Against
-- [[UniPi]]: 2D video + inverse dynamics baseline; TesserAct outperforms by ~10-15%
-- [[Shape of Motion]]: 4D reconstruction baseline; outperformed 120x faster and better quality
+- [UniPi](UniPi.md): 2D video + inverse dynamics baseline; TesserAct outperforms by ~10-15%
+- Shape of Motion: 4D reconstruction baseline; outperformed 120x faster and better quality
 
 ### Method Related
-- [[4D Gaussian Splatting]]: Related 4D scene representation approach
-- [[Depth Estimation]]: RollingDepth + Marigold-LCM used for training data annotation
-- [[Normal Estimation]]: Surface normal prediction as auxiliary geometry signal
-- [[Inverse Dynamics Model]]: Action extraction approach
+- 4D Gaussian Splatting: Related 4D scene representation approach
+- Depth Estimation: RollingDepth + Marigold-LCM used for training data annotation
+- Normal Estimation: Surface normal prediction as auxiliary geometry signal
+- Inverse Dynamics Model: Action extraction approach
 
 ### Hardware/Data Related
-- [[RLBench]]: Primary robot policy evaluation benchmark
-- [[Bridge Dataset]]: Real robot training data
-- [[RT-1 Dataset]]: Real robot training data
+- RLBench: Primary robot policy evaluation benchmark
+- Bridge Dataset: Real robot training data
+- RT-1 Dataset: Real robot training data
 
 ---
 

@@ -19,7 +19,7 @@ created: 2026-05-20
 | Institution | Fudan University, National University of Singapore |
 | Date | May 2026 |
 | Project Page | [openmoss.github.io/Awesome-WAM](https://openmoss.github.io/Awesome-WAM) |
-| Baselines | [[VLA]] / [[World Model]] |
+| Baselines | VLA / World Model |
 | Links | [arXiv](https://arxiv.org/abs/2605.12090) / [Code](https://github.com/OpenMOSS/Awesome-WAM) |
 
 ---
@@ -44,8 +44,8 @@ created: 2026-05-20
 
 The embodied AI field is split between two parallel paradigms that have developed largely independently:
 
-- **[[VLA]] (Vision-Language-Action Models)**: Map current observations and language instructions directly to actions via $p(a \mid o, l)$. They are reactive — they do not model what will happen next, which limits their ability to plan ahead or reason about physical consequences.
-- **[[World Model]] (WM)**: Predict future states, typically via $p(o' \mid o, a)$ (action-conditioned) or $p(o' \mid o, l)$ (language-conditioned). They understand future consequences but require an external policy to generate actions — they cannot act autonomously.
+- **VLA (Vision-Language-Action Models)**: Map current observations and language instructions directly to actions via $p(a \mid o, l)$. They are reactive — they do not model what will happen next, which limits their ability to plan ahead or reason about physical consequences.
+- **World Model (WM)**: Predict future states, typically via $p(o' \mid o, a)$ (action-conditioned) or $p(o' \mid o, l)$ (language-conditioned). They understand future consequences but require an external policy to generate actions — they cannot act autonomously.
 
 Neither paradigm alone captures an agent that both understands the world and acts within it. The key question this survey asks is: can we build a single model that jointly generates actions and predicts their consequences?
 
@@ -57,7 +57,7 @@ Neither paradigm alone captures an agent that both understands the world and act
 
 ### Motivation
 
-The authors observe that several prominent recent systems — [[GR-1]], [[UWM]], [[UniPi]], [[CoT-VLA]] — already learn both state prediction and action generation simultaneously, but each frames it differently and there is no common vocabulary. The WAM survey provides that vocabulary, revealing that these systems share a single mathematical goal:
+The authors observe that several prominent recent systems — [GR-1](WAM-Survey/GR-1.md), [UWM](WAM-Survey/UWM.md), [UniPi](WAM-Survey/UniPi.md), [CoT-VLA](WAM-Survey/CoT-VLA.md) — already learn both state prediction and action generation simultaneously, but each frames it differently and there is no common vocabulary. The WAM survey provides that vocabulary, revealing that these systems share a single mathematical goal:
 
 $$
 \mathcal{L}_{WAM} = \mathbb{E}_{(o,l,o',a) \sim \mathcal{D}} \left[ -\log p(o', a \mid o, l) \right]
@@ -77,7 +77,7 @@ The hope is that co-training the world model and action policy causes each to be
 
 To make the WAM definition precise, the survey contrasts three learning objectives:
 
-[[VLA|VLA learning objective]]:
+VLA learning objective:
 
 $$
 \mathcal{L}_{VLA} = \mathbb{E}_{(o,l,a) \sim \mathcal{D}} \left[ -\log p(a \mid o, l) \right]
@@ -85,7 +85,7 @@ $$
 
 No future state is modeled. The policy is a pure reactive mapping from current observation to action.
 
-[[World Model|WM learning objective]] (action-conditioned):
+WM learning objective (action-conditioned):
 
 $$
 \mathcal{L}_{WM} = \mathbb{E}_{(o,a,o') \sim \mathcal{D}} \left[ -\log p(o' \mid o, a) \right]
@@ -93,7 +93,7 @@ $$
 
 The model predicts future states given the current state and an externally provided action. It cannot generate actions and cannot be used as a policy without a separate action source.
 
-[[WAM|WAM joint objective]]:
+WAM joint objective:
 
 $$
 \mathcal{L}_{WAM} = \mathbb{E}_{(o,l,o',a) \sim \mathcal{D}} \left[ -\log p(o', a \mid o, l) \right]
@@ -101,7 +101,7 @@ $$
 
 Both outputs — future observation $o'$ and action $a$ — are generated jointly from the same language-conditioned model. This is the defining equation of the WAM paradigm.
 
-![[WAM_survey_definition.svg]]
+![WAM survey definition](WAM-Survey/assets/WAM_survey_definition.svg)
 
 **Caption**: Input-output comparison of VLA, WM, and WAM paradigms. WAM is the only paradigm with language instruction input, future state prediction output, and action output simultaneously — it is strictly more capable than either alone.
 
@@ -109,7 +109,7 @@ Both outputs — future observation $o'$ and action $a$ — are generated jointl
 
 The survey's central organizing principle is a two-level taxonomy. At the top level, WAMs split into Cascaded and Joint depending on whether the joint distribution is factorized explicitly or learned end-to-end.
 
-![[WAM_survey_roadmap.svg]]
+![WAM survey roadmap](WAM-Survey/assets/WAM_survey_roadmap.svg)
 
 **Caption**: Temporal evolution roadmap and classification tree. Horizontal axis is time (2022→2025). Shows the progression from early video planning (UniPi, 2022) to large-scale diffusion joint WAMs (UWM, CosmosPolicy, 2025). The roadmap shows that Cascaded WAMs dominated 2022–2024 while Joint WAMs became the dominant paradigm in 2024–2025.
 
@@ -119,7 +119,7 @@ The survey's central organizing principle is a two-level taxonomy. At the top le
 
 **Core idea**: Explicitly factorizes the joint distribution into two sequential steps — first predict the future, then extract actions from that prediction:
 
-[[WAM|Cascaded WAM factorization]]:
+Cascaded WAM factorization:
 
 $$
 p(o', a \mid o, l) = p(a \mid o', o, l) \cdot p(o' \mid o, l)
@@ -133,13 +133,13 @@ $$
 
 Cascaded WAMs split further by how actions are extracted from predicted video:
 
-**Explicit-Learned (IDM)**: The world model generates pixel-level video frames $\hat{o}'$. A separate [[Inverse Dynamics Model]] (IDM) — typically a small CNN+MLP — takes consecutive frame pairs $(\hat{o}_t, \hat{o}_{t+1})$ and regresses the robot joint action $a_t$ that would cause that transition. Representative works: [[UniPi]], [[GR-MG]], [[RoboEnvision]], Gen2Act.
+**Explicit-Learned (IDM)**: The world model generates pixel-level video frames $\hat{o}'$. A separate Inverse Dynamics Model (IDM) — typically a small CNN+MLP — takes consecutive frame pairs $(\hat{o}_t, \hat{o}_{t+1})$ and regresses the robot joint action $a_t$ that would cause that transition. Representative works: [UniPi](WAM-Survey/UniPi.md), [GR-MG](WAM-Survey/GR-MG.md), [RoboEnvision](WAM-Survey/RoboEnvision.md), Gen2Act.
 
-**Explicit-Geometric**: Instead of learning an IDM, geometric priors extract actions from predicted video — optical flow gives 2D motion that maps to end-effector velocity, 3D point tracking gives spatial displacement, 4D Gaussian Splatting gives full 3D trajectories. This is more interpretable and does not require action-annotated training data for the extraction step. Representative works: [[Im2Flow2Act]], [[ThisAndThat]], 4DGen.
+**Explicit-Geometric**: Instead of learning an IDM, geometric priors extract actions from predicted video — optical flow gives 2D motion that maps to end-effector velocity, 3D point tracking gives spatial displacement, 4D Gaussian Splatting gives full 3D trajectories. This is more interpretable and does not require action-annotated training data for the extraction step. Representative works: [Im2Flow2Act](WAM-Survey/Im2Flow2Act.md), [ThisAndThat](WAM-Survey/ThisAndThat.md), 4DGen.
 
-**Implicit (Latent)**: The world model operates entirely in a learned latent space $z'$ rather than pixel space, bypassing the expensive pixel-level video generation step. A policy head attached to the latent representation generates actions directly. This trades visual interpretability for inference speed. Representative works: [[VLA-JEPA]], [[VLP]], [[ARDuP]], [[VILP]].
+**Implicit (Latent)**: The world model operates entirely in a learned latent space $z'$ rather than pixel space, bypassing the expensive pixel-level video generation step. A policy head attached to the latent representation generates actions directly. This trades visual interpretability for inference speed. Representative works: [VLA-JEPA](WAM-Survey/VLA-JEPA.md), [VLP](WAM-Survey/VLP.md), [ARDuP](WAM-Survey/ARDuP.md), [VILP](WAM-Survey/VILP.md).
 
-![[WAM_survey_cascaded.svg]]
+![WAM survey cascaded](WAM-Survey/assets/WAM_survey_cascaded.svg)
 
 **Caption**: Three Cascaded WAM sub-architectures illustrated side by side. (1a) Explicit-Learned: video diffusion generates pixel frames, IDM extracts actions. (1b) Explicit-Geometric: video diffusion generates frames, geometric prior (flow/3D) extracts actions. (2) Implicit: latent world model predicts in embedding space, policy head generates actions without pixel rendering.
 
@@ -181,10 +181,10 @@ Visual and action tokens are treated as a single unified sequence. The model pre
 
 Representative works and their key design choices:
 
-- [[GR-1]] / [[GR-2]]: GPT backbone; visual tokens are DINO patch features; action tokens are continuous values decoded via a separate head. GR-2 extended to long-horizon video prediction with a recurrent prediction scheme.
-- [[CoT-VLA]]: Introduces visual chain-of-thought — the model first generates intermediate visual "reasoning" frames before generating actions, mimicking how humans think through a plan before executing.
-- [[WorldVLA]]: Fully unified autoregressive model where image tokens and action tokens share a single LLM vocabulary; no separate action head.
-- [[VLA-JEPA]]: Adapts the JEPA (Joint Embedding Predictive Architecture) framework — predicts in latent embedding space rather than pixel space, more efficient than pixel-level AR generation.
+- [GR-1](WAM-Survey/GR-1.md) / [GR-2](WAM-Survey/GR-2.md): GPT backbone; visual tokens are DINO patch features; action tokens are continuous values decoded via a separate head. GR-2 extended to long-horizon video prediction with a recurrent prediction scheme.
+- [CoT-VLA](WAM-Survey/CoT-VLA.md): Introduces visual chain-of-thought — the model first generates intermediate visual "reasoning" frames before generating actions, mimicking how humans think through a plan before executing.
+- [WorldVLA](WAM-Survey/WorldVLA.md): Fully unified autoregressive model where image tokens and action tokens share a single LLM vocabulary; no separate action head.
+- [VLA-JEPA](WAM-Survey/VLA-JEPA.md): Adapts the JEPA (Joint Embedding Predictive Architecture) framework — predicts in latent embedding space rather than pixel space, more efficient than pixel-level AR generation.
 
 | Method   | Backbone    | Visual Token | Action Token  | Year |
 | -------- | ----------- | ------------ | ------------- | ---- |
@@ -198,15 +198,15 @@ Representative works and their key design choices:
 
 Diffusion WAMs jointly denoise both future visual observations and action sequences from Gaussian noise. The key architectural question is whether visual and action denoising share a single network stream or maintain separate streams with a coupling mechanism.
 
-![[WAM_survey_joint.svg]]
+![WAM survey joint](WAM-Survey/assets/WAM_survey_joint.svg)
 
 **Caption**: Full taxonomy of diffusion Joint WAM architectures. Left branch: Unified Stream — visual and action tokens are concatenated and denoised by a single DiT, the simplest design. Right branch: Multi-Stream — visual and action denoising run in separate DiT branches coupled by one of three mechanisms: Cross-Attention (action queries attend to visual keys/values), Hidden-State Coupling (intermediate features are shared between branches), or Shared Representation (early layers are shared, late layers are specialized).
 
-**Unified Stream**: Visual tokens and action tokens are concatenated into a single sequence and passed through a shared [[DiT]]. A single denoising pass produces both $\hat{o}'$ and $\hat{a}$ simultaneously. This is architecturally simplest and has no coupling overhead, but visual tokens and action tokens must compete for the same attention capacity — visual tokens can "distract" the action head and vice versa. Representative: [[UWM]], CosmosPolicy, DreamZero, FLARE, FRAPPE.
+**Unified Stream**: Visual tokens and action tokens are concatenated into a single sequence and passed through a shared DiT. A single denoising pass produces both $\hat{o}'$ and $\hat{a}$ simultaneously. This is architecturally simplest and has no coupling overhead, but visual tokens and action tokens must compete for the same attention capacity — visual tokens can "distract" the action head and vice versa. Representative: [UWM](WAM-Survey/UWM.md), CosmosPolicy, DreamZero, FLARE, FRAPPE.
 
 **Multi-Stream — Cross-Attention Coupling**: Separate DiT branches for visual and action denoising. The action branch attends to visual features via cross-attention at each denoising step, allowing the action policy to read visual predictions without contaminating the visual stream. Representative: PAD, VideoVLA, CoVAR.
 
-**Multi-Stream — Hidden-State Coupling**: Intermediate hidden states from the visual branch are injected into the action branch (e.g., via addition or concatenation at specific layers). More lightweight than cross-attention but less expressive. Representative: LDA-1B, [[STARRY]].
+**Multi-Stream — Hidden-State Coupling**: Intermediate hidden states from the visual branch are injected into the action branch (e.g., via addition or concatenation at specific layers). More lightweight than cross-attention but less expressive. Representative: LDA-1B, STARRY.
 
 **Multi-Stream — Shared Representation**: Early DiT layers are shared between visual and action streams; later layers are specialized. The shared early layers learn task-relevant features usable by both objectives, while the specialized late layers focus each stream on its output modality. Representative: UVA, PhysGen.
 
@@ -230,7 +230,7 @@ Diffusion WAMs jointly denoise both future visual observations and action sequen
 
 Beyond architectures that learn $p(o', a \mid o, l)$ jointly, the survey identifies four ways a world model can improve a VLA without necessarily being part of the same model:
 
-![[WAM_survey_wm4vla.svg]]
+![WAM survey wm4vla](WAM-Survey/assets/WAM_survey_wm4vla.svg)
 
 **Caption**: The four WM-for-VLA paradigms. (1) Imitation Learning: WM generates additional training trajectories with synthesized goal images, expanding the training distribution without physical robot time. (2) Reinforcement Learning: WM acts as a differentiable simulator, allowing the policy to practice inside the model without real-world rollouts. (3) Reward Modeling: WM predicts task completion from synthesized future frames, providing a dense reward signal without hand-designed reward functions. (4) Evaluation: WM evaluates policy quality by simulating execution and measuring visual fidelity or task success, enabling automated offline policy selection.
 
@@ -244,7 +244,7 @@ This four-role framing is useful because it covers systems that do not fit clean
 
 Understanding WAM training data requires understanding the trade-off between **transfer difficulty** (how hard it is to adapt knowledge from this data source to a new robot) and **scaling difficulty** (how hard it is to collect more data of this type).
 
-![[WAM_survey_data.svg]]
+![WAM survey data](WAM-Survey/assets/WAM_survey_data.svg)
 
 **Caption**: 2D landscape of embodied training data. Transfer difficulty (horizontal) vs. scaling difficulty (vertical). Robot teleoperation data sits at low transfer/high scaling difficulty: it is exactly on-distribution for the target robot but expensive to collect at scale. Human egocentric video (Ego4D, EPIC-Kitchens) sits at high transfer/low scaling difficulty: there is enormous internet-scale video of humans performing tasks, but the domain gap to robot end-effectors is large. Simulation data sits near the origin: cheap to generate and reasonably diverse, but the sim-to-real gap must be bridged.
 
@@ -254,8 +254,8 @@ Understanding WAM training data requires understanding the trade-off between **t
 |---------|-------|----------|-----------------|
 | RT-1 | 130K trajectories | Mobile Manipulator | Daily household tasks |
 | Bridge V2 | 60K trajectories | WidowX | Kitchen manipulation |
-| Open X-Embodiment ([[OXE]]) | 1M+ trajectories | Multi-platform | Cross-embodiment aggregate from 22 robots |
-| [[DROID]] | 76K trajectories | Franka | High diversity of environments |
+| Open X-Embodiment (OXE) | 1M+ trajectories | Multi-platform | Cross-embodiment aggregate from 22 robots |
+| DROID | 76K trajectories | Franka | High diversity of environments |
 | RoboMIND | 55K trajectories | Multiple | Multi-task, includes Chinese instructions |
 
 **UMI-style hand-collection datasets** (middle ground — low collection cost, moderate transfer difficulty):
@@ -280,7 +280,7 @@ UMI-style collection dramatically lowers the hardware barrier by replacing a ful
 | Dataset | Scale | Source | Characteristics |
 |---------|-------|--------|-----------------|
 | EPIC-Kitchens | 100 hours | First-person view | Kitchen manipulation with action labels |
-| [[Ego4D]] | 3670 hours | First-person view | Broad daily activities, weak action labels |
+| Ego4D | 3670 hours | First-person view | Broad daily activities, weak action labels |
 | HOI4D | 2.4M frames | RGBD | Human-object interaction with 3D annotations |
 | Something-Something | 220K videos | Third-person | Object manipulation, good for temporal reasoning |
 
@@ -292,7 +292,7 @@ Evaluating the world model component of a WAM requires metrics that go beyond ta
 
 **Visual fidelity metrics** (measure how realistic the predicted future frames are):
 
-[[PSNR|Peak Signal-to-Noise Ratio]]:
+Peak Signal-to-Noise Ratio:
 
 $$
 \text{PSNR}(x, y) = 10 \cdot \log_{10} \left( \frac{\text{MAX}^2}{\text{MSE}(x, y)} \right)
@@ -300,7 +300,7 @@ $$
 
 Pixel-level accuracy. Higher is better (>30 dB is generally considered good quality). Simple but does not capture perceptual quality — a blurry prediction can have high PSNR if the blur matches the mean.
 
-[[SSIM|Structural Similarity Index]]:
+Structural Similarity Index:
 
 $$
 \text{SSIM}(x,y) = \frac{(2\mu_x\mu_y + C_1)(2\sigma_{xy} + C_2)}{(\mu_x^2 + \mu_y^2 + C_1)(\sigma_x^2 + \sigma_y^2 + C_2)}
@@ -308,7 +308,7 @@ $$
 
 Measures luminance, contrast, and structure jointly. Range $[-1, 1]$; higher is better. More robust to global brightness shifts than PSNR. Symbols: $\mu_x, \mu_y$ — image means; $\sigma_x^2, \sigma_y^2$ — variances; $\sigma_{xy}$ — covariance; $C_1, C_2$ — stability constants.
 
-[[LPIPS|Learned Perceptual Image Patch Similarity]]:
+Learned Perceptual Image Patch Similarity:
 
 $$
 \text{LPIPS}(x, y) = \sum_l \frac{1}{H_l W_l} \sum_{h,w} \left\| w_l \odot \left( \hat{f}_l(x)_{hw} - \hat{f}_l(y)_{hw} \right) \right\|_2^2
@@ -316,7 +316,7 @@ $$
 
 Uses pretrained deep network features to measure perceptual similarity. Lower is better. More aligned with human judgment than PSNR/SSIM for natural images. $\hat{f}_l$ — normalized feature map at layer $l$; $w_l$ — learned per-layer weights.
 
-[[DreamSim]] similarity (human-calibrated perceptual distance):
+DreamSim similarity (human-calibrated perceptual distance):
 
 $$
 \text{DreamSim}(x, y) = 1 - \| E(x) - E(y) \|_2
@@ -324,7 +324,7 @@ $$
 
 Embedding distance in a space specifically fine-tuned on human perceptual similarity judgments. More reliable than LPIPS for comparing generated robot manipulation frames where subtle motion differences matter.
 
-[[DINO|DINO feature consistency]] (semantic alignment):
+DINO feature consistency (semantic alignment):
 
 $$
 \text{DINO}(g_t, r_t) = \frac{\langle f(g_t), f(r_t) \rangle}{\|f(g_t)\|_2 \cdot \|f(r_t)\|_2}
@@ -332,7 +332,7 @@ $$
 
 Cosine similarity of DINO features between generated frame $g_t$ and reference frame $r_t$. Measures whether the generated frame is semantically consistent (same objects, same scene layout) even if pixel-level details differ.
 
-[[FVD|Fréchet Video Distance]] (video-level distribution quality):
+Fréchet Video Distance (video-level distribution quality):
 
 $$
 \text{FVD} = \|\mu_r - \mu_g\|_2^2 + \text{Tr}\left(\Sigma_r + \Sigma_g - 2(\Sigma_r \Sigma_g)^{1/2}\right)
@@ -364,10 +364,10 @@ Measures the distance between the distribution of real videos and generated vide
 
 The survey does not conduct new experiments but synthesizes patterns across 70+ surveyed papers:
 
-- **Cascaded Explicit-Learned WAMs** (e.g., [[UniPi]], [[GR-MG]]): Produce visually compelling video plans but inference takes >1 second per step at useful resolution — incompatible with reactive robot control at >10 Hz. Best suited for offline plan generation followed by open-loop execution.
-- **Cascaded Implicit WAMs** (e.g., [[VLA-JEPA]]): Inference is fast (comparable to standard VLAs) but the latent world model is uninterpretable. The world model acts as a learned feature extractor more than a simulator.
-- **Joint Diffusion WAMs** (e.g., [[UWM]], CosmosPolicy): The survey finds that co-training the world model and action policy with a joint diffusion objective consistently improves manipulation success rate by 10–30% over VLA-only baselines across multiple benchmarks. The world model loss acts as a strong regularizer that prevents the action policy from overfitting to the behavioral cloning objective.
-- **Autoregressive Joint WAMs** (e.g., [[GR-2]]): Excel at cross-task generalization due to the unified token representation, but require careful tokenization design to maintain continuous action precision.
+- **Cascaded Explicit-Learned WAMs** (e.g., [UniPi](WAM-Survey/UniPi.md), [GR-MG](WAM-Survey/GR-MG.md)): Produce visually compelling video plans but inference takes >1 second per step at useful resolution — incompatible with reactive robot control at >10 Hz. Best suited for offline plan generation followed by open-loop execution.
+- **Cascaded Implicit WAMs** (e.g., [VLA-JEPA](WAM-Survey/VLA-JEPA.md)): Inference is fast (comparable to standard VLAs) but the latent world model is uninterpretable. The world model acts as a learned feature extractor more than a simulator.
+- **Joint Diffusion WAMs** (e.g., [UWM](WAM-Survey/UWM.md), CosmosPolicy): The survey finds that co-training the world model and action policy with a joint diffusion objective consistently improves manipulation success rate by 10–30% over VLA-only baselines across multiple benchmarks. The world model loss acts as a strong regularizer that prevents the action policy from overfitting to the behavioral cloning objective.
+- **Autoregressive Joint WAMs** (e.g., [GR-2](WAM-Survey/GR-2.md)): Excel at cross-task generalization due to the unified token representation, but require careful tokenization design to maintain continuous action precision.
 
 ---
 
@@ -426,40 +426,40 @@ The survey concludes with seven research challenges that define the frontier of 
 
 ### Predecessors
 
-- [[VLA]]: Predecessor paradigm, models only $p(a \mid o, l)$
-- [[World Model]]: Predecessor paradigm, models state transitions $p(o' \mid o, a)$
-- [[Diffusion Policy]]: Core action generation baseline; most WAM action heads build on or compare against it
+- VLA: Predecessor paradigm, models only $p(a \mid o, l)$
+- World Model: Predecessor paradigm, models state transitions $p(o' \mid o, a)$
+- Diffusion Policy: Core action generation baseline; most WAM action heads build on or compare against it
 
 ### Representative Methods (Cascaded WAM)
 
-- [[UniPi]]: Earliest explicit pixel-level cascaded WAM (2023); established the video-as-plan paradigm
-- [[GR-MG]]: Representative of learned action extraction; adds goal-image conditioning to video diffusion
-- [[VLA-JEPA]]: Implicit cascaded WAM; uses JEPA latent prediction as a world model signal
+- [UniPi](WAM-Survey/UniPi.md): Earliest explicit pixel-level cascaded WAM (2023); established the video-as-plan paradigm
+- [GR-MG](WAM-Survey/GR-MG.md): Representative of learned action extraction; adds goal-image conditioning to video diffusion
+- [VLA-JEPA](WAM-Survey/VLA-JEPA.md): Implicit cascaded WAM; uses JEPA latent prediction as a world model signal
 
 ### Representative Methods (Joint WAM)
 
-- [[GR-1]]: One of the earliest autoregressive joint WAMs; DINO features + GPT backbone
-- [[GR-2]]: Extends GR-1 with improved long-horizon video prediction and larger training data
-- [[UWM]]: Canonical unified-stream diffusion joint WAM; joint DiT denoises video + action
-- [[WorldVLA]]: Latest AR joint WAM; fully unified LLM vocabulary for images and actions
-- [[PAD]]: Multi-stream cross-attention coupled diffusion WAM
-- [[VideoVLA]]: Multi-stream video DiT with cross-attention action coupling
+- [GR-1](WAM-Survey/GR-1.md): One of the earliest autoregressive joint WAMs; DINO features + GPT backbone
+- [GR-2](WAM-Survey/GR-2.md): Extends GR-1 with improved long-horizon video prediction and larger training data
+- [UWM](WAM-Survey/UWM.md): Canonical unified-stream diffusion joint WAM; joint DiT denoises video + action
+- [WorldVLA](WAM-Survey/WorldVLA.md): Latest AR joint WAM; fully unified LLM vocabulary for images and actions
+- [PAD](WAM-Survey/PAD.md): Multi-stream cross-attention coupled diffusion WAM
+- [VideoVLA](WAM-Survey/VideoVLA.md): Multi-stream video DiT with cross-attention action coupling
 
 ### Techniques
 
-- [[Action Chunking]]: Core action representation technique; most WAMs predict T=8–16 step action chunks
-- [[DiT]]: Dominant backbone for diffusion joint WAMs
-- [[Flow Matching]]: Alternative to DDPM used in several WAMs (e.g., [[STARRY]]); fewer inference steps
-- [[JEPA]]: Predictive representation learning framework underlying several implicit WAMs
+- Action Chunking: Core action representation technique; most WAMs predict T=8–16 step action chunks
+- DiT: Dominant backbone for diffusion joint WAMs
+- Flow Matching: Alternative to DDPM used in several WAMs (e.g., STARRY); fewer inference steps
+- JEPA: Predictive representation learning framework underlying several implicit WAMs
 
 ### Evaluation Metrics
 
-- [[PSNR]], [[SSIM]], [[LPIPS]], [[FVD]], [[DreamSim]]: World modeling quality metrics discussed in the survey
+- PSNR, SSIM, LPIPS, FVD, DreamSim: World modeling quality metrics discussed in the survey
 
 ### Architecture Foundations
 
-- [[Mixture-of-Transformers]]: Foundation for independently parameterized multi-stream WAMs
-- [[Latent Diffusion Model]]: Latent-space diffusion base for implicit cascaded WAMs
+- Mixture-of-Transformers: Foundation for independently parameterized multi-stream WAMs
+- Latent Diffusion Model: Latent-space diffusion base for implicit cascaded WAMs
 
 ---
 

@@ -20,7 +20,7 @@ created: 2026-05-20
 | Institution | University of Freiburg, LMU Munich, TU Munich, Huawei Munich Research Center |
 | Date | June 2025 |
 | Project Page | N/A |
-| Baselines | [[UniPi]], AVDC, OpenSora (Hierarchical/Autoregressive/Naive), RDT-1B |
+| Baselines | [UniPi](UniPi.md), AVDC, OpenSora (Hierarchical/Autoregressive/Naive), RDT-1B |
 | Links | [arXiv](https://arxiv.org/abs/2506.22007) / Code: N/A |
 
 ---
@@ -217,24 +217,24 @@ Both SPA and 3D Attention contribute to consistency; 3D attention primarily pres
 ## Related Notes
 
 ### Based On
-- [[OpenSora]]: Base DiT video diffusion model used as codebase
-- [[Diffusion Transformer]]: Core DiT architecture for keyframe and filling diffusion
-- [[Video Diffusion Model]]: Foundational generation method
+- OpenSora: Base DiT video diffusion model used as codebase
+- Diffusion Transformer: Core DiT architecture for keyframe and filling diffusion
+- Video Diffusion Model: Foundational generation method
 
 ### Compared Against
-- [[UniPi]]: Short-horizon video + inverse dynamics baseline; outperformed 3x on success rate
-- [[AVDC]]: Optical flow action extraction baseline; outperformed on all video quality metrics
-- [[RDT-1B]]: Diffusion foundation model for bimanual manipulation; outperformed on LHMM tasks
+- [UniPi](UniPi.md): Short-horizon video + inverse dynamics baseline; outperformed 3x on success rate
+- [AVDC](AVDC.md): Optical flow action extraction baseline; outperformed on all video quality metrics
+- RDT-1B: Diffusion foundation model for bimanual manipulation; outperformed on LHMM tasks
 
 ### Method Related
-- [[Hierarchical Planning]]: Two-stage coarse-to-fine video generation architecture
-- [[Keyframe Generation]]: Core abstraction — keyframes as end-states of atomic sub-tasks
-- [[Vision-Language Model]]: GPT-4o1 used for high-level instruction decomposition
-- [[Attention Mechanism]]: Keyframe-Instruction Cross-Attention and Semantics Preserving Attention
+- Hierarchical Planning: Two-stage coarse-to-fine video generation architecture
+- Keyframe Generation: Core abstraction — keyframes as end-states of atomic sub-tasks
+- Vision-Language Model: GPT-4o1 used for high-level instruction decomposition
+- Attention Mechanism: Keyframe-Instruction Cross-Attention and Semantics Preserving Attention
 
 ### Hardware/Data Related
-- [[MuJoCo]]: Physics simulator used for LHMM dataset and policy evaluation
-- [[Language Table]]: Block manipulation benchmark used for training and evaluation
+- MuJoCo: Physics simulator used for LHMM dataset and policy evaluation
+- Language Table: Block manipulation benchmark used for training and evaluation
 
 ---
 

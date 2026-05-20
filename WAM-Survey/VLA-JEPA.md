@@ -235,20 +235,20 @@ T=8 is optimal — sufficient horizon for manipulation dynamics without excessiv
 ## Related Notes
 
 ### Based On
-- [[V-JEPA2]]: Frozen target encoder for leakage-free latent world model
-- [[Qwen3-VL]]: 2B VLM backbone
-- [[JEPA]]: Joint-Embedding Predictive Architecture — target encoder for self-supervised prediction
+- V-JEPA2: Frozen target encoder for leakage-free latent world model
+- Qwen3-VL: 2B VLM backbone
+- JEPA: Joint-Embedding Predictive Architecture — target encoder for self-supervised prediction
 
 ### Compared Against
-- [[OpenVLA-OFT]]: 69.6% LIBERO-Plus; outperformed +9.9%
-- [[villa-x]]: 44.9% SimplerEnv; outperformed +20.3%
-- [[π₀.₅]]: 96.9% LIBERO; comparable
+- OpenVLA-OFT: 69.6% LIBERO-Plus; outperformed +9.9%
+- villa-x: 44.9% SimplerEnv; outperformed +20.3%
+- π₀.₅: 96.9% LIBERO; comparable
 
 ### Method Related
-- [[Latent World Model]]: JEPA-style prediction in latent rather than pixel space
-- [[Leakage-Free Prediction]]: Target encoder produces future targets; student sees only current observations
-- [[Flow Matching]]: DiT-B action prediction objective
-- [[Human Video Pretraining]]: SSv2 teaches robustness and physical dynamics priors
+- Latent World Model: JEPA-style prediction in latent rather than pixel space
+- Leakage-Free Prediction: Target encoder produces future targets; student sees only current observations
+- Flow Matching: DiT-B action prediction objective
+- Human Video Pretraining: SSv2 teaches robustness and physical dynamics priors
 
 ---
 

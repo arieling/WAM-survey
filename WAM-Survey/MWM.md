@@ -226,19 +226,19 @@ Predictive Feature Bank (C2 vs. C1) provides +10.8%; full MWM with multi-view pr
 ## Related Notes
 
 ### Compared Against
-- [[GE-ACT]]: RGB-based generative action model; outperformed +37.5% RLBench, +29.7% real-world
-- [[π₀]]: VLA baseline; outperformed 85%→98.3% LIBERO
-- [[OpenVLA]]: 7B VLA; outperformed 54%→98.3% LIBERO
+- GE-ACT: RGB-based generative action model; outperformed +37.5% RLBench, +29.7% real-world
+- π₀: VLA baseline; outperformed 85%→98.3% LIBERO
+- OpenVLA: 7B VLA; outperformed 54%→98.3% LIBERO
 
 ### Method Related
-- [[Semantic Mask]]: Information bottleneck representation for world model prediction
-- [[Predictive Feature Bank]]: Multi-level world model features for action conditioning
-- [[Flow Matching]]: World model training paradigm
-- [[Receding Horizon Control]]: Online replanning for action execution
+- Semantic Mask: Information bottleneck representation for world model prediction
+- Predictive Feature Bank: Multi-level world model features for action conditioning
+- Flow Matching: World model training paradigm
+- Receding Horizon Control: Online replanning for action execution
 
 ### Hardware/Data Related
-- [[LIBERO]]: Long-horizon tabletop manipulation benchmark
-- [[RLBench]]: Diverse robot manipulation benchmark
+- LIBERO: Long-horizon tabletop manipulation benchmark
+- RLBench: Diverse robot manipulation benchmark
 
 ---
 

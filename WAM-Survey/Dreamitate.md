@@ -190,17 +190,17 @@ The data efficiency ablation compares both methods at reduced training set sizes
 ## Related Notes
 
 ### Based On
-- [[Stable Video Diffusion]]: Base model for stereo video generation
-- [[MegaPose]]: Model-based 6-DoF pose estimation for 3D trajectory extraction
+- Stable Video Diffusion: Base model for stereo video generation
+- MegaPose: Model-based 6-DoF pose estimation for 3D trajectory extraction
 
 ### Compared Against
-- [[Diffusion Policy]]: Teleoperation-based BC baseline; outperformed by +30–80% across tasks
+- Diffusion Policy: Teleoperation-based BC baseline; outperformed by +30–80% across tasks
 
 ### Method Related
-- [[Human Demonstration]]: Tool-based human video as robot training data
-- [[Stereo Vision]]: Dual-camera setup for 3D geometric recovery
-- [[Inverse Kinematics]]: Tool trajectory to robot end-effector mapping
-- [[Classifier-Free Guidance]]: Video generation conditioning mechanism
+- Human Demonstration: Tool-based human video as robot training data
+- Stereo Vision: Dual-camera setup for 3D geometric recovery
+- Inverse Kinematics: Tool trajectory to robot end-effector mapping
+- Classifier-Free Guidance: Video generation conditioning mechanism
 
 ---
 

@@ -20,20 +20,20 @@ created: 2026-05-20
 | Institution | MIT, Google DeepMind, UC Berkeley, Georgia Tech, University of Alberta |
 | Date | January 2023 (NeurIPS 2023) |
 | Project Page | https://universal-policy.github.io/ |
-| Baselines | [[Diffuser]], Transformer BC, Image+TT |
+| Baselines | Diffuser, Transformer BC, Image+TT |
 | Links | [arXiv](https://arxiv.org/abs/2302.00111) / Code: N/A |
 
 ---
 
 ## One-Sentence Summary
 
-> UniPi casts sequential decision-making as text-conditioned video generation: a [[Video Diffusion Model]] synthesizes future image frames as a plan, and an [[Inverse Dynamics Model]] extracts robot actions from the generated video — enabling combinatorial language generalization and cross-environment transfer.
+> UniPi casts sequential decision-making as text-conditioned video generation: a Video Diffusion Model synthesizes future image frames as a plan, and an Inverse Dynamics Model extracts robot actions from the generated video — enabling combinatorial language generalization and cross-environment transfer.
 
 ---
 
 ## Core Contributions
 
-1. **Policy-as-Video Formulation**: Introduces the [[Unified Predictive Decision Process]] (UPDP) abstraction, treating robot policies as text-conditioned video generators rather than direct action predictors.
+1. **Policy-as-Video Formulation**: Introduces the Unified Predictive Decision Process (UPDP) abstraction, treating robot policies as text-conditioned video generators rather than direct action predictors.
 2. **Trajectory Consistency via Tiling**: Proposes conditioning each denoising step on the tiled initial observation frame to enforce environment consistency across synthesized frames.
 3. **Hierarchical Video Planning**: Uses coarse-to-fine temporal super-resolution to generate long-horizon plans, enabling hierarchical planning with interpretable intermediate states.
 4. **Internet-Scale Transfer**: Pretraining on 14M+ web video-text pairs followed by fine-tuning on robot data yields significantly better video quality and task success on real robots.
@@ -52,7 +52,7 @@ How to learn a single generalist policy that works across diverse environments w
 - Diffusion-based methods (Diffuser) work in joint space only and cannot share knowledge across agent morphologies.
 
 ### Motivation
-Images and text are universal across environments and humans. A [[Video Diffusion Model]] that generates future image trajectories conditioned on text instructions naturally shares knowledge across tasks, avoids reward design, and can leverage internet video data.
+Images and text are universal across environments and humans. A Video Diffusion Model that generates future image trajectories conditioned on text instructions naturally shares knowledge across tasks, avoids reward design, and can leverage internet video data.
 
 ---
 
@@ -62,8 +62,8 @@ Images and text are universal across environments and humans. A [[Video Diffusio
 
 UniPi adopts a **cascaded video diffusion** architecture with two decoupled components:
 
-- **Input**: Current observation frame $x_0$ + text instruction $c$ (encoded by [[T5]]-XXL)
-- **Planner** (universal): [[Video Diffusion Model]] $\rho(\tau | x_0, c)$ — synthesizes $H$-step image trajectory
+- **Input**: Current observation frame $x_0$ + text instruction $c$ (encoded by T5-XXL)
+- **Planner** (universal): Video Diffusion Model $\rho(\tau | x_0, c)$ — synthesizes $H$-step image trajectory
 - **Tiling module**: Replicates $x_0$ across time to enforce consistency during denoising
 - **Temporal Super Resolution**: Hierarchically refines sparse keyframe video to dense frames
 - **Inverse Dynamics**: Small CNN+MLP predicts 7-DOF robot actions from consecutive frame pairs
@@ -86,7 +86,7 @@ UniPi adopts a **cascaded video diffusion** architecture with two decoupled comp
 **Design Motivation**: Naive text-to-video models generate videos where the scene changes dramatically; robot planning requires the environment to remain consistent.
 
 **Implementation**:
-- Re-purposes a temporal [[Super Resolution]] architecture
+- Re-purposes a temporal Super Resolution architecture
 - Concatenates $x_0$ channel-wise to each noisy intermediate frame $\tau_k^h$ during denoising
 - Uses temporal convolutions (not attention) for local temporal consistency
 
@@ -113,7 +113,7 @@ UniPi adopts a **cascaded video diffusion** architecture with two decoupled comp
 
 ## Key Formulas
 
-### Formula 1: [[Continuous-Time Diffusion Model|Continuous-Time Forward Process]]
+### Formula 1: Continuous-Time Forward Process
 
 $$
 q_k(\tau_k | \tau) = \mathcal{N}(\cdot; \alpha_k \tau, \sigma_k^2 I), \quad k \in [0, 1]
@@ -126,7 +126,7 @@ $$
 - $\alpha_k, \sigma_k^2$: predefined noise schedule scalars (log SNR range $[-20, 20]$)
 - $k \in [0, 1]$: continuous diffusion time
 
-### Formula 2: [[Classifier-Free Guidance|Classifier-Free Guidance Sampling]]
+### Formula 2: Classifier-Free Guidance Sampling
 
 $$
 \hat{s}(\tau_k, k | c, x_0) = (1 + \omega) s(\tau_k, k | c, x_0) - \omega s(\tau_k, k)
@@ -139,7 +139,7 @@ $$
 - $s(\tau_k, k)$: unconditional denoiser
 - $\omega$: guidance strength scalar controlling conditioning strength
 
-### Formula 3: [[Trajectory Policy|Trajectory-Task Conditioned Policy]]
+### Formula 3: Trajectory-Task Conditioned Policy
 
 $$
 \pi(\cdot | \{x_h\}_{h=0}^H, c) : \mathcal{X}^{H+1} \times \mathcal{C} \to \Delta(\mathcal{A}^H)
@@ -180,7 +180,7 @@ $$
 
 ### Figure 7: Adaptable Planning (Test-Time Guidance)
 
-**Description**: By providing an intermediate target image as guidance, UniPi can adapt its plan to move a specific block (e.g., "Right Cyan Block" vs. "Left Cyan Block"), demonstrating steerability via [[Classifier-Free Guidance]].
+**Description**: By providing an intermediate target image as guidance, UniPi can adapt its plan to move a specific block (e.g., "Right Cyan Block" vs. "Left Cyan Block"), demonstrating steerability via Classifier-Free Guidance.
 
 ### Figure 8: Pretraining Enables Combinatorial Generalization
 
@@ -285,23 +285,23 @@ $$
 ## Related Notes
 
 ### Based On
-- [[Video Diffusion Model]]: Core generation backbone (Imagen Video architecture)
-- [[Classifier-Free Guidance]]: Used for text/frame conditioning strength
-- [[T5]]: Text encoder for language conditioning
-- [[Inverse Dynamics Model]]: Action extraction from synthesized frames
+- Video Diffusion Model: Core generation backbone (Imagen Video architecture)
+- Classifier-Free Guidance: Used for text/frame conditioning strength
+- T5: Text encoder for language conditioning
+- Inverse Dynamics Model: Action extraction from synthesized frames
 
 ### Compared Against
-- [[Diffuser]]: Joint-space diffusion policy; UniPi outperforms by ~5x on all tasks
-- [[Trajectory Transformer]]: Sequence-model baseline; outperformed on novel tasks
+- Diffuser: Joint-space diffusion policy; UniPi outperforms by ~5x on all tasks
+- Trajectory Transformer: Sequence-model baseline; outperformed on novel tasks
 
 ### Method Related
-- [[Unified Predictive Decision Process]]: Novel abstraction introduced by this paper
-- [[Video Language Planning]]: Direct follow-up work (VLP, 2310.10625) extending UniPi
-- [[World Model]]: UniPi jointly learns a world model and policy via video generation
+- Unified Predictive Decision Process: Novel abstraction introduced by this paper
+- Video Language Planning: Direct follow-up work (VLP, 2310.10625) extending UniPi
+- World Model: UniPi jointly learns a world model and policy via video generation
 
 ### Hardware/Data Related
-- [[Bridge Dataset]]: Real-robot dataset used for fine-tuning
-- [[CLIPort]]: Simulation environment used for multi-task evaluation
+- Bridge Dataset: Real-robot dataset used for fine-tuning
+- CLIPort: Simulation environment used for multi-task evaluation
 
 ---
 

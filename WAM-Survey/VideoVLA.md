@@ -211,17 +211,17 @@ More future frames → better performance; longer horizon provides richer tempor
 ## Related Notes
 
 ### Based On
-- [[CogVideoX]]: 5B video generation backbone; 3D-causal VAE; DiT architecture
-- [[Open X-Embodiment]]: Large-scale multi-robot pretraining dataset
-- [[T5]]: Text encoder for language conditioning
+- CogVideoX: 5B video generation backbone; 3D-causal VAE; DiT architecture
+- Open X-Embodiment: Large-scale multi-robot pretraining dataset
+- T5: Text encoder for language conditioning
 
 ### Compared Against
-- [[OpenSora-1.1]]: Alternative video backbone; substantially outperformed (80.4% vs. 50.2%)
+- OpenSora-1.1: Alternative video backbone; substantially outperformed (80.4% vs. 50.2%)
 
 ### Method Related
-- [[Joint Diffusion]]: Unified video+action DDPM denoising
-- [[Bidirectional Attention]]: Full self-attention over video+action tokens
-- [[Cross-Embodiment Pretraining]]: Multi-robot pretraining for generalization
+- Joint Diffusion: Unified video+action DDPM denoising
+- Bidirectional Attention: Full self-attention over video+action tokens
+- Cross-Embodiment Pretraining: Multi-robot pretraining for generalization
 
 ---
 

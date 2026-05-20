@@ -207,15 +207,15 @@ UWM is significantly more robust to visual distribution shifts.
 ## Related Notes
 
 ### Compared Against
-- [[Diffusion Policy]]: 0.71 LIBERO OOD, 0.36 OOD Stack-Bowls; outperformed
-- [[PAD]]: 0.57 LIBERO OOD; outperformed +22%
-- [[GR-1]]: 0.58 LIBERO OOD; outperformed +21%
+- Diffusion Policy: 0.71 LIBERO OOD, 0.36 OOD Stack-Bowls; outperformed
+- [PAD](PAD.md): 0.57 LIBERO OOD; outperformed +22%
+- [GR-1](GR-1.md): 0.58 LIBERO OOD; outperformed +21%
 
 ### Method Related
-- [[Decoupled Diffusion Timesteps]]: Independent noise per modality enabling flexible inference
-- [[Register Tokens]]: Cross-modal feature exchange in unified diffusion framework
-- [[Action-Free Pretraining]]: Video co-training without action labels via timestep masking
-- [[Forward Dynamics Model]]: Single model supports multiple inference modes
+- Decoupled Diffusion Timesteps: Independent noise per modality enabling flexible inference
+- Register Tokens: Cross-modal feature exchange in unified diffusion framework
+- Action-Free Pretraining: Video co-training without action labels via timestep masking
+- Forward Dynamics Model: Single model supports multiple inference modes
 
 ---
 

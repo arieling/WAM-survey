@@ -201,19 +201,19 @@ Cross-view attention is critical — removing it drops mIoU by 0.29 (41% relativ
 ## Related Notes
 
 ### Based On
-- [[Stable Video Diffusion]]: Base video diffusion model extended with multi-view capability
-- [[FoundationPose]]: 6-DoF pose tracking for action extraction
-- [[SAM2]]: Object segmentation for FoundationPose initialization
+- Stable Video Diffusion: Base video diffusion model extended with multi-view capability
+- FoundationPose: 6-DoF pose tracking for action extraction
+- SAM2: Object segmentation for FoundationPose initialization
 
 ### Compared Against
-- [[Dreamitate]]: Single-view video diffusion with tool tracking; outperformed 12%→64%
-- [[Diffusion Policy]]: Teleoperation-based BC; outperformed 12%→64%
-- [[DP3]]: 3D point cloud policy; outperformed 25%→64%
+- [Dreamitate](Dreamitate.md): Single-view video diffusion with tool tracking; outperformed 12%→64%
+- Diffusion Policy: Teleoperation-based BC; outperformed 12%→64%
+- DP3: 3D point cloud policy; outperformed 25%→64%
 
 ### Method Related
-- [[Pointmap]]: 3D-aware scene representation for geometric consistency supervision
-- [[Cross-View Attention]]: Information transfer between multiple camera views
-- [[4D World Model]]: Spatiotemporally consistent scene prediction
+- Pointmap: 3D-aware scene representation for geometric consistency supervision
+- Cross-View Attention: Information transfer between multiple camera views
+- 4D World Model: Spatiotemporally consistent scene prediction
 
 ---
 

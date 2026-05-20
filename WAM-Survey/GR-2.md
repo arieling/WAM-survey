@@ -199,18 +199,18 @@ Success rate scales consistently with model size across all datasets — both va
 ## Related Notes
 
 ### Based On
-- [[GR-1]]: Predecessor architecture; GR-2 scales and improves
-- [[VQGAN]]: Discrete image tokenization backbone
-- [[CLIP]]: Frozen language encoder
+- [GR-1](GR-1.md): Predecessor architecture; GR-2 scales and improves
+- VQGAN: Discrete image tokenization backbone
+- CLIP: Frozen language encoder
 
 ### Compared Against
-- [[GR-1]]: Prior version; outperformed 4.21→4.64 CALVIN, 33%→90% bin-picking
-- [[HULC]]: Hierarchical policy; outperformed on CALVIN
+- [GR-1](GR-1.md): Prior version; outperformed 4.21→4.64 CALVIN, 33%→90% bin-picking
+- HULC: Hierarchical policy; outperformed on CALVIN
 
 ### Method Related
-- [[Web-Scale Video Pre-training]]: 38M clip pretraining for physical dynamics
-- [[Scaling Laws]]: Consistent performance gains with model size
-- [[Data Augmentation]]: Diffusion model + SAM for unseen environment generalization
+- Web-Scale Video Pre-training: 38M clip pretraining for physical dynamics
+- Scaling Laws: Consistent performance gains with model size
+- Data Augmentation: Diffusion model + SAM for unseen environment generalization
 
 ---
 

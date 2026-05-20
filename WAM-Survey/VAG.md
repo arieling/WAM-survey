@@ -210,22 +210,22 @@ VAG generates plausible video-action pairs for custom real-world manipulation ta
 ## Related Notes
 
 ### Based On
-- [[Cosmos-Predict2]]: 2B video generation model used as video stream backbone
-- [[Diffusion Policy]]: 1D U-Net action stream architecture
-- [[Flow Matching]]: Shared training paradigm for both streams
+- Cosmos-Predict2: 2B video generation model used as video stream backbone
+- Diffusion Policy: 1D U-Net action stream architecture
+- Flow Matching: Shared training paradigm for both streams
 
 ### Compared Against
-- [[π₀]]: VLA baseline; downstream pretraining improved by +20% with VAG data
-- [[AnyPos]]: Action prediction baseline; outperformed 66%→79% on LIBERO
+- π₀: VLA baseline; downstream pretraining improved by +20% with VAG data
+- AnyPos: Action prediction baseline; outperformed 66%→79% on LIBERO
 
 ### Method Related
-- [[Dual-Stream Architecture]]: Parallel video and action generation
-- [[Data Synthesis]]: Using generative models to augment robot demonstration datasets
-- [[Behavioral Cloning]]: Downstream policy learning from synthesized data
+- Dual-Stream Architecture: Parallel video and action generation
+- Data Synthesis: Using generative models to augment robot demonstration datasets
+- Behavioral Cloning: Downstream policy learning from synthesized data
 
 ### Hardware/Data Related
-- [[AgiBot]]: Primary evaluation dataset
-- [[LIBERO]]: Secondary evaluation benchmark
+- AgiBot: Primary evaluation dataset
+- LIBERO: Secondary evaluation benchmark
 
 ---
 

@@ -234,23 +234,23 @@ The following results represent the first demonstration of zero-shot dexterous m
 ## Related Notes
 
 ### Based On
-- [[WAN 2.1]]: Base 14B I2V video model
-- [[Diffusion Forcing]]: Independent per-token noise schedule for flexible conditioning
-- [[HaMeR]]: Human hand mesh recovery for action extraction
-- [[Dex-Retargeting]]: Human-to-dexterous-robot hand motion transfer
+- WAN 2.1: Base 14B I2V video model
+- Diffusion Forcing: Independent per-token noise schedule for flexible conditioning
+- HaMeR: Human hand mesh recovery for action extraction
+- Dex-Retargeting: Human-to-dexterous-robot hand motion transfer
 
 ### Compared Against
-- [[π₀]]: VLA baseline; outperformed on all real-robot tasks
-- [[Wan 2.1 I2V]]: Video generation baseline; outperformed by +20% on Level 3 video quality
-- [[Cosmos-Predict2]]: Video generation baseline; outperformed by +52% on Level 3
+- π₀: VLA baseline; outperformed on all real-robot tasks
+- Wan 2.1 I2V: Video generation baseline; outperformed by +20% on Level 3 video quality
+- Cosmos-Predict2: Video generation baseline; outperformed by +52% on Level 3
 
 ### Method Related
-- [[History Guidance]]: CFG variant for temporal coherence in video generation
-- [[cuRobo]]: GPU-accelerated IK solver for robot arm control
-- [[Cross-Embodiment Transfer]]: Zero-shot transfer from human video to robot execution
+- History Guidance: CFG variant for temporal coherence in video generation
+- cuRobo: GPU-accelerated IK solver for robot arm control
+- Cross-Embodiment Transfer: Zero-shot transfer from human video to robot execution
 
 ### Hardware/Data Related
-- [[LVP-1M]]: Action-centric curated video dataset for manipulation video pretraining
+- LVP-1M: Action-centric curated video dataset for manipulation video pretraining
 
 ---
 

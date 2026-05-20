@@ -221,23 +221,23 @@ Large-scale pretraining is the most critical component (−40% without it); clos
 ## Related Notes
 
 ### Based On
-- [[AnimateDiff]]: Motion modules for temporal flow prediction
-- [[Stable Diffusion]]: U-Net backbone with LoRA for flow world model
-- [[AnyGrasp]]: Grasp pose estimation from predicted 3D flow
-- [[Grounding-SAM2]]: Object segmentation for dataset construction
+- AnimateDiff: Motion modules for temporal flow prediction
+- Stable Diffusion: U-Net backbone with LoRA for flow world model
+- AnyGrasp: Grasp pose estimation from predicted 3D flow
+- Grounding-SAM2: Object segmentation for dataset construction
 
 ### Compared Against
-- [[AVDC]]: 2D video world model; outperformed 20%→70%
-- [[Im2Flow2Act]]: 2D object-centric flow; outperformed 25%→70%
-- [[Rekep]]: VLM code-based planning; outperformed 20%→70%
+- [AVDC](AVDC.md): 2D video world model; outperformed 20%→70%
+- [Im2Flow2Act](Im2Flow2Act.md): 2D object-centric flow; outperformed 25%→70%
+- Rekep: VLM code-based planning; outperformed 20%→70%
 
 ### Method Related
-- [[3D Optical Flow]]: Core embodiment-agnostic action representation
-- [[SVD Transform Estimation]]: Rigid body transformation from point clouds
-- [[Cross-Embodiment Transfer]]: Zero-shot generalization across robot platforms
+- 3D Optical Flow: Core embodiment-agnostic action representation
+- SVD Transform Estimation: Rigid body transformation from point clouds
+- Cross-Embodiment Transfer: Zero-shot generalization across robot platforms
 
 ### Hardware/Data Related
-- [[ManiFlow-110k]]: Synthesized 3D flow dataset for world model pretraining
+- ManiFlow-110k: Synthesized 3D flow dataset for world model pretraining
 
 ---
 

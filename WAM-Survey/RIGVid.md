@@ -233,21 +233,21 @@ Rigid body retargeting transfers seamlessly to ALOHA without modification:
 ## Related Notes
 
 ### Based On
-- [[Kling]]: Frontier image-to-video model for generating manipulation demonstrations
-- [[FoundationPose]]: 6-DoF object pose tracking for action extraction
-- [[Grounding DINO]]: Open-vocabulary object detection for target identification
-- [[SAM-2]]: Object segmentation for FoundationPose initialization
-- [[BundleSDF]]: 3D object mesh reconstruction from RGB-D sequences
+- Kling: Frontier image-to-video model for generating manipulation demonstrations
+- FoundationPose: 6-DoF object pose tracking for action extraction
+- Grounding DINO: Open-vocabulary object detection for target identification
+- SAM-2: Object segmentation for FoundationPose initialization
+- BundleSDF: 3D object mesh reconstruction from RGB-D sequences
 
 ### Compared Against
-- [[Gen2Act]]: Human video + sparse tracking; outperformed 67.5%→85%
-- [[AVDC]]: 2D optical flow; outperformed 32.5%→85%
-- [[Track2Act]]: Point tracking; outperformed 7.5%→85%
+- [Gen2Act](Gen2Act.md): Human video + sparse tracking; outperformed 67.5%→85%
+- [AVDC](AVDC.md): 2D optical flow; outperformed 32.5%→85%
+- Track2Act: Point tracking; outperformed 7.5%→85%
 
 ### Method Related
-- [[6-DoF Pose Tracking]]: Structured pose representation for manipulation
-- [[Motion Retargeting]]: Rigid body transform for embodiment transfer
-- [[Closed-Loop Execution]]: Real-time deviation detection and recovery
+- 6-DoF Pose Tracking: Structured pose representation for manipulation
+- Motion Retargeting: Rigid body transform for embodiment transfer
+- Closed-Loop Execution: Real-time deviation detection and recovery
 
 ---
 

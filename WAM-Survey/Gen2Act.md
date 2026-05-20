@@ -20,7 +20,7 @@ created: 2026-05-20
 | Institution | Google DeepMind, Carnegie Mellon University, Stanford University |
 | Date | September 2024 |
 | Project Page | N/A |
-| Baselines | RT-1, RT-1-GC, [[Vid2Robot]] |
+| Baselines | RT-1, RT-1-GC, Vid2Robot |
 | Links | [arXiv](https://arxiv.org/abs/2409.16283) / Code: N/A |
 
 ---
@@ -215,18 +215,18 @@ Adding a small number of targeted demonstrations provides modest but consistent 
 ## Related Notes
 
 ### Based On
-- [[VideoPoet]]: Zero-shot video generation model used for human video synthesis
-- [[Perceiver-Resampler]]: Visual token compression for efficient cross-modal conditioning
-- [[Point Tracking]]: BOOTSTRAAP/TAP-Vid for motion auxiliary supervision
+- VideoPoet: Zero-shot video generation model used for human video synthesis
+- Perceiver-Resampler: Visual token compression for efficient cross-modal conditioning
+- Point Tracking: BOOTSTRAAP/TAP-Vid for motion auxiliary supervision
 
 ### Compared Against
-- [[Vid2Robot]]: Video-conditioned policy with real human-robot pairs; outperformed by +23% average
-- [[RT-1]]: Language-conditioned BC baseline; outperformed by +38% average
+- Vid2Robot: Video-conditioned policy with real human-robot pairs; outperformed by +23% average
+- RT-1: Language-conditioned BC baseline; outperformed by +38% average
 
 ### Method Related
-- [[Behavioral Cloning]]: Policy learning method
-- [[Action Chunking]]: Action prediction strategy
-- [[Classifier-Free Guidance]]: Conditioning approach in VideoPoet
+- Behavioral Cloning: Policy learning method
+- Action Chunking: Action prediction strategy
+- Classifier-Free Guidance: Conditioning approach in VideoPoet
 
 ---
 

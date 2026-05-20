@@ -181,15 +181,15 @@ The unified pipeline handles all four object categories, a broader scope than mo
 ## Related Notes
 
 ### Based On
-- [[Kling]]: Frontier image-to-video model (option 1)
-- [[Veo]]: Google frontier video model (option 2)
-- [[Sora]]: OpenAI frontier video model (option 3)
+- Kling: Frontier image-to-video model (option 1)
+- Veo: Google frontier video model (option 2)
+- Sora: OpenAI frontier video model (option 3)
 
 ### Method Related
-- [[3D Object Flow]]: Task-level embodiment-agnostic action representation
-- [[Point Tracking]]: Foundation model for keypoint tracking across video frames
-- [[Zero-Shot Manipulation]]: Execution without task-specific training
-- [[Multi-Embodiment Transfer]]: Cross-platform robot control from single plan
+- 3D Object Flow: Task-level embodiment-agnostic action representation
+- Point Tracking: Foundation model for keypoint tracking across video frames
+- Zero-Shot Manipulation: Execution without task-specific training
+- Multi-Embodiment Transfer: Cross-platform robot control from single plan
 
 ---
 

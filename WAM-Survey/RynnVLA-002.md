@@ -209,18 +209,18 @@ Continuous parallel decoding achieves up to 48 Hz — suitable for real-time con
 ## Related Notes
 
 ### Based On
-- [[WorldVLA]]: Predecessor discrete action framework; same Chameleon backbone
-- [[Chameleon]]: Mixed-modal early-fusion backbone
-- [[VQ-GAN]]: Discrete image tokenization
+- [WorldVLA](WorldVLA.md): Predecessor discrete action framework; same Chameleon backbone
+- Chameleon: Mixed-modal early-fusion backbone
+- VQ-GAN: Discrete image tokenization
 
 ### Compared Against
-- [[WorldVLA]]: Extends discrete-only WorldVLA (81.8% → 97.4% LIBERO continuous)
+- [WorldVLA](WorldVLA.md): Extends discrete-only WorldVLA (81.8% → 97.4% LIBERO continuous)
 
 ### Method Related
-- [[Continuous Action Head]]: Parallel decoding with bidirectional attention for continuous robot actions
-- [[Attention Masking]]: Preventing action error accumulation via selective masking
-- [[Mutual Enhancement]]: World model and action model benefit each other during joint training
-- [[Joint Autoregressive Video+Action]]: Unified discrete token prediction of images + actions
+- Continuous Action Head: Parallel decoding with bidirectional attention for continuous robot actions
+- Attention Masking: Preventing action error accumulation via selective masking
+- Mutual Enhancement: World model and action model benefit each other during joint training
+- Joint Autoregressive Video+Action: Unified discrete token prediction of images + actions
 
 ---
 

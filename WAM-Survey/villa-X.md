@@ -235,18 +235,18 @@ The following ablations isolate the contribution of the proprioceptive FDM and t
 ## Related Notes
 
 ### Based On
-- [[PaliGemma]]: 3B VLM encoder for vision-language conditioning
-- [[VQ-VAE]]: Discrete latent action codebook
-- [[Flow Matching]]: Action generation training paradigm
+- PaliGemma: 3B VLM encoder for vision-language conditioning
+- VQ-VAE: Discrete latent action codebook
+- Flow Matching: Action generation training paradigm
 
 ### Compared Against
-- [[GR00T-N1.5]]: Nvidia robot foundation model; outperformed 62%→77.7% SIMPLER
-- [[LAPA]]: Latent action pretraining; villa-X improves with proprio-FDM
+- GR00T-N1.5: Nvidia robot foundation model; outperformed 62%→77.7% SIMPLER
+- LAPA: Latent action pretraining; villa-X improves with proprio-FDM
 
 ### Method Related
-- [[Latent Action Model]]: Discrete latent action discovery from video+proprioception
-- [[Dual Expert Architecture]]: Specialized latent and robot action transformers
-- [[Stochastic Attention Masking]]: Training regularization for action-latent coupling
+- Latent Action Model: Discrete latent action discovery from video+proprioception
+- Dual Expert Architecture: Specialized latent and robot action transformers
+- Stochastic Attention Masking: Training regularization for action-latent coupling
 
 ---
 

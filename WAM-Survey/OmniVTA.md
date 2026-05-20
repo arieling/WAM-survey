@@ -241,21 +241,21 @@ The contribution of the 60Hz RLTC reflex controller is quantified by ablating it
 ## Related Notes
 
 ### Based On
-- [[Stable Diffusion VAE]]: Visual encoding for VTWM visual branch
-- [[Diffusion Policy]]: Action chunk generation backbone for AFP
+- Stable Diffusion VAE: Visual encoding for VTWM visual branch
+- Diffusion Policy: Action chunk generation backbone for AFP
 
 ### Compared Against
-- [[Reactive Diffusion Policy (RDP)]]: Best prior baseline; outperformed 50%→80% on Wipe
-- [[KineDex]]: Tactile-enhanced policy; outperformed 40%→80%
+- Reactive Diffusion Policy (RDP): Best prior baseline; outperformed 50%→80% on Wipe
+- KineDex: Tactile-enhanced policy; outperformed 40%→80%
 
 ### Method Related
-- [[Implicit Neural Representation]]: Continuous deformation field modeling in TactileVAE
-- [[Slow-Fast Control]]: Hierarchical 15Hz planning + 60Hz tactile correction
-- [[Tactile Sensing]]: Contact detection and force estimation for manipulation
+- Implicit Neural Representation: Continuous deformation field modeling in TactileVAE
+- Slow-Fast Control: Hierarchical 15Hz planning + 60Hz tactile correction
+- Tactile Sensing: Contact detection and force estimation for manipulation
 
 ### Hardware/Data Related
-- [[OmniViTac]]: New large-scale visuo-tactile manipulation dataset
-- [[xArm7]]: Robot platform for evaluation
+- OmniViTac: New large-scale visuo-tactile manipulation dataset
+- xArm7: Robot platform for evaluation
 
 ---
 

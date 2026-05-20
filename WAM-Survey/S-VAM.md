@@ -233,19 +233,19 @@ DPAv3 + DINOv2 is the optimal combination; dynamic depth (DPAv3) substantially b
 ## Related Notes
 
 ### Based On
-- [[Stable Video Diffusion]]: SVD backbone for physical dynamics features
-- [[DINOv2]]: Semantic teacher for patch-level distillation targets
-- [[DPAv3]]: Geometric teacher for dynamic depth distillation targets
+- Stable Video Diffusion: SVD backbone for physical dynamics features
+- DINOv2: Semantic teacher for patch-level distillation targets
+- DPAv3: Geometric teacher for dynamic depth distillation targets
 
 ### Compared Against
-- [[VPP]]: Single-pass SVD feature extraction baseline; S-VAM improves task 5 +17.1%
-- [[GR-1]]: Autoregressive video prediction; outperformed 3.06→4.16 CALVIN
-- [[HiF-VLA]]: Previous video-action CALVIN SOTA; outperformed 4.08→4.16
+- [VPP](VPP.md): Single-pass SVD feature extraction baseline; S-VAM improves task 5 +17.1%
+- [GR-1](GR-1.md): Autoregressive video prediction; outperformed 3.06→4.16 CALVIN
+- HiF-VLA: Previous video-action CALVIN SOTA; outperformed 4.08→4.16
 
 ### Method Related
-- [[Self-Distillation]]: Knowledge transfer from generated video to single-step features
-- [[QFormer]]: Cross-modal token condensation architecture
-- [[Single-Step Inference]]: Real-time policy execution from video diffusion features
+- Self-Distillation: Knowledge transfer from generated video to single-step features
+- QFormer: Cross-modal token condensation architecture
+- Single-Step Inference: Real-time policy execution from video diffusion features
 
 ---
 

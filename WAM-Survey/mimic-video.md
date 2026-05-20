@@ -210,18 +210,18 @@ The 10× sample efficiency improvement demonstrates that video dynamics pretrain
 ## Related Notes
 
 ### Based On
-- [[Cosmos-Predict2]]: 2B video DiT backbone for physical dynamics pretraining
-- [[Flow Matching]]: Action decoder training and video generation paradigm
-- [[LoRA]]: Parameter-efficient video backbone fine-tuning
+- Cosmos-Predict2: 2B video DiT backbone for physical dynamics pretraining
+- Flow Matching: Action decoder training and video generation paradigm
+- LoRA: Parameter-efficient video backbone fine-tuning
 
 ### Compared Against
-- [[π₀]]: VLA baseline; outperformed 35.4%→56.3% SIMPLER-Bridge
-- [[OpenVLA]]: 7B VLA; comparable LIBERO performance
+- π₀: VLA baseline; outperformed 35.4%→56.3% SIMPLER-Bridge
+- OpenVLA: 7B VLA; comparable LIBERO performance
 
 ### Method Related
-- [[Partial Denoising]]: Stopping diffusion at intermediate steps for feature extraction
-- [[Implicit IDM]]: Action decoder as implicit inverse dynamics on video latents
-- [[Data Efficiency]]: Few-shot robot policy learning via video pretraining
+- Partial Denoising: Stopping diffusion at intermediate steps for feature extraction
+- Implicit IDM: Action decoder as implicit inverse dynamics on video latents
+- Data Efficiency: Few-shot robot policy learning via video pretraining
 
 ---
 

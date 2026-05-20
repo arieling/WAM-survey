@@ -68,7 +68,7 @@ AVDC is a **3-stage pipeline** with no end-to-end training signal:
   - Noise schedule: linear $\beta$ schedule, $T_{noise}=1000$ steps
   - Parameters: 109M–201M (depending on resolution variant)
   - Training: 4× V100 GPUs, ~1 day, Adam optimizer, lr=5e-5
-- **Stage 2 — Optical Flow Estimation**: [[GMFlow]] computes dense optical flow between consecutive synthesized frame pairs $(I_t, I_{t+1})$
+- **Stage 2 — Optical Flow Estimation**: GMFlow computes dense optical flow between consecutive synthesized frame pairs $(I_t, I_{t+1})$
   - Output: pixel-level displacement field $(u^i_t, v^i_t)$ for all pixels $i$
   - GMFlow: frozen pretrained model, no fine-tuning
 - **Stage 3 — SE(3) Transform Estimation**: Recovers rigid body transform $T_t \in SE(3)$ from flow + depth
@@ -102,7 +102,7 @@ where $img_{1:T}$ are the clean video frames, $\epsilon \sim \mathcal{N}(0, I)$ 
 **Design Motivation**: Optical flow provides pixel-level geometric motion evidence that can be converted to SE(3) transforms without any action supervision.
 
 **Implementation**:
-- Apply frozen [[GMFlow]] between every consecutive pair $(I_t, I_{t+1})$ in generated video
+- Apply frozen GMFlow between every consecutive pair $(I_t, I_{t+1})$ in generated video
 - GMFlow: Transformer-based global matching flow estimator
 - Output: flow field $\mathbf{F}_t = \{(u^i_t, v^i_t)\}$ for pixels $i$
 - Flow computed on generated frames, not real observations — avoids domain gap issues
@@ -228,24 +228,24 @@ Replanning (+10.7%), depth information (+14.4%), and dense flow (+6.9%) all cont
 ## Related Notes
 
 ### Based On
-- [[Video Diffusion Model]]: Core generation backbone for synthesizing future frame sequences
-- [[GMFlow]]: Optical flow estimator used for dense correspondence extraction
-- [[SE(3) Transform]]: Rigid body geometry for converting flow to robot commands
-- [[Classifier-Free Guidance]]: Text+frame conditioning during video generation
+- Video Diffusion Model: Core generation backbone for synthesizing future frame sequences
+- GMFlow: Optical flow estimator used for dense correspondence extraction
+- SE(3) Transform: Rigid body geometry for converting flow to robot commands
+- Classifier-Free Guidance: Text+frame conditioning during video generation
 
 ### Compared Against
-- [[UniPi]]: Video-as-policy baseline; AVDC outperforms by ~4x without action labels
-- [[SuSIE]]: Video subgoal synthesis baseline; outperformed on cross-environment transfer
+- [UniPi](UniPi.md): Video-as-policy baseline; AVDC outperforms by ~4x without action labels
+- SuSIE: Video subgoal synthesis baseline; outperformed on cross-environment transfer
 
 ### Method Related
-- [[Optical Flow]]: Dense pixel correspondences between video frames
-- [[Inverse Dynamics Model]]: Alternative action extraction approach (requires action labels)
-- [[Receding Horizon Control]]: Replanning strategy shared with VLP
-- [[Goal-Conditioned Policy]]: Alternative execution module
+- Optical Flow: Dense pixel correspondences between video frames
+- Inverse Dynamics Model: Alternative action extraction approach (requires action labels)
+- Receding Horizon Control: Replanning strategy shared with VLP
+- Goal-Conditioned Policy: Alternative execution module
 
 ### Hardware/Data Related
-- [[Meta-World]]: Simulation benchmark used for training and primary evaluation
-- [[iTHOR]]: Household manipulation environment for zero-shot evaluation
+- Meta-World: Simulation benchmark used for training and primary evaluation
+- iTHOR: Household manipulation environment for zero-shot evaluation
 
 ---
 

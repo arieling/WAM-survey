@@ -205,21 +205,21 @@ Physical interaction (grasping, execution) is the primary bottleneck — upstrea
 ## Related Notes
 
 ### Based On
-- [[Wan2.1]]: Primary open-source video generation model
-- [[Veo]]: Google frontier video model (closed API)
-- [[TAPIP3D]]: 3D point tracking in calibrated space
-- [[Grounded-SAM2]]: Object grounding and segmentation
-- [[MegaSaM]]: Monocular depth estimation
+- Wan2.1: Primary open-source video generation model
+- Veo: Google frontier video model (closed API)
+- TAPIP3D: 3D point tracking in calibrated space
+- Grounded-SAM2: Object grounding and segmentation
+- MegaSaM: Monocular depth estimation
 
 ### Compared Against
-- [[AVDC]]: 2D video flow method; outperformed on all tasks
-- [[Diffusion Policy]]: 10–30-demo imitation learning; matched without demonstrations
+- [AVDC](AVDC.md): 2D video flow method; outperformed on all tasks
+- Diffusion Policy: 10–30-demo imitation learning; matched without demonstrations
 
 ### Method Related
-- [[Kabsch Algorithm]]: Optimal rigid rotation estimation from point correspondences
-- [[Model Predictive Control]]: Deformable object manipulation planning
-- [[Zero-Shot Manipulation]]: Task execution without task-specific training
-- [[Rejection Sampling]]: VLM-based video quality selection
+- Kabsch Algorithm: Optimal rigid rotation estimation from point correspondences
+- Model Predictive Control: Deformable object manipulation planning
+- Zero-Shot Manipulation: Task execution without task-specific training
+- Rejection Sampling: VLM-based video quality selection
 
 ---
 

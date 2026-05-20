@@ -216,17 +216,17 @@ DINOv2 outperforms ResNet backbone. Noise augmentation improves robustness (+0.1
 ## Related Notes
 
 ### Based On
-- [[Veo-3]]: Google's frontier video generation model used as visual planner
-- [[DINOv2]]: Self-supervised ViT encoder for IDM feature extraction
-- [[π₀]]: VLA model (π₀.₅) used as contact-phase executor
+- Veo-3: Google's frontier video generation model used as visual planner
+- DINOv2: Self-supervised ViT encoder for IDM feature extraction
+- π₀: VLA model (π₀.₅) used as contact-phase executor
 
 ### Compared Against
-- [[π₀]]: State-of-the-art VLA baseline; outperformed 3.2× on semantic generalization
+- π₀: State-of-the-art VLA baseline; outperformed 3.2× on semantic generalization
 
 ### Method Related
-- [[Inverse Dynamics Model]]: Action extraction from video frame pairs
-- [[Hierarchical Policy]]: Two-level control (video planner + VLA executor)
-- [[Interaction Gate]]: Novel binary signal distinguishing reaching vs. contact phases
+- Inverse Dynamics Model: Action extraction from video frame pairs
+- Hierarchical Policy: Two-level control (video planner + VLA executor)
+- Interaction Gate: Novel binary signal distinguishing reaching vs. contact phases
 
 ---
 

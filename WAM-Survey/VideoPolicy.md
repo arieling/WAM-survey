@@ -226,22 +226,22 @@ Longer video prediction horizons consistently improve success rate, especially u
 ## Related Notes
 
 ### Based On
-- [[Stable Video Diffusion]]: SVD fine-tuned as video U-Net policy backbone
-- [[Diffusion Policy]]: 1D action U-Net architecture
+- Stable Video Diffusion: SVD fine-tuned as video U-Net policy backbone
+- Diffusion Policy: 1D action U-Net architecture
 
 ### Compared Against
-- [[π₀]]: VLA baseline; outperformed 85%→94% on LIBERO-10
-- [[OpenVLA]]: 7B VLA; outperformed 54%→94% on LIBERO-10
-- [[UniPi]]: Video+IDM; outperformed substantially
+- π₀: VLA baseline; outperformed 85%→94% on LIBERO-10
+- OpenVLA: 7B VLA; outperformed 54%→94% on LIBERO-10
+- [UniPi](UniPi.md): Video+IDM; outperformed substantially
 
 ### Method Related
-- [[Two-Stage Training]]: Decoupled video and action learning with stop-gradient
-- [[Video Feature Extraction]]: Multi-layer decoder feature conditioning
-- [[Action-Free Pre-Training]]: Video-only training as pre-training for unseen tasks
+- Two-Stage Training: Decoupled video and action learning with stop-gradient
+- Video Feature Extraction: Multi-layer decoder feature conditioning
+- Action-Free Pre-Training: Video-only training as pre-training for unseen tasks
 
 ### Hardware/Data Related
-- [[RoboCasa]]: Large-scale kitchen manipulation benchmark
-- [[LIBERO]]: Tabletop manipulation benchmark
+- RoboCasa: Large-scale kitchen manipulation benchmark
+- LIBERO: Tabletop manipulation benchmark
 
 ---
 

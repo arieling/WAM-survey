@@ -181,17 +181,17 @@ The ablation below isolates the contribution of hybrid attention and the full vi
 ## Related Notes
 
 ### Based On
-- [[VILA-U]]: 7B unified multimodal model for understanding + generation
-- [[Open X-Embodiment]]: Robot pre-training dataset
+- VILA-U: 7B unified multimodal model for understanding + generation
+- Open X-Embodiment: Robot pre-training dataset
 
 ### Compared Against
-- [[OpenVLA]]: 7B VLA baseline; outperformed 76.5%→81.13% LIBERO
-- [[SuSIE]]: Subgoal image generation; CoT-VLA achieves similar with unified model
+- OpenVLA: 7B VLA baseline; outperformed 76.5%→81.13% LIBERO
+- SuSIE: Subgoal image generation; CoT-VLA achieves similar with unified model
 
 ### Method Related
-- [[Chain-of-Thought Reasoning]]: Visual intermediate subgoal generation before action
-- [[Residual Quantization]]: Discrete image tokenization for autoregressive generation
-- [[Hybrid Attention]]: Mixed causal/full attention for different prediction tasks
+- Chain-of-Thought Reasoning: Visual intermediate subgoal generation before action
+- Residual Quantization: Discrete image tokenization for autoregressive generation
+- Hybrid Attention: Mixed causal/full attention for different prediction tasks
 
 ---
 

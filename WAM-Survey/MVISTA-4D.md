@@ -20,7 +20,7 @@ created: 2026-05-20
 | Institution | Not specified (inferred: Chinese institution based on author names and equipment) |
 | Date | February 2026 |
 | Project Page | N/A |
-| Baselines | [[UniPi]], [[TesserAct]], 4DGen |
+| Baselines | [UniPi](UniPi.md), [TesserAct](TesserAct.md), 4DGen |
 | Links | [arXiv](https://arxiv.org/abs/2602.09878) / Code: N/A |
 
 ---
@@ -235,24 +235,24 @@ Multi-view generation provides +4% improvement over single-view; gains plateau b
 ## Related Notes
 
 ### Based On
-- [[WAN2.2]]: Base 5B text/image-to-video generation model (flow matching)
-- [[Flow Matching]]: Video diffusion training paradigm
-- [[PointNet]]: 3D point cloud encoder for residual IDM
+- WAN2.2: Base 5B text/image-to-video generation model (flow matching)
+- Flow Matching: Video diffusion training paradigm
+- PointNet: 3D point cloud encoder for residual IDM
 
 ### Compared Against
-- [[TesserAct]]: Single-view RGB-DN world model; outperformed 67.3% → 72.6%
-- [[UniPi]]: 2D video baseline; outperformed on 3D reconstruction
-- [[4DGen]]: Two-view 3D reconstruction baseline; outperformed 47.0% → 72.6%
+- [TesserAct](TesserAct.md): Single-view RGB-DN world model; outperformed 67.3% → 72.6%
+- [UniPi](UniPi.md): 2D video baseline; outperformed on 3D reconstruction
+- [4DGen](4DGen.md): Two-view 3D reconstruction baseline; outperformed 47.0% → 72.6%
 
 ### Method Related
-- [[Test-Time Optimization]]: Inference-time compute scaling via backpropagation
-- [[Inverse Dynamics Model]]: Action extraction approach
-- [[Epipolar Geometry]]: Geometric constraint for cross-view attention sampling
-- [[Deformable Attention]]: Adaptive sampling approach in cross-view module
+- Test-Time Optimization: Inference-time compute scaling via backpropagation
+- Inverse Dynamics Model: Action extraction approach
+- Epipolar Geometry: Geometric constraint for cross-view attention sampling
+- Deformable Attention: Adaptive sampling approach in cross-view module
 
 ### Hardware/Data Related
-- [[RLBench]]: Robot manipulation benchmark
-- [[RoboTwin]]: Bimanual manipulation benchmark
+- RLBench: Robot manipulation benchmark
+- RoboTwin: Bimanual manipulation benchmark
 
 ---
 

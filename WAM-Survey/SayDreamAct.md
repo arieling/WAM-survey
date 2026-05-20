@@ -215,22 +215,22 @@ The adversarial distillation speed-quality trade-off is quantified as follows:
 ## Related Notes
 
 ### Based On
-- [[Cosmos-Predict2]]: Video generation model used as world model backbone
-- [[ACT]]: Action Chunking with Transformers backbone for action prediction
-- [[Adversarial Training]]: Distillation methodology for fast inference
+- Cosmos-Predict2: Video generation model used as world model backbone
+- ACT: Action Chunking with Transformers backbone for action prediction
+- Adversarial Training: Distillation methodology for fast inference
 
 ### Compared Against
-- [[UniVLA]]: 7B parameter video-language-action model; outperformed 95.2% → 98.2%
-- [[DreamVLA]]: Video-conditioned VLA; outperformed 92.6% → 98.2%
-- [[π₀]]: Flow-based VLA; outperformed 94.2% → 98.2%
+- UniVLA: 7B parameter video-language-action model; outperformed 95.2% → 98.2%
+- DreamVLA: Video-conditioned VLA; outperformed 92.6% → 98.2%
+- π₀: Flow-based VLA; outperformed 94.2% → 98.2%
 
 ### Method Related
-- [[Temporal Sampling]]: Length-agnostic keyframe extraction
-- [[Behavioral Cloning]]: Action model training paradigm
-- [[Classifier-Free Guidance]]: Conditioning approach in Cosmos diffusion model
+- Temporal Sampling: Length-agnostic keyframe extraction
+- Behavioral Cloning: Action model training paradigm
+- Classifier-Free Guidance: Conditioning approach in Cosmos diffusion model
 
 ### Hardware/Data Related
-- [[LIBERO]]: Primary evaluation benchmark (4 suites, 1850 training demos)
+- LIBERO: Primary evaluation benchmark (4 suites, 1850 training demos)
 
 ---
 
