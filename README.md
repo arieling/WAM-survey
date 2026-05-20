@@ -89,7 +89,7 @@ Cascaded WAMs split further by how actions are extracted from predicted video:
 | Method       | Type               | Visual Generation | Action Extraction | Year |
 | ------------ | ------------------ | ----------------- | ----------------- | ---- |
 | [UniPi](WAM-Survey/UniPi.md)        | Explicit-Learned   | Video Diffusion   | IDM               | 2023 |
-| SuSIE        | Explicit-Learned   | Video Diffusion   | IDM               | 2023 |
+| [SuSIE](WAM-Survey/SuSIE.md)        | Explicit-Learned   | Video Diffusion   | IDM               | 2023 |
 | [AVDC](WAM-Survey/AVDC.md)         | Explicit-Learned   | Video Diffusion   | IDM               | 2023 |
 | [GR-MG](WAM-Survey/GR-MG.md)        | Explicit-Learned   | Video Diffusion   | IDM               | 2024 |
 | [Gen2Act](WAM-Survey/Gen2Act.md)      | Explicit-Learned   | Video Diffusion   | IDM               | 2024 |
@@ -153,17 +153,17 @@ Diffusion WAMs jointly denoise both future visual observations and action sequen
 
 **Multi-Stream — Shared Representation**: Early DiT layers are shared between visual and action streams; later layers are specialized. The shared early layers learn task-relevant features usable by both objectives, while the specialized late layers focus each stream on its output modality. Representative: UVA, PhysGen.
 
-| Method | Stream | Coupling | Backbone | Year |
-|--------|--------|----------|----------|------|
-| [PAD](WAM-Survey/PAD.md) | Multi | Cross-Attn | DiT | 2024 |
-| [UWM](WAM-Survey/UWM.md) | Unified | — | DiT | 2024 |
-| DreamZero | Unified | — | DiT | 2024 |
-| CosmosPolicy | Unified | — | Video DiT | 2025 |
-| FLARE | Unified | — | DiT | 2025 |
-| FRAPPE | Unified | — | DiT | 2025 |
-| [VideoVLA](WAM-Survey/VideoVLA.md) | Multi | Cross-Attn | Video DiT | 2025 |
-| CoVAR | Multi | Cross-Attn | DiT | 2025 |
-| LDA-1B | Multi | Hidden-State | DiT | 2025 |
+| Method                             | Stream  | Coupling     | Backbone  | Year |
+| ---------------------------------- | ------- | ------------ | --------- | ---- |
+| [PAD](WAM-Survey/PAD.md)           | Multi   | Cross-Attn   | DiT       | 2024 |
+| [UWM](WAM-Survey/UWM.md)           | Unified | —            | DiT       | 2024 |
+| [DreamZero](WAM-Survey/DreamZero.md)                    | Unified | —            | DiT       | 2024 |
+| [CosmosPolicy](WAM-Survey/CosmosPolicy.md)              | Unified | —            | Video DiT | 2025 |
+| FLARE                                                   | Unified | —            | DiT       | 2025 |
+| [FRAPPE](WAM-Survey/FRAPPE.md)                          | Unified | —            | DiT       | 2025 |
+| [VideoVLA](WAM-Survey/VideoVLA.md)                      | Multi   | Cross-Attn   | Video DiT | 2025 |
+| [CoVAR](WAM-Survey/CoVAR.md)                            | Multi   | Cross-Attn   | DiT       | 2025 |
+| [LDA-1B](WAM-Survey/LDA-1B.md)                         | Multi   | Hidden-State | DiT       | 2025 |
 
 **Key design trade-off**: Unified Stream is simpler but risks token competition; Multi-Stream adds coupling complexity but keeps visual and action generation from interfering. The survey finds no definitive winner — the best choice depends on the relative difficulty of the visual prediction vs. action precision required by the task.
 
