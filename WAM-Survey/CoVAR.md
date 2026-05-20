@@ -27,13 +27,13 @@ created: 2026-05-20
 
 ## One-Line Summary
 
-> CoVAR co-generates synchronized video predictions and robot action sequences via parallel [[Diffusion Policy|video]] and [[WAM|action]] [[DiT|diffusion transformers]] connected by a novel Bridge Attention mechanism, achieving state-of-the-art manipulation success rates on Calvin, Libero90, and real UR5 benchmarks.
+> CoVAR co-generates synchronized video predictions and robot action sequences via parallel video and action diffusion transformers connected by a novel Bridge Attention mechanism, achieving state-of-the-art manipulation success rates on Calvin, Libero90, and real UR5 benchmarks.
 
 ---
 
 ## Core Contributions
 
-1. **Parallel Multi-modal Diffusion**: Extends a pretrained [[视频生成模型|video diffusion]] backbone ([[DiT|Open-Sora-1.2]]) with a dedicated parallel action [[DiT]] branch, enabling joint [[整流流匹配|rectified flow]]-based denoising of video latents and robot actions without discarding pretrained visual knowledge.
+1. **Parallel Multi-modal Diffusion**: Extends a pretrained video diffusion backbone (Open-Sora-1.2) with a dedicated parallel action DiT branch, enabling joint rectified flow-based denoising of video latents and robot actions without discarding pretrained visual knowledge.
 2. **Bridge Attention**: A cross-modal interaction module that maintains separate per-modality query, key, and value projection matrices while computing joint attention over the concatenated video and action token sequences — enabling bidirectional information exchange without feature entanglement.
 3. **Action Refinement Module**: A lightweight transformer that maps coarse actions (produced at low resolution) to precise robot control signals by cross-attending to initial visual observations and text instructions, critical for low-resolution training datasets.
 
@@ -47,13 +47,13 @@ Robotic manipulation policies must predict sequences of robot joint states given
 
 ### Limitations of Existing Methods
 
-- **Two-stage methods** (e.g., [[UniPi]], [[RoboEnvision]]): Generate video first, then extract actions via a separate inverse dynamics model. The two stages are decoupled, so video generation errors propagate to the action stage and the two objectives cannot co-optimize.
-- **Joint model methods** (e.g., [[UWM]], [[PAD]]): Concatenate video and action tokens and denoise with a single shared attention module. This forces both modalities to share the same query/key/value projections, which can conflict since video features are spatially dense (many tokens, patch-based) while action features are temporally compact (joint-state vectors). Shared projections also overwrite pretrained visual representations.
+- **Two-stage methods** (e.g., [UniPi](UniPi.md), [RoboEnvision](RoboEnvision.md)): Generate video first, then extract actions via a separate inverse dynamics model. The two stages are decoupled, so video generation errors propagate to the action stage and the two objectives cannot co-optimize.
+- **Joint model methods** (e.g., [UWM](UWM.md), [PAD](PAD.md)): Concatenate video and action tokens and denoise with a single shared attention module. This forces both modalities to share the same query/key/value projections, which can conflict since video features are spatially dense (many tokens, patch-based) while action features are temporally compact (joint-state vectors). Shared projections also overwrite pretrained visual representations.
 - **Annotation scarcity**: Standard video diffusion pretraining on large web-scale data does not include robot action labels. Methods that require joint training from scratch discard this pretrained knowledge.
 
 ### Motivation
 
-The key insight is that video and action modalities are fundamentally different in token structure and semantics, so they benefit from separate projection parameters while still needing to exchange information. Bridge Attention addresses this by maintaining modality-specific projections but computing attention jointly — a middle ground between fully shared (joint model) and fully decoupled (two-stage). Additionally, inheriting a pretrained [[视频生成模型|video diffusion]] backbone gives CoVAR a head start on visual quality that scratch-trained joint models cannot match.
+The key insight is that video and action modalities are fundamentally different in token structure and semantics, so they benefit from separate projection parameters while still needing to exchange information. Bridge Attention addresses this by maintaining modality-specific projections but computing attention jointly — a middle ground between fully shared (joint model) and fully decoupled (two-stage). Additionally, inheriting a pretrained video diffusion backbone gives CoVAR a head start on visual quality that scratch-trained joint models cannot match.
 
 ---
 
@@ -61,7 +61,7 @@ The key insight is that video and action modalities are fundamentally different 
 
 ### Architecture Overview
 
-CoVAR builds on [[整流流匹配|rectified flow]]-based diffusion with a [[DiT|Diffusion Transformer]] backbone (Open-Sora-1.2, 1.1B parameters). A parallel action DiT branch (0.3B new parameters, total 1.4B) is added alongside the frozen/fine-tuned video DiT. The two branches interact at every transformer block through Bridge Attention. For low-resolution datasets, a separate Action Refinement Module refines the coarse action outputs.
+CoVAR builds on rectified flow-based diffusion with a Diffusion Transformer backbone (Open-Sora-1.2, 1.1B parameters). A parallel action DiT branch (0.3B new parameters, total 1.4B) is added alongside the frozen/fine-tuned video DiT. The two branches interact at every transformer block through Bridge Attention. For low-resolution datasets, a separate Action Refinement Module refines the coarse action outputs.
 
 - **Inputs**: Initial image observation, robot joint state, text instruction, noisy video latent $x_t^1$, noisy action sequence $x_t^2$
 - **Backbone**: Open-Sora-1.2 video DiT (pretrained) + parallel action DiT (newly initialized)
@@ -78,7 +78,7 @@ CoVAR builds on [[整流流匹配|rectified flow]]-based diffusion with a [[DiT|
 
 ### Multi-Modal Rectified Flow
 
-CoVAR adopts [[整流流匹配|rectified flow]] to jointly model the video-action distribution. The combined data is denoted:
+CoVAR adopts rectified flow to jointly model the video-action distribution. The combined data is denoted:
 
 $$
 X_0 = (x_0^1,\; x_0^2)
@@ -106,7 +106,7 @@ where $v_\theta^1$ is predicted by the video DiT branch and $v_\theta^2$ by the 
 
 ### Action Representation
 
-Robot actions are low-dimensional joint-state vectors at each timestep. Rather than using a [[变分自编码器|VAE]] (which would add computational overhead and a second training objective), CoVAR encodes actions with a **lightweight MLP encoder** that maps raw joint states into a higher-dimensional embedding space compatible with the DiT's channel dimension. For decoding, a **UNet-based action decoder** is used instead of a simple linear layer. The UNet's skip connections provide multi-scale feature aggregation from intermediate DiT layers, which empirically improves action precision (see ablation, Table V).
+Robot actions are low-dimensional joint-state vectors at each timestep. Rather than using a VAE (which would add computational overhead and a second training objective), CoVAR encodes actions with a **lightweight MLP encoder** that maps raw joint states into a higher-dimensional embedding space compatible with the DiT's channel dimension. For decoding, a **UNet-based action decoder** is used instead of a simple linear layer. The UNet's skip connections provide multi-scale feature aggregation from intermediate DiT layers, which empirically improves action precision (see ablation, Table V).
 
 ### Bridge Attention Module
 
@@ -301,21 +301,21 @@ The ablation is conducted on the real-world UR5 dataset to isolate the contribut
 
 ### Based On
 
-- [[视频生成模型|Open-Sora-1.2]]: Video DiT backbone; CoVAR inherits its pretrained weights and extends it with a parallel action branch
-- [[整流流匹配|Rectified Flow]]: The flow-matching ODE framework underlying both video and action denoising
-- [[DiT]]: Diffusion Transformer architecture used for both the video and action branches
+- Open-Sora-1.2: Video DiT backbone; CoVAR inherits its pretrained weights and extends it with a parallel action branch
+- Rectified Flow: The flow-matching ODE framework underlying both video and action denoising
+- DiT: Diffusion Transformer architecture used for both the video and action branches
 
 ### Compared Against
 
-- [[UniPi]]: Two-stage baseline (generate video → extract actions via inverse dynamics); CoVAR outperforms on all benchmarks by removing the decoupled pipeline bottleneck
-- [[PAD]]: Joint diffusion baseline that concatenates all tokens with shared Q/K/V; CoVAR outperforms by using separate modality-specific projections via Bridge Attention
-- [[UWM]]: Unified world model baseline using a single shared transformer; CoVAR outperforms across all metrics
-- [[RoboEnvision]]: Two-stage method with a lightweight policy model; CoVAR achieves 6–17× higher real-world success rates
+- [UniPi](UniPi.md): Two-stage baseline (generate video → extract actions via inverse dynamics); CoVAR outperforms on all benchmarks by removing the decoupled pipeline bottleneck
+- [PAD](PAD.md): Joint diffusion baseline that concatenates all tokens with shared Q/K/V; CoVAR outperforms by using separate modality-specific projections via Bridge Attention
+- [UWM](UWM.md): Unified world model baseline using a single shared transformer; CoVAR outperforms across all metrics
+- [RoboEnvision](RoboEnvision.md): Two-stage method with a lightweight policy model; CoVAR achieves 6–17× higher real-world success rates
 
 ---
 
 > [!summary] CoVAR (2025)
-> - **Core**: Co-generate video predictions and robot actions via parallel [[DiT]] branches connected by [[WAM|Bridge Attention]] with modality-specific Q/K/V projections
+> - **Core**: Co-generate video predictions and robot actions via parallel DiT branches connected by Bridge Attention with modality-specific Q/K/V projections
 > - **Method**: Extend pretrained Open-Sora-1.2 video DiT with a parallel action DiT; Bridge Attention computes joint attention over concatenated tokens but uses separate per-modality projections; Action Refinement Module for low-resolution datasets
 > - **Results**: Best action success on Calvin (1.000 Drawer, 0.929 Push), Libero90 (0.873 Pick), and real UR5 (0.64–0.74); best perceptual video quality (LPIPS) among joint generation methods
 > - **Code**: N/A

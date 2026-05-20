@@ -45,15 +45,15 @@ created: 2026-05-20
 
 ### Problem Being Solved
 
-Generalist robotic [[VLA|Vision-Language-Action (VLA)]] models learn a reactive mapping from current observations and language instructions to action sequences. They lack explicit awareness of how the world will evolve after executing an action. This deficit hurts generalization: in novel or out-of-distribution scenarios, the model cannot reason about causal consequences and tends to make premature or physically inconsistent decisions. Existing attempts to add [[世界模型|world modeling]] to VLAs fall into two families, both with critical flaws.
+Generalist robotic Vision-Language-Action (VLA) models learn a reactive mapping from current observations and language instructions to action sequences. They lack explicit awareness of how the world will evolve after executing an action. This deficit hurts generalization: in novel or out-of-distribution scenarios, the model cannot reason about causal consequences and tends to make premature or physically inconsistent decisions. Existing attempts to add world modeling to VLAs fall into two families, both with critical flaws.
 
 ### Limitations of Existing Methods
 
-**Pixel-level world models** (e.g., [[VPP]], [[AVDC]]): These methods train the policy to explicitly generate or decode future video frames, then use the predicted frames as auxiliary input. The problem is twofold. First, generating full-resolution future images forces the model to spend capacity fitting visually redundant pixels (textures, backgrounds) rather than task-relevant object semantics. Second, at inference time the policy is conditioned on its own predictions, introducing compounding errors—hallucinated future frames propagate to distorted actions.
+**Pixel-level world models** (e.g., [VPP](VPP.md), [AVDC](AVDC.md)): These methods train the policy to explicitly generate or decode future video frames, then use the predicted frames as auxiliary input. The problem is twofold. First, generating full-resolution future images forces the model to spend capacity fitting visually redundant pixels (textures, backgrounds) rather than task-relevant object semantics. Second, at inference time the policy is conditioned on its own predictions, introducing compounding errors—hallucinated future frames propagate to distorted actions.
 
-**Single-representation implicit alignment** (e.g., [[FLARE]], [[MWM]]): These methods align internal features with a single pre-trained visual encoder, bypassing pixel generation. However, any single encoder carries inductive biases tied to its training objective (e.g., CLIP favors language-grounded semantics; DINOv2 favors geometric structure). A policy aligned to just one encoder inherits those biases and may underperform on tasks that benefit from complementary representations.
+**Single-representation implicit alignment** (e.g., [FLARE](FLARE.md), [MWM](MWM.md)): These methods align internal features with a single pre-trained visual encoder, bypassing pixel generation. However, any single encoder carries inductive biases tied to its training objective (e.g., CLIP favors language-grounded semantics; DINOv2 favors geometric structure). A policy aligned to just one encoder inherits those biases and may underperform on tasks that benefit from complementary representations.
 
-**[[Diffusion Policy]]-based VLAs without world modeling** (e.g., [[RDT]], [[π0]]): These achieve strong generalization through scale but lack any future-state awareness, leading to failures on precise, contact-rich, or multi-step tasks where anticipating consequences is critical.
+**Diffusion Policy-based VLAs without world modeling** (e.g., RDT, π0): These achieve strong generalization through scale but lack any future-state awareness, leading to failures on precise, contact-rich, or multi-step tasks where anticipating consequences is critical.
 
 ### Motivation
 
@@ -65,9 +65,9 @@ The key insight is that **implicit representation alignment can inject world-mod
 
 ### Architecture Overview
 
-FRAPPE uses a **two-stage fine-tuning strategy on top of a pretrained [[Diffusion Policy|diffusion-based VLA]]** with:
+FRAPPE uses a **two-stage fine-tuning strategy on top of a pretrained diffusion-based VLA** with:
 - **Input**: Language instruction $l$, current visual observation $\mathbf{o}_t$, noisy action chunk $\tilde{\mathbf{a}}_t$, denoising step $k$, learnable future-prefix tokens $\mathbf{p}_t$
-- **Backbone**: [[RDT|Robotic Diffusion Transformer (RDT-1B)]] — a 1B-parameter [[DiT|Diffusion Transformer]] pretrained on diverse robot demonstrations
+- **Backbone**: Robotic Diffusion Transformer (RDT-1B) — a 1B-parameter Diffusion Transformer pretrained on diverse robot demonstrations
 - **Core modules**: Future Prefix Tokens (n×d learnable tokens), Visual Foundation Model (VFM) teachers (CLIP 400M, DINOv2 142M, ViT 300M), MiPA (Mixture-of-Prefix-and-LoRA) router
 - **Output**: Denoised action chunk $\mathbf{a}_t$ (predicted directly; no future frame generation at inference)
 - **Total parameters (trainable at post-training)**: Prefix tokens + LoRA modules per expert; backbone frozen
@@ -80,7 +80,7 @@ FRAPPE uses a **two-stage fine-tuning strategy on top of a pretrained [[Diffusio
 
 ### Future Prefix Tokens
 
-**Motivation**: Standard [[VLA]] models consume the current observation $\mathbf{o}_t$ and produce an action. They have no explicit pathway to represent what the world should look like in the near future. Introducing a set of dedicated learnable tokens that are trained to encode future visual states gives the backbone implicit access to predictive dynamics at every denoising step, without modifying the backbone architecture or adding inference-time world-model rollouts.
+**Motivation**: Standard VLA models consume the current observation $\mathbf{o}_t$ and produce an action. They have no explicit pathway to represent what the world should look like in the near future. Introducing a set of dedicated learnable tokens that are trained to encode future visual states gives the backbone implicit access to predictive dynamics at every denoising step, without modifying the backbone architecture or adding inference-time world-model rollouts.
 
 **Design**: A set of learnable tokens $\mathbf{p} \in \mathbb{R}^{n \times d}$ (where $n$ is prefix length and $d$ is the model's hidden dimension) is concatenated with the backbone's input sequence at every denoising step. During training, these tokens receive gradient signal from an alignment loss that encourages them to encode the visual foundation model's representation of a future observation $\mathbf{o}_{t+h}$ (horizon $h=8$ steps ahead). Because the tokens are fully differentiable and concatenated with the action inputs, the backbone learns to use them for action generation. During inference, the tokens simply exist as learned parameters—no future observation needs to be generated or fed in.
 
@@ -110,7 +110,7 @@ $$
 
 The alignment loss in mid-training uses cosine similarity between the predicted prefix and the (stop-gradient) teacher encoding:
 
-[[世界模型|Alignment Loss]]:
+Alignment Loss:
 
 $$
 \mathcal{L}_{\Phi} = \cos(\mathbf{p}_t, \text{sg}(\mathbf{e}))
@@ -133,12 +133,12 @@ $$
 
 **Design**: Three expert streams are added to the frozen backbone. Each expert $i \in \{1, 2, 3\}$ consists of:
 - A dedicated set of learnable prefix tokens $\mathbf{p}^{(i)} \in \mathbb{R}^{n \times d}$
-- A set of [[LoRA]] modules injected into the backbone layers for that expert (backbone weights frozen; only LoRA $A$, $B$ matrices trained)
+- A set of LoRA modules injected into the backbone layers for that expert (backbone weights frozen; only LoRA $A$, $B$ matrices trained)
 - A corresponding frozen VFM teacher: expert 1 → CLIP (400M), expert 2 → DINOv2 (142M), expert 3 → ViT (300M)
 
 A lightweight **router network** computes gating weights $\{w_i\}_{i=1}^{M}$ (where $M=3$, $\sum_i w_i = 1$). Each expert stream produces a latent action representation $z_i$, and the final action is obtained by weighted aggregation:
 
-[[Action Chunking|Action Aggregation]]:
+Action Aggregation:
 
 $$
 \mathbf{a}_t = \text{MLP}\!\left(\sum_{i=1}^{M} w_i \cdot z_i\right)
@@ -159,7 +159,7 @@ $$
 
 To prevent mode collapse (where the router always assigns all weight to one expert), a **load-balancing loss** is applied:
 
-[[Mixture-of-Transformers|Load Balance Loss]]:
+Load Balance Loss:
 
 $$
 \mathcal{L}_{\text{balance}} = \frac{1}{B} \sum_{j=1}^{B} \left(\log \sum_{i=1}^{M} e^{\mathbf{g}_{i,j}}\right)^{2}
@@ -185,13 +185,13 @@ where $\epsilon = 0.1$ is the smoothing factor.
 
 The full training objective combines three losses with scalar hyperparameters:
 
-[[Diffusion Policy|Action Loss]]:
+Action Loss:
 
 $$
 \mathcal{L}_{\text{action}} := \text{MSE}(\mathbf{a}_t, f_\theta(l, \mathbf{o}_t, \tilde{\mathbf{a}}_t, k))
 $$
 
-**Meaning**: Standard [[Diffusion Policy|diffusion denoising]] objective—mean squared error between predicted and ground-truth action chunks. This is the primary task signal.
+**Meaning**: Standard diffusion denoising objective—mean squared error between predicted and ground-truth action chunks. This is the primary task signal.
 
 **Symbols**:
 - $\mathbf{a}_t$: ground-truth action chunk
@@ -199,7 +199,7 @@ $$
 
 Combined objective:
 
-[[世界模型|FRAPPE Total Loss]]:
+FRAPPE Total Loss:
 
 $$
 \mathcal{L}_{\text{total}} = \mathcal{L}_{\text{action}} + \lambda_1 \mathcal{L}_{\text{align}} + \lambda_2 \mathcal{L}_{\text{balance}}
@@ -264,11 +264,11 @@ FRAPPE achieves state-of-the-art performance on RoboTwin 2.0 across 8 bimanual m
 
 | Method | Easy Avg. | Hard Avg. |
 |--------|-----------|-----------|
-| [[Diffusion Policy\|DP]] | 31.3% | 0.0% |
-| [[VPP]] | 35.8% | 4.0% |
-| [[RDT]] (baseline) | 47.4% | 15.1% |
-| [[π0]] | 57.1% | 14.1% |
-| [[pi0.5\|π₀.₅]] | 45.4% | 13.3% |
+| DP | 31.3% | 0.0% |
+| [VPP](VPP.md) | 35.8% | 4.0% |
+| RDT (baseline) | 47.4% | 15.1% |
+| π0 | 57.1% | 14.1% |
+| π₀.₅ | 45.4% | 13.3% |
 | **FRAPPE** | **57.5%** | **25.5%** |
 
 **Per-task breakdown (Easy% / Hard%)**:
@@ -415,27 +415,27 @@ FRAPPE's compatibility with action-free human video is validated via a data pyra
 
 ### Based On
 
-- [[RDT]]: FRAPPE is built directly on top of RDT-1B (and RDT-130M), using its pretrained DiT backbone as the frozen base model in post-training
-- [[Diffusion Policy]]: The action generation objective is a standard diffusion denoising MSE loss, inheriting the action chunking and denoising framework
-- [[Theia]]: The mid-training phase uses a Theia-distilled 86M encoder as the unified teacher, compressing CLIP/DINOv2/ViT into a single alignment target
+- RDT: FRAPPE is built directly on top of RDT-1B (and RDT-130M), using its pretrained DiT backbone as the frozen base model in post-training
+- Diffusion Policy: The action generation objective is a standard diffusion denoising MSE loss, inheriting the action chunking and denoising framework
+- Theia: The mid-training phase uses a Theia-distilled 86M encoder as the unified teacher, compressing CLIP/DINOv2/ViT into a single alignment target
 
 ### Compared Against
 
-- [[π0]]: Strong VLA baseline with 57.1% Easy / 14.1% Hard; FRAPPE matches Easy but nearly doubles Hard performance
-- [[pi0.5]]: Smaller π₀ variant; FRAPPE outperforms on both settings despite using a different base model
-- [[VPP]]: Explicit video prediction policy; FRAPPE achieves better generalization while avoiding inference-time video generation overhead
-- [[RDT]]: Direct base model; FRAPPE improves it from 47.4/15.1 to 57.5/25.5 through world-modeling fine-tuning
+- π0: Strong VLA baseline with 57.1% Easy / 14.1% Hard; FRAPPE matches Easy but nearly doubles Hard performance
+- pi0.5: Smaller π₀ variant; FRAPPE outperforms on both settings despite using a different base model
+- [VPP](VPP.md): Explicit video prediction policy; FRAPPE achieves better generalization while avoiding inference-time video generation overhead
+- RDT: Direct base model; FRAPPE improves it from 47.4/15.1 to 57.5/25.5 through world-modeling fine-tuning
 
 ### Method Related
 
-- [[世界模型|World Model]]: FRAPPE implements implicit world modeling via representation alignment rather than explicit generative prediction
-- [[LoRA]]: MiPA uses LoRA for parameter-efficient post-training fine-tuning of three expert streams
-- [[Action Chunking]]: The action output is a chunk of $h$ future actions, consistent with standard VLA practice
-- [[VLA]]: FRAPPE is a VLA enhancement method; the base architecture follows VLA conventions
+- World Model: FRAPPE implements implicit world modeling via representation alignment rather than explicit generative prediction
+- LoRA: MiPA uses LoRA for parameter-efficient post-training fine-tuning of three expert streams
+- Action Chunking: The action output is a chunk of $h$ future actions, consistent with standard VLA practice
+- VLA: FRAPPE is a VLA enhancement method; the base architecture follows VLA conventions
 
 ### Hardware / Data
 
-- [[TASTE-Rob]]: 100,856-sequence web-scale egocentric video dataset used for action-free co-training in mid-training phase
+- TASTE-Rob: 100,856-sequence web-scale egocentric video dataset used for action-free co-training in mid-training phase
 
 ---
 

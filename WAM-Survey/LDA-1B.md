@@ -20,7 +20,7 @@ created: 2026-05-20
 | Institution | Tsinghua University, Shanghai AI Laboratory |
 | Date | February 2025 |
 | Project Page | N/A |
-| Baselines | [[pi0.5]], [[GR00T-N1.6]], [[UWM]] |
+| Baselines | pi0.5, GR00T-N1.6, [UWM](UWM.md) |
 | Links | [arXiv](https://arxiv.org/abs/2602.12215) / Code: N/A |
 
 ---
@@ -35,7 +35,7 @@ created: 2026-05-20
 
 1. **Universal Embodied Data Ingestion Strategy**: Rather than filtering data down to high-quality expert demonstrations, LDA-1B assigns each tier of data a distinct role: actionless human videos supervise visual forecasting only; low-quality robot trajectories train forward and inverse dynamics but not policy; high-quality trajectories train all objectives. This enables 30,000+ hours of mixed-quality data to be exploited without degrading action quality—compared to baselines that degrade when mixed with low-quality data, LDA-1B gains 10% by including the noisy 30% of demonstrations.
 
-2. **Latent Dynamics in DINO Feature Space**: Unlike prior world models (e.g., [[UWM]]) that predict future observations in pixel-space via [[Latent Diffusion Model|VAE]] latents, LDA-1B predicts in [[DINO]] feature space. DINOv2 features are semantically structured, suppressing background noise and encoding object-level spatial relations. This prevents representation entanglement and enables consistent scaling—UWM saturates quickly while LDA-1B continues improving from 0.1B to 1B parameters and as data grows to 30k hours.
+2. **Latent Dynamics in DINO Feature Space**: Unlike prior world models (e.g., [UWM](UWM.md)) that predict future observations in pixel-space via VAE latents, LDA-1B predicts in DINO feature space. DINOv2 features are semantically structured, suppressing background noise and encoding object-level spatial relations. This prevents representation entanglement and enables consistent scaling—UWM saturates quickly while LDA-1B continues improving from 0.1B to 1B parameters and as data grows to 30k hours.
 
 3. **EI-30K Dataset**: A new large-scale embodied interaction dataset with over 30,000 hours of standardized human and robot trajectories (8k hours real robots, 8.6k simulated, 7.2k human with actions, 10k actionless human videos), all aligned to a unified hand-centric coordinate system and converted to LeRobot format with quality annotations.
 
@@ -45,17 +45,17 @@ created: 2026-05-20
 
 ### Problem Being Solved
 
-Existing [[robot-foundation-model|robot foundation models]] are trained primarily via large-scale [[Behavior Cloning|behavior cloning]] (BC) on high-quality expert demonstrations. This creates a fundamental bottleneck: the supply of expert-quality teleoperation data is expensive and scarce. Meanwhile, vast quantities of lower-quality robot trajectories, simulated data, and human activity videos exist but cannot be effectively exploited by BC-centric approaches—adding low-quality data to BC training often degrades performance.
+Existing robot foundation models are trained primarily via large-scale behavior cloning (BC) on high-quality expert demonstrations. This creates a fundamental bottleneck: the supply of expert-quality teleoperation data is expensive and scarce. Meanwhile, vast quantities of lower-quality robot trajectories, simulated data, and human activity videos exist but cannot be effectively exploited by BC-centric approaches—adding low-quality data to BC training often degrades performance.
 
 The core question is: how to scale robot pretraining to 30,000+ hours of heterogeneous, mixed-quality data while maintaining or improving downstream manipulation performance?
 
 ### Limitations of Existing Methods
 
-- **Behavior Cloning (e.g., [[pi0.5]], RDT, InternVLA)**: Train exclusively on high-quality teleoperation data. Fundamentally limited by data quantity ceiling (~10k hours). Discards all dynamics knowledge implicit in lower-quality data. Cannot leverage actionless human videos at all.
+- **Behavior Cloning (e.g., pi0.5, RDT, InternVLA)**: Train exclusively on high-quality teleoperation data. Fundamentally limited by data quantity ceiling (~10k hours). Discards all dynamics knowledge implicit in lower-quality data. Cannot leverage actionless human videos at all.
 
 - **Hybrid alignment methods (e.g., Being-H0, UniVLA)**: Incorporate heterogeneous data via latent action modeling or visual foresight but achieve only ~6,000 hours of effective embodied data. The alignment between heterogeneous data modalities remains shallow.
 
-- **Pixel-space world models (e.g., [[UWM]])**: Jointly optimize policy and video generation but operate in VAE pixel-space. VAE latents entangle appearance, geometry, and dynamics at a low-level granularity, causing rapid saturation as data and model size increase. The representation capacity is wasted on redundant appearance reconstruction.
+- **Pixel-space world models (e.g., [UWM](UWM.md))**: Jointly optimize policy and video generation but operate in VAE pixel-space. VAE latents entangle appearance, geometry, and dynamics at a low-level granularity, causing rapid saturation as data and model size increase. The representation capacity is wasted on redundant appearance reconstruction.
 
 - **Unified Video Action Models (DyWA, FLARE, WorldVLA)**: Show that co-training next-state prediction improves generalization, but do not explicitly model data quality roles, limiting heterogeneous data exploitation.
 
@@ -76,10 +76,10 @@ By decoupling these objectives and assigning data to only the objectives it is a
 
 LDA-1B uses a **Multi-Modal Diffusion Transformer (MM-DiT)** with the following structure:
 - **Input**: Current RGB observations, language instruction, task specification (one of four objectives)
-- **Visual Encoder**: Frozen [[DINO|DINOv2]] encoder — encodes current observation into semantic latent tokens
-- **Language/Vision Encoder**: Frozen [[VLM]] ([[Qwen-VL|Qwen3]]) — encodes observations and language to conditioning tokens
-- **Core Module**: [[MMDiT|MM-DiT]] — jointly denoises noisy action chunks and noisy future DINO visual features
-- **Conditioning**: [[自适应层归一化|AdaLN]] injects VLM tokens, diffusion timestep embeddings, and task embeddings into each Transformer block
+- **Visual Encoder**: Frozen DINOv2 encoder — encodes current observation into semantic latent tokens
+- **Language/Vision Encoder**: Frozen VLM (Qwen3) — encodes observations and language to conditioning tokens
+- **Core Module**: MM-DiT — jointly denoises noisy action chunks and noisy future DINO visual features
+- **Conditioning**: AdaLN injects VLM tokens, diffusion timestep embeddings, and task embeddings into each Transformer block
 - **Output**: Denoised action sequence (delta end-effector poses + finger configuration) and/or future DINO feature predictions
 - **Total parameters**: ~1B (trainable MM-DiT + action encoder/decoder; frozen VLM + DINO)
 
@@ -137,7 +137,7 @@ By expressing all actions in the wrist coordinate frame, the model can share rep
 **Temporal Organization**:
 - Visual observations sampled at **3 Hz** — reduces redundancy from temporally correlated frames, reducing computation
 - Actions sampled at **10 Hz** — preserves fine-grained action dynamics within each action chunk
-- [[Action Chunking]] is used: the model predicts a chunk of $k$ future actions at once, improving temporal consistency
+- Action Chunking is used: the model predicts a chunk of $k$ future actions at once, improving temporal consistency
 
 ---
 
@@ -151,12 +151,12 @@ By expressing all actions in the wrist coordinate frame, the model can share rep
 - **Visual tokens**: The noisy future DINO features $o'_{t_o}$ are projected via a visual-specific linear encoder
 - **Shared self-attention**: Both sets of tokens are concatenated and processed through shared multi-modal self-attention, enabling action-visual interaction and cross-prediction
 - **Modality-specific expert layers**: FFN layers are split per modality (action expert, visual expert) to preserve modality-specific processing
-- **AdaLN conditioning**: Conditioning signals (VLM tokens $c$, timestep embedding, task embedding) are injected into each transformer block via [[自适应层归一化|Adaptive Layer Normalization (AdaLN)]]
+- **AdaLN conditioning**: Conditioning signals (VLM tokens $c$, timestep embedding, task embedding) are injected into each transformer block via Adaptive Layer Normalization (AdaLN)
 - **Cross-attention for language**: High-level semantic language guidance is provided to the model via cross-attention to VLM token sequence
 
 The model simultaneously predicts velocity fields for both modalities:
 
-[[Flow Matching|Flow Matching Instantiation]]:
+Flow Matching Instantiation:
 
 $$
 (\epsilon_a^\theta, \epsilon_o^\theta) = s_\theta(o, a_{t_a}, o'_{t_o}, t_a, t_o')
@@ -176,9 +176,9 @@ $$
 
 ### Training Objective
 
-LDA-1B uses a [[Flow Matching|flow-matching]] objective over both action and visual modalities. The action loss and observation loss activate selectively depending on which task objectives are active for a given data sample:
+LDA-1B uses a flow-matching objective over both action and visual modalities. The action loss and observation loss activate selectively depending on which task objectives are active for a given data sample:
 
-[[Flow Matching|Action Flow Matching Loss]]:
+Action Flow Matching Loss:
 
 $$
 l_{\mathrm{action}}^\theta = \mathbb{E}_{\substack{(o_{t:t+k}, a_{t+1:t+k}, \ell) \sim \mathcal{D} \\ \tau_a \sim \mathcal{U}(0, T_\tau) \\ \epsilon_a \sim \mathcal{N}(\mathbf{0}, \mathbf{I})}} \|v_a^\theta - (\epsilon_a - a_{t+1:t+k})\|_2^2
@@ -192,7 +192,7 @@ $$
 - $a_{t+1:t+k}$: ground-truth action chunk
 - $\tau_a$: diffusion timestep sampled uniformly from $[0, T_\tau]$
 
-[[Flow Matching|Observation Flow Matching Loss]]:
+Observation Flow Matching Loss:
 
 $$
 l_{\mathrm{obs}}^\theta = \mathbb{E}_{\substack{(o_{t:t+k}, a_{t+1:t+k}, \ell) \sim \mathcal{D} \\ \tau_o \sim \mathcal{U}(0, T_\tau) \\ \epsilon_o \sim \mathcal{N}(\mathbf{0}, \mathbf{I})}} \|v_o^\theta - (\epsilon_o - o_{t+1:t+k})\|_2^2
@@ -200,7 +200,7 @@ $$
 
 **Meaning**: Minimizes the L2 error between the predicted visual velocity field and the ground-truth flow direction in DINO feature space. Active for forward dynamics, inverse dynamics, and visual forecasting objectives.
 
-[[Flow Matching|Combined Loss]]:
+Combined Loss:
 
 $$
 l^\theta = l_{\mathrm{action}}^\theta + l_{\mathrm{obs}}^\theta
@@ -212,7 +212,7 @@ $$
 
 ### Inference
 
-At deployment, LDA-1B runs in **policy mode** only: given the current observation $o_t$ and language instruction $\ell$, it denoises the action tokens from pure Gaussian noise to produce the next action chunk $a_{t+1:t+k}$. The visual forecasting head is disabled during inference — only the action prediction pathway is active. Standard DDIM/flow-matching sampling is used with a fixed number of denoising steps. The model uses [[Action Chunking]] with temporal ensemble to smooth action execution.
+At deployment, LDA-1B runs in **policy mode** only: given the current observation $o_t$ and language instruction $\ell$, it denoises the action tokens from pure Gaussian noise to produce the next action chunk $a_{t+1:t+k}$. The visual forecasting head is disabled during inference — only the action prediction pathway is active. Standard DDIM/flow-matching sampling is used with a fixed number of denoising steps. The model uses Action Chunking with temporal ensemble to smooth action execution.
 
 ---
 
@@ -309,7 +309,7 @@ All models are few-shot fine-tuned with 100 robot demonstrations per task on Gal
 
 **Caption**: Success rate comparison on real-world gripper manipulation tasks (8 tasks: Pick & Place, Contact-rich, Fine, Long-horizon). LDA-1B (dark blue) consistently outperforms GR00T-N1.6 and π0.5 baselines.
 
-Key real-world improvements over [[pi0.5]]:
+Key real-world improvements over pi0.5:
 - **Contact-rich manipulation** (e.g., clean rubbish): **+21%** (e.g., LDA: 35%, π0.5: 0%)
 - **Long-horizon manipulation**: **+23%**
 - **Overall gripper tasks**: LDA-1B consistently leads across all 8 task categories
@@ -442,29 +442,29 @@ The attention difference maps demonstrate that LDA-1B develops **action-conditio
 
 ### Based On
 
-- [[UWM]]: LDA-1B directly extends the Unified World Model (UWM) framework by replacing VAE latents with DINO features and adding quality-aware multi-task data routing
-- [[MMDiT]]: The joint denoising architecture is based on the Multi-Modal Diffusion Transformer, adapted for action + visual joint denoising
-- [[DINO]]: DINOv2 serves as the frozen visual encoder and the target representation space for forward dynamics prediction
-- [[Flow Matching]]: The training objective uses flow matching rather than DDPM-style score matching
+- [UWM](UWM.md): LDA-1B directly extends the Unified World Model (UWM) framework by replacing VAE latents with DINO features and adding quality-aware multi-task data routing
+- MMDiT: The joint denoising architecture is based on the Multi-Modal Diffusion Transformer, adapted for action + visual joint denoising
+- DINO: DINOv2 serves as the frozen visual encoder and the target representation space for forward dynamics prediction
+- Flow Matching: The training objective uses flow matching rather than DDPM-style score matching
 
 ### Compared Against
 
-- [[pi0.5]]: 3B-parameter BC-trained model, serves as the strongest real-world baseline; LDA-1B outperforms on all real-world categories with 7x fewer parameters
-- [[GR00T-N1.6]]: NVIDIA's 1B heterogeneous-data model; LDA-1B exceeds on both simulation (55.4% vs 51.3%) and all real-world tasks
-- [[UWM]]: The closest prior world model baseline; LDA-1B demonstrates that DINO latents unlock scaling that VAE latents cannot
+- pi0.5: 3B-parameter BC-trained model, serves as the strongest real-world baseline; LDA-1B outperforms on all real-world categories with 7x fewer parameters
+- GR00T-N1.6: NVIDIA's 1B heterogeneous-data model; LDA-1B exceeds on both simulation (55.4% vs 51.3%) and all real-world tasks
+- [UWM](UWM.md): The closest prior world model baseline; LDA-1B demonstrates that DINO latents unlock scaling that VAE latents cannot
 
 ### Method Related
 
-- [[Diffusion Policy]]: The action prediction head uses the same diffusion/flow-matching policy learning paradigm
-- [[Action Chunking]]: Used for temporal consistency in action prediction
-- [[VLM]]: Qwen3 VLM serves as the language and observation encoder, providing conditioning tokens via cross-attention
-- [[Qwen-VL]]: The specific VLM backbone used (frozen) for multimodal conditioning
-- [[自适应层归一化|Adaptive Layer Normalization (AdaLN)]]: Used to inject all conditioning signals (timestep, task embedding, VLM tokens) into each Transformer block
+- Diffusion Policy: The action prediction head uses the same diffusion/flow-matching policy learning paradigm
+- Action Chunking: Used for temporal consistency in action prediction
+- VLM: Qwen3 VLM serves as the language and observation encoder, providing conditioning tokens via cross-attention
+- Qwen-VL: The specific VLM backbone used (frozen) for multimodal conditioning
+- Adaptive Layer Normalization (AdaLN): Used to inject all conditioning signals (timestep, task embedding, VLM tokens) into each Transformer block
 
 ### Hardware / Data
 
-- [[EI-30K]]: The new dataset introduced by this paper — 30k+ hours of standardized human and robot interaction data
-- [[RoboCasa]]: The simulation benchmark used for main evaluation (24 tasks, GR-1 humanoid)
+- EI-30K: The new dataset introduced by this paper — 30k+ hours of standardized human and robot interaction data
+- RoboCasa: The simulation benchmark used for main evaluation (24 tasks, GR-1 humanoid)
 
 ---
 

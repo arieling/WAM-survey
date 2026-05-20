@@ -33,9 +33,9 @@ created: 2026-05-20
 
 ## Core Contributions
 
-1. **Hierarchical image-editing planner**: SuSIE repurposes [[InstructPix2Pix]], a pretrained image-editing diffusion model, as a high-level robotic planner. By finetuning on video data (robot trajectories and human manipulation videos), the model learns to "hallucinate" a plausible next visual state given the current observation and a language instruction, generating a concrete subgoal image rather than an abstract language command. This bridges the gap between internet-scale visual knowledge and robot control.
+1. **Hierarchical image-editing planner**: SuSIE repurposes InstructPix2Pix, a pretrained image-editing diffusion model, as a high-level robotic planner. By finetuning on video data (robot trajectories and human manipulation videos), the model learns to "hallucinate" a plausible next visual state given the current observation and a language instruction, generating a concrete subgoal image rather than an abstract language command. This bridges the gap between internet-scale visual knowledge and robot control.
 
-2. **Decoupled high-level and low-level control**: The system explicitly separates semantic planning (what state to move toward) from motor execution (how to get there). The high-level model operates in visual observation space and is entirely independent of robot action spaces, allowing it to be trained on non-robot video data. The low-level [[goal-conditioned behavioral cloning]] (GCBC) policy operates in action space and is never exposed to language at test time, only to goal images — making it more precise and robust than language-conditioned policies.
+2. **Decoupled high-level and low-level control**: The system explicitly separates semantic planning (what state to move toward) from motor execution (how to get there). The high-level model operates in visual observation space and is entirely independent of robot action spaces, allowing it to be trained on non-robot video data. The low-level goal-conditioned behavioral cloning (GCBC) policy operates in action space and is never exposed to language at test time, only to goal images — making it more precise and robust than language-conditioned policies.
 
 3. **State-of-the-art zero-shot generalization**: By leveraging internet-scale pretraining in the diffusion model and robot-specific action knowledge in the low-level policy, SuSIE achieves superior generalization to novel objects and scenes without any additional finetuning. It outperforms RT-2-X (a 55-billion parameter vision-language-action model trained on 20× more data) on real-world manipulation tasks, and more than quadruples the previous best result on the CALVIN zero-shot benchmark (0.26 vs. 0.05 for chaining five instructions).
 
@@ -51,13 +51,13 @@ The CALVIN benchmark formalizes this: a policy is trained on three tabletop envi
 
 ### Limitations of Existing Methods
 
-- **Language-conditioned policies (e.g., HULC, [[MCIL]])**: These methods directly map language instructions to actions via a shared embedding. They suffer because language is ambiguous and underspecified for precise motor control — the word "grasp" does not tell the policy the required wrist angle, grasp height, or finger pressure. They also cannot leverage internet-scale non-robot data because they require action labels paired with language.
+- **Language-conditioned policies (e.g., HULC, MCIL)**: These methods directly map language instructions to actions via a shared embedding. They suffer because language is ambiguous and underspecified for precise motor control — the word "grasp" does not tell the policy the required wrist angle, grasp height, or finger pressure. They also cannot leverage internet-scale non-robot data because they require action labels paired with language.
 
-- **Vision-language-action models (e.g., [[RT-2]])**: Models like RT-2-X scale language-conditioned policies to billions of parameters and train on diverse robot and internet data. However, they are expensive to train (require Google-scale infrastructure), expensive at inference time, and still rely on language as the sole semantic interface — which limits precision. RT-2-X's 55B parameters trained on 20× more data than SuSIE are outperformed on real-world zero-shot tasks.
+- **Vision-language-action models (e.g., RT-2)**: Models like RT-2-X scale language-conditioned policies to billions of parameters and train on diverse robot and internet data. However, they are expensive to train (require Google-scale infrastructure), expensive at inference time, and still rely on language as the sole semantic interface — which limits precision. RT-2-X's 55B parameters trained on 20× more data than SuSIE are outperformed on real-world zero-shot tasks.
 
 - **Goal-conditioned policies trained directly on robot data**: A goal-conditioned behavioral cloning (GCBC) policy given goal images can be precise, but at test time a goal image for a novel configuration must be provided by an oracle. Without a way to generate appropriate goal images automatically from language instructions, this approach is not applicable in practice. The "Oracle GCBC" in SuSIE's evaluation represents the theoretical upper bound for a goal-conditioned policy with perfect goal images — and SuSIE actually exceeds this oracle, showing that its hierarchical decomposition confers precision benefits beyond simply supplying better goals.
 
-- **Video prediction models for planning**: Prior work on video prediction for robot planning (e.g., [[SV2P]], [[RSSM]]-based models) trained generative models on robot data alone. This limits the diversity and quality of predictions because robot datasets are small. Crucially, these models must predict actions jointly with observations or use complex planning procedures.
+- **Video prediction models for planning**: Prior work on video prediction for robot planning (e.g., SV2P, RSSM-based models) trained generative models on robot data alone. This limits the diversity and quality of predictions because robot datasets are small. Crucially, these models must predict actions jointly with observations or use complex planning procedures.
 
 ### Motivation
 
@@ -73,8 +73,8 @@ A second important insight is that **the diffusion model does not need to output
 
 SuSIE uses a **two-level hierarchical architecture** with:
 - **Input**: Current observation image $o_t$ (RGB, 256×256) and language instruction $l$
-- **High-level backbone**: [[InstructPix2Pix]] (Stable Diffusion v1-5 UNet, finetuned on video data)
-- **Low-level backbone**: [[DDPM]]-based goal-conditioned behavioral cloning policy (`gc_ddpm_bc`)
+- **High-level backbone**: InstructPix2Pix (Stable Diffusion v1-5 UNet, finetuned on video data)
+- **Low-level backbone**: DDPM-based goal-conditioned behavioral cloning policy (`gc_ddpm_bc`)
 - **Core modules**: Subgoal diffusion model, goal-conditioned low-level policy
 - **Output**: Joint actions $a_t$ executed on the robot
 - **Total parameters**: ~860M (diffusion model, SD v1-5 scale) + low-level policy (architecture not specified, trained on BridgeData V2)
@@ -87,7 +87,7 @@ SuSIE uses a **two-level hierarchical architecture** with:
 
 **Motivation**: A language instruction like "pick up the pepper" is semantically underspecified for a low-level policy — it does not convey the required approach direction, grasp height, or finger configuration. However, an image of the pepper already grasped and lifted provides direct visual supervision that constrains precisely what the robot's end state should look like. The high-level model's job is to translate ambiguous language instructions into concrete visual targets, leveraging broad world knowledge from internet pretraining to fill in visual details that language omits.
 
-**Design**: The high-level model is [[InstructPix2Pix]] — a conditional image diffusion model that takes an image and a text instruction and outputs an edited version of the image reflecting the instruction. The base model is Stable Diffusion v1-5, extended with additional conditioning on the input image by concatenating the noised image latent with the VAE-encoded input image across channels in the UNet.
+**Design**: The high-level model is InstructPix2Pix — a conditional image diffusion model that takes an image and a text instruction and outputs an edited version of the image reflecting the instruction. The base model is Stable Diffusion v1-5, extended with additional conditioning on the input image by concatenating the noised image latent with the VAE-encoded input image across channels in the UNet.
 
 For robotic use, this model is **finetuned on video data** where consecutive frames form (input image, output image) pairs and the corresponding language annotation serves as the instruction. Two data sources are used:
 
@@ -95,9 +95,9 @@ For robotic use, this model is **finetuned on video data** where consecutive fra
 
 2. **Something-Something (SS-v2)**: A large-scale dataset of 220,847 human hand manipulation video clips annotated with action templates (e.g., "picking [object] up from [surface]", "pushing [object] to the left"). These clips provide diverse object interactions across many object categories and environments not seen in robot data. Training on SS-v2 is critical for zero-shot generalization to novel objects.
 
-The finetuning uses the standard [[denoising diffusion probabilistic model]] (DDPM) objective on video frame pairs:
+The finetuning uses the standard denoising diffusion probabilistic model (DDPM) objective on video frame pairs:
 
-[[Denoising Diffusion Loss|Diffusion Finetuning Loss]]:
+Diffusion Finetuning Loss:
 
 $$
 \mathcal{L}_{\text{diff}} = \mathbb{E}_{t, \mathbf{x}_0, \boldsymbol{\epsilon}} \left[ \left\| \boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta\!\left(\mathbf{x}_t, t, c_I, c_L\right) \right\|^2 \right]
@@ -114,13 +114,13 @@ $$
 
 The best-performing model checkpoint is trained for **40,000 gradient steps** on combined BridgeData + Something-Something data.
 
-At inference, the model uses [[classifier-free guidance]] (CFG) to sharpen the generated subgoal toward the language instruction, sampling with a standard DDIM schedule.
+At inference, the model uses classifier-free guidance (CFG) to sharpen the generated subgoal toward the language instruction, sampling with a standard DDIM schedule.
 
 ### Low-Level Goal-Conditioned Policy
 
 **Motivation**: Once a subgoal image is generated, a precise motor controller is needed to actually move the robot to achieve that visual target. Language-conditioned policies are imprecise because they cannot exploit the rich spatial information encoded in an image — the exact position of the end effector relative to the object, approach angle, etc. A goal-conditioned policy operating directly on image observations can leverage this spatial information for precise grasps, especially on challenging objects (smooth, lightweight, or unusually shaped).
 
-**Design**: The low-level policy is the `gc_ddpm_bc` agent from the BridgeData V2 repository — a [[diffusion policy]]-style goal-conditioned behavioral cloning model. It takes as input:
+**Design**: The low-level policy is the `gc_ddpm_bc` agent from the BridgeData V2 repository — a diffusion policy-style goal-conditioned behavioral cloning model. It takes as input:
 - The current observation image $o_t$
 - The goal image $g$ (subgoal generated by the high-level model)
 - Outputs: predicted robot actions $a_t$ over a prediction horizon of **4 steps**
@@ -149,7 +149,7 @@ The overall system is trained in two independent stages — there is **no joint 
 
 **Stage 2 — Low-level policy training**: Train `gc_ddpm_bc` on BridgeData V2 robot demonstrations using standard behavioral cloning with delta-goal image relabeling. This stage is entirely independent of the subgoal model.
 
-[[Behavioral Cloning Loss|Low-Level Policy Loss]]:
+Low-Level Policy Loss:
 
 $$
 \mathcal{L}_{\text{BC}} = \mathbb{E}_{(o_t, g, a_t) \sim \mathcal{D}} \left[ \left\| a_t - \pi_\phi(o_t, g) \right\|^2 \right]
@@ -287,27 +287,27 @@ The iterative replanning loop provides an automatic error recovery mechanism. If
 
 ### Based On
 
-- [[InstructPix2Pix]]: The pretrained image-editing model that SuSIE finetunes as its high-level planner. SuSIE's key contribution is discovering that this model can be adapted for robotic subgoal generation by finetuning on robot and human video data.
-- [[BridgeData V2]]: The robot manipulation dataset used to train both the subgoal model finetuning and the low-level policy. SuSIE uses the `gc_ddpm_bc` policy implementation directly from the BridgeData V2 codebase.
-- [[Stable Diffusion]]: The underlying generative model architecture (SD v1-5 UNet, VAE, CLIP text encoder) on which InstructPix2Pix and therefore SuSIE's high-level model is built.
+- InstructPix2Pix: The pretrained image-editing model that SuSIE finetunes as its high-level planner. SuSIE's key contribution is discovering that this model can be adapted for robotic subgoal generation by finetuning on robot and human video data.
+- BridgeData V2: The robot manipulation dataset used to train both the subgoal model finetuning and the low-level policy. SuSIE uses the `gc_ddpm_bc` policy implementation directly from the BridgeData V2 codebase.
+- Stable Diffusion: The underlying generative model architecture (SD v1-5 UNet, VAE, CLIP text encoder) on which InstructPix2Pix and therefore SuSIE's high-level model is built.
 
 ### Compared Against
 
-- [[RT-2]]: RT-2-X is the primary strong baseline — a 55B-parameter VLA model trained on 20× more data. SuSIE outperforms it on zero-shot real-world tasks, demonstrating that hierarchical image-based planning is more data-efficient than scaling a single VLA.
-- [[GCBC]]: Oracle GCBC represents the idealized upper bound for goal-conditioned control with perfect goal images. SuSIE surpassing this baseline validates that the hierarchical loop itself (not just goal quality) confers benefits.
-- [[HULC]]: A strong language-conditioned manipulation policy for CALVIN; the prior SOTA on CALVIN before SuSIE.
+- RT-2: RT-2-X is the primary strong baseline — a 55B-parameter VLA model trained on 20× more data. SuSIE outperforms it on zero-shot real-world tasks, demonstrating that hierarchical image-based planning is more data-efficient than scaling a single VLA.
+- GCBC: Oracle GCBC represents the idealized upper bound for goal-conditioned control with perfect goal images. SuSIE surpassing this baseline validates that the hierarchical loop itself (not just goal quality) confers benefits.
+- HULC: A strong language-conditioned manipulation policy for CALVIN; the prior SOTA on CALVIN before SuSIE.
 
 ### Method Related
 
-- [[Hierarchical Reinforcement Learning]]: SuSIE implements a temporal abstraction hierarchy where the high-level model sets subgoals and the low-level policy achieves them, analogous to options frameworks in HRL.
-- [[Diffusion Policy]]: The `gc_ddpm_bc` low-level policy is a diffusion-based behavioral cloning method; the same DDPM denoising framework underlies both the subgoal generator and the action predictor.
-- [[Goal-Conditioned Behavioral Cloning]]: The foundational framework for the low-level policy, where demonstrations are relabeled with reached states as goals (HER-style).
-- [[Classifier-Free Guidance]]: Used during inference in the high-level diffusion model to sharpen subgoal generation toward the language instruction.
+- Hierarchical Reinforcement Learning: SuSIE implements a temporal abstraction hierarchy where the high-level model sets subgoals and the low-level policy achieves them, analogous to options frameworks in HRL.
+- Diffusion Policy: The `gc_ddpm_bc` low-level policy is a diffusion-based behavioral cloning method; the same DDPM denoising framework underlies both the subgoal generator and the action predictor.
+- Goal-Conditioned Behavioral Cloning: The foundational framework for the low-level policy, where demonstrations are relabeled with reached states as goals (HER-style).
+- Classifier-Free Guidance: Used during inference in the high-level diffusion model to sharpen subgoal generation toward the language instruction.
 
 ### Hardware / Data
 
-- [[BridgeData V2]]: Primary robot dataset — tabletop manipulation demonstrations with WidowX robot arm, language annotated
-- [[Something-Something v2]]: Human hand manipulation video dataset, 220,847 clips; critical for zero-shot object generalization
+- BridgeData V2: Primary robot dataset — tabletop manipulation demonstrations with WidowX robot arm, language annotated
+- Something-Something v2: Human hand manipulation video dataset, 220,847 clips; critical for zero-shot object generalization
 
 ---
 

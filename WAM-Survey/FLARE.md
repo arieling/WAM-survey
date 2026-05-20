@@ -27,15 +27,15 @@ created: 2026-05-20
 
 ## One-Line Summary
 
-> FLARE augments a [[Diffusion Transformer]]-based robot policy with lightweight future latent alignment tokens that implicitly model world dynamics, achieving up to 26% improvement over baselines with minimal architectural overhead.
+> FLARE augments a Diffusion Transformer-based robot policy with lightweight future latent alignment tokens that implicitly model world dynamics, achieving up to 26% improvement over baselines with minimal architectural overhead.
 
 ---
 
 ## Core Contributions
 
-1. **Implicit Latent World Modeling via Future Alignment**: Instead of predicting full future frames pixel-by-pixel, FLARE introduces M learnable future tokens into the [[Diffusion Transformer]] (DiT) input sequence. At an intermediate DiT layer, these tokens' hidden states are projected and aligned via cosine similarity loss to the frozen latent embedding of the next observed frame. This forces the action denoising network to develop an implicit, compressed internal representation of future world states without the expense of full generative reconstruction.
+1. **Implicit Latent World Modeling via Future Alignment**: Instead of predicting full future frames pixel-by-pixel, FLARE introduces M learnable future tokens into the Diffusion Transformer (DiT) input sequence. At an intermediate DiT layer, these tokens' hidden states are projected and aligned via cosine similarity loss to the frozen latent embedding of the next observed frame. This forces the action denoising network to develop an implicit, compressed internal representation of future world states without the expense of full generative reconstruction.
 
-2. **Action-Aware Vision-Language Embedding Model**: The future target embeddings are not raw [[SigLIP-2]] features but are produced by a compact model specifically pretrained with an action flow-matching co-objective on ~2,990 hours of cross-embodiment robotic data. This co-training ensures the embedding captures task-relevant information (what matters for manipulation) rather than generic visual semantics, which ablations show contributes a net 11.1 percentage point gain over using raw SigLIP-2 features.
+2. **Action-Aware Vision-Language Embedding Model**: The future target embeddings are not raw SigLIP-2 features but are produced by a compact model specifically pretrained with an action flow-matching co-objective on ~2,990 hours of cross-embodiment robotic data. This co-training ensures the embedding captures task-relevant information (what matters for manipulation) rather than generic visual semantics, which ablations show contributes a net 11.1 percentage point gain over using raw SigLIP-2 features.
 
 3. **Action-Free Human Video Co-Training**: By decoupling the alignment loss from the action prediction loss, FLARE enables mixing action-labeled robot demonstrations with action-free human egocentric videos during training. Human videos contribute only to the future latent alignment objective, effectively acting as additional world-model supervision without requiring any action annotation or pose estimation, and approximately doubling success rate on novel objects when only 10 teleoperated demonstrations are available.
 
@@ -45,19 +45,19 @@ created: 2026-05-20
 
 ### Problem Being Solved
 
-Robot manipulation policies trained purely via [[imitation learning]] suffer from limited generalization: they learn to map observations to actions without internalizing a model of how the world responds to actions. When encountering new objects, viewpoints, or task configurations, these policies fail because they have no internal mechanism for anticipating consequences. The fundamental question is: how do you cheaply inject world-dynamics awareness into a [[VLA]] policy without the enormous cost of training a full video-generative model?
+Robot manipulation policies trained purely via imitation learning suffer from limited generalization: they learn to map observations to actions without internalizing a model of how the world responds to actions. When encountering new objects, viewpoints, or task configurations, these policies fail because they have no internal mechanism for anticipating consequences. The fundamental question is: how do you cheaply inject world-dynamics awareness into a VLA policy without the enormous cost of training a full video-generative model?
 
 ### Limitations of Existing Methods
 
-- **[[Diffusion Policy]]** learns a [[flow-matching]] action prior over observation-conditioned action chunks, but treats the environment as a black box. It contains no mechanism for predicting how the scene will evolve after actions are taken, limiting generalization.
-- **[[UWM]]** (Unified World Model) jointly trains a video prediction and action prediction head with a shared diffusion objective. Although it reasons over future frames, the pixel-level reconstruction task competes with the policy task for model capacity and requires large numbers of gradient steps (the authors train UWM for 400k steps vs. 80k for FLARE). Its 29.5% success rate on the GR-1 benchmark—below even vanilla Diffusion Policy—demonstrates that joint pixel prediction does not always help.
-- **[[GR-1]] / [[GR-2]]** families unify next-token prediction across video and actions, requiring large transformer capacity and extensive video data for the video prediction head to contribute meaningfully.
-- **[[DINO-WM]]** aligns with DINO features at the current timestep (analogous to [[REPA]] for image generation), which provides representation regularization but does not explicitly model future dynamics.
-- **Prior VLA-based approaches** ([[π0]], [[GR00T N1]]) use diffusion/flow-matching policy heads atop frozen VLMs but do not incorporate world model supervision, limiting data efficiency.
+- **Diffusion Policy** learns a flow-matching action prior over observation-conditioned action chunks, but treats the environment as a black box. It contains no mechanism for predicting how the scene will evolve after actions are taken, limiting generalization.
+- **[UWM](UWM.md)** (Unified World Model) jointly trains a video prediction and action prediction head with a shared diffusion objective. Although it reasons over future frames, the pixel-level reconstruction task competes with the policy task for model capacity and requires large numbers of gradient steps (the authors train UWM for 400k steps vs. 80k for FLARE). Its 29.5% success rate on the GR-1 benchmark—below even vanilla Diffusion Policy—demonstrates that joint pixel prediction does not always help.
+- **[GR-1](GR-1.md) / [GR-2](GR-2.md)** families unify next-token prediction across video and actions, requiring large transformer capacity and extensive video data for the video prediction head to contribute meaningfully.
+- **DINO-WM** aligns with DINO features at the current timestep (analogous to REPA for image generation), which provides representation regularization but does not explicitly model future dynamics.
+- **Prior VLA-based approaches** (π0, GR00T N1) use diffusion/flow-matching policy heads atop frozen VLMs but do not incorporate world model supervision, limiting data efficiency.
 
 ### Motivation
 
-The key insight is that world modeling for policy improvement does not require generating pixel-perfect future frames — it requires the policy network to maintain an internal state that is *predictive* of how the world will look after the planned actions. Concretely, if the hidden states of a [[Diffusion Transformer]] at an intermediate layer can be made predictive of the latent embedding of the next observation, the network must implicitly represent future-relevant scene structure. This is analogous to the [[JEPA]] (Joint Embedding Predictive Architecture) philosophy: predict in abstract latent space rather than pixel space, which is more computationally efficient and avoids the difficulty of learning high-frequency visual details that are irrelevant to control. The alignment loss is a simple cosine similarity objective — no decoder, no reconstruction network — keeping the method almost free in terms of added parameters and compute.
+The key insight is that world modeling for policy improvement does not require generating pixel-perfect future frames — it requires the policy network to maintain an internal state that is *predictive* of how the world will look after the planned actions. Concretely, if the hidden states of a Diffusion Transformer at an intermediate layer can be made predictive of the latent embedding of the next observation, the network must implicitly represent future-relevant scene structure. This is analogous to the JEPA (Joint Embedding Predictive Architecture) philosophy: predict in abstract latent space rather than pixel space, which is more computationally efficient and avoids the difficulty of learning high-frequency visual details that are irrelevant to control. The alignment loss is a simple cosine similarity objective — no decoder, no reconstruction network — keeping the method almost free in terms of added parameters and compute.
 
 ---
 
@@ -65,11 +65,11 @@ The key insight is that world modeling for policy improvement does not require g
 
 ### Architecture Overview
 
-FLARE uses a **[[Diffusion Transformer]] (DiT) policy with future latent alignment** with the following structure:
+FLARE uses a **Diffusion Transformer (DiT) policy with future latent alignment** with the following structure:
 
 - **Input**: Multi-camera RGB observations $o_t$, language instruction, proprioceptive state $q_t$, noised action chunk $A_t^\tau$, and $M$ learnable future token embeddings
-- **Backbone**: [[Diffusion Transformer]] with alternating cross-attention (attending to vision-language embeddings) and self-attention layers; same architecture as [[GR00T N1]]
-- **Vision-Language Encoder**: [[Eagle]] VLM for producing observation embeddings $\phi_t = \text{VL}(o_t)$
+- **Backbone**: Diffusion Transformer with alternating cross-attention (attending to vision-language embeddings) and self-attention layers; same architecture as GR00T N1
+- **Vision-Language Encoder**: Eagle VLM for producing observation embeddings $\phi_t = \text{VL}(o_t)$
 - **Core modules**: Future latent alignment module (Section 3.1), Action-aware vision-language embedding model (Section 3.2)
 - **Output**: Denoised action chunk $A_t$ of length $H$
 
@@ -85,13 +85,13 @@ FLARE uses a **[[Diffusion Transformer]] (DiT) policy with future latent alignme
 
 ### Future Latent Alignment Module
 
-**Motivation**: A policy that can predict how the scene will look after executing its planned actions must internally represent the causal consequences of those actions. By adding $M$ learnable future tokens to the DiT input and penalizing their intermediate-layer projections for diverging from actual future observation embeddings, FLARE creates a training signal that forces the shared self-attention mechanism to encode future-relevant information into all tokens, including the action-prediction tokens. The critical design choice is to use *future* embeddings (not current-frame embeddings as in [[REPA]]) — this is what makes the loss a world-model objective rather than a representation-regularization objective.
+**Motivation**: A policy that can predict how the scene will look after executing its planned actions must internally represent the causal consequences of those actions. By adding $M$ learnable future tokens to the DiT input and penalizing their intermediate-layer projections for diverging from actual future observation embeddings, FLARE creates a training signal that forces the shared self-attention mechanism to encode future-relevant information into all tokens, including the action-prediction tokens. The critical design choice is to use *future* embeddings (not current-frame embeddings as in REPA) — this is what makes the loss a world-model objective rather than a representation-regularization objective.
 
 **Design**: The DiT input sequence is augmented with $M = 32$ learnable future token embeddings appended to the state and action tokens. All tokens attend to each other via self-attention and receive vision-language context via cross-attention. At internal layer $L = 6$ (out of typically 16 or more total layers), the hidden states corresponding to the $M$ future tokens are extracted and passed through a lightweight MLP $f_\theta: \mathbb{R}^{B \times M \times D_{\text{DiT}}} \to \mathbb{R}^{B \times M \times D_{\text{embed}}}$. These projected features are compared to the output of the frozen future embedding model $g(\phi_{t+H}) \in \mathbb{R}^{B \times M \times D_{\text{embed}}}$, where $\phi_{t+H}$ is the vision-language embedding of the observation $H$ steps ahead. The alignment is computed as cosine similarity, negated to form a minimization objective.
 
 **Layer selection rationale**: Using too early a layer (e.g., layer 4) hurts performance because the representations have not yet integrated cross-attention context. Using too deep a layer forces the same neurons to serve both action prediction and future prediction, causing conflicts. Layer 6 is empirically optimal, providing a good trade-off between information richness and separation from the action output head.
 
-[[Future Latent Alignment|Alignment Loss]]:
+Alignment Loss:
 
 $$
 \mathcal{L}_{\text{align}}(\theta) = -\mathbb{E}_\tau\left[\cos\!\left(f_\theta(\phi_t, A_t^\tau, q_t),\; g(\phi_{t+H})\right)\right]
@@ -109,20 +109,20 @@ $$
 - $\cos$: cosine similarity
 - $B$: batch size, $M$: number of future tokens, $D$: embedding dimension
 
-**Distinction from REPA**: [[REPA]] aligns DiT hidden states with the *current* image embedding in text-to-image diffusion models, acting as a representation learning regularizer. FLARE aligns with *future* embeddings, making it a predictive world-model objective. Additionally, FLARE uses separate learnable future tokens (not reusing image or noise tokens), so the flow-matching stream and alignment stream can interact via self-attention while optimizing partially independent objectives.
+**Distinction from REPA**: REPA aligns DiT hidden states with the *current* image embedding in text-to-image diffusion models, acting as a representation learning regularizer. FLARE aligns with *future* embeddings, making it a predictive world-model objective. Additionally, FLARE uses separate learnable future tokens (not reusing image or noise tokens), so the flow-matching stream and alignment stream can interact via self-attention while optimizing partially independent objectives.
 
 ---
 
 ### Action-Aware Vision-Language Embedding Model
 
-**Motivation**: The quality of the alignment target $g(\phi_{t+H})$ determines how useful the alignment loss is. A generic vision encoder (e.g., raw [[SigLIP-2]] patch tokens) would produce embeddings that capture low-level visual detail irrelevant to manipulation (background texture, lighting variation). What is needed is an embedding that captures *what matters for the task*: object positions, affordances, robot-object spatial relations. The model achieves this by co-training the embedding model with an action prediction head.
+**Motivation**: The quality of the alignment target $g(\phi_{t+H})$ determines how useful the alignment loss is. A generic vision encoder (e.g., raw SigLIP-2 patch tokens) would produce embeddings that capture low-level visual detail irrelevant to manipulation (background texture, lighting variation). What is needed is an embedding that captures *what matters for the task*: object positions, affordances, robot-object spatial relations. The model achieves this by co-training the embedding model with an action prediction head.
 
 **Design**: The action-aware embedding model has the following components:
 
-1. **Vision encoder**: [[SigLIP-2]]-large (patch size 16, image size 256×256) encodes each 256×256 RGB image into 256 patch tokens.
+1. **Vision encoder**: SigLIP-2-large (patch size 16, image size 256×256) encodes each 256×256 RGB image into 256 patch tokens.
 2. **Language encoder**: Encodes the padded language instruction into 32 tokens.
 3. **Fusion**: Four layers of self-attention transformer blocks operate on the concatenated 288 tokens (256 vision + 32 language), allowing cross-modal integration.
-4. **Compression ([[Q-Former]])**: A Q-former module with $M=32$ learnable query tokens runs interleaved self-attention (among queries) and cross-attention (queries to fused tokens), compressing the full representation into 32 fixed-size query token embeddings. This design generalizes across multi-camera setups by processing each camera independently and pooling.
+4. **Compression (Q-Former)**: A Q-former module with $M=32$ learnable query tokens runs interleaved self-attention (among queries) and cross-attention (queries to fused tokens), compressing the full representation into 32 fixed-size query token embeddings. This design generalizes across multi-camera setups by processing each camera independently and pooling.
 5. **Action head (pretraining only)**: 8 additional DiT blocks are attached during pretraining to predict actions via flow-matching, ensuring the embedding captures task-relevant information.
 
 The model is pretrained on approximately 2,990 hours of diverse cross-embodiment robotic data (see Table 3 in Appendix B), spanning real robot and simulation across multiple morphologies (GR-1 humanoid, DROID, RT-1, Bridge-v2, etc.).
@@ -137,7 +137,7 @@ The model is pretrained on approximately 2,990 hours of diverse cross-embodiment
 
 **EMA Posttraining Adaptation**: During downstream policy training, if the target embedding model is kept completely frozen, a distribution shift may arise between the pretraining domain and the downstream task (different lighting, object types, camera placements). To mitigate this, FLARE uses an exponential moving average (EMA) update of the target embedding model, where the slowly-evolving target tracks the policy's own vision-language encoder:
 
-[[Exponential Moving Average|EMA Update Rule]]:
+EMA Update Rule:
 
 $$
 \theta_{\text{target\_vl}} \leftarrow \rho\,\theta_{\text{target\_vl}} + (1-\rho)\,\theta_{\text{policy\_vl}}
@@ -154,9 +154,9 @@ $$
 
 ### Training Objective (Full)
 
-FLARE training combines two objectives. The primary objective is the flow-matching loss from [[π0]] / [[GR00T N1]]:
+FLARE training combines two objectives. The primary objective is the flow-matching loss from π0 / GR00T N1:
 
-[[Flow Matching|Action Flow-Matching Loss]]:
+Action Flow-Matching Loss:
 
 $$
 \mathcal{L}_{\text{fm}}(\theta) = \mathbb{E}_\tau\left[\left\|V_\theta(\phi_t, A_t^\tau, q_t) - (\epsilon - A_t)\right\|^2\right]
@@ -172,7 +172,7 @@ $$
 
 The combined training loss is:
 
-[[FLARE Loss|Combined Objective]]:
+Combined Objective:
 
 $$
 \mathcal{L} = \mathcal{L}_{\text{fm}} + \lambda\,\mathcal{L}_{\text{align}}
@@ -191,7 +191,7 @@ $$
 
 At inference time, action generation proceeds by iterative denoising over $K=4$ steps starting from pure noise $A_t^0 \sim \mathcal{N}(0, I)$:
 
-[[Flow Matching|Euler Integration Step]]:
+Euler Integration Step:
 
 $$
 A_t^{\tau + 1/K} = A_t^\tau + \frac{1}{K}\,V_\theta(\phi_t, A_t^\tau, q_t)
@@ -223,8 +223,8 @@ The $M$ future tokens are present in the input sequence but their outputs are di
 
 ### Implementation Details
 
-- **Backbone**: [[Diffusion Transformer]] with alternating cross-attention + self-attention, same as GR00T N1; [[Eagle]] VLM for vision-language encoding
-- **Embedding model backbone**: [[SigLIP-2]]-large (patch size 16, resolution 256×256)
+- **Backbone**: Diffusion Transformer with alternating cross-attention + self-attention, same as GR00T N1; Eagle VLM for vision-language encoding
+- **Embedding model backbone**: SigLIP-2-large (patch size 16, resolution 256×256)
 - **Future tokens**: $M=32$ learnable tokens; alignment at DiT layer $L=6$
 - **Optimizer**: AdamW ($\beta_1=0.95$, $\beta_2=0.999$, $\epsilon=10^{-8}$, weight decay $10^{-5}$)
 - **Learning rate**: Cosine decay with 5% warmup
@@ -352,29 +352,29 @@ The real robot qualitative analysis reveals a mechanistically interesting behavi
 
 ### Based On
 
-- [[π0]]: FLARE inherits the [[flow-matching]] policy head and DiT architecture from π0, extending it with future alignment tokens
-- [[GR00T N1]]: FLARE uses the same DiT architecture and [[Eagle]] VLM backbone as GR00T N1; the "Policy Only" baseline is essentially GR00T N1 trained from scratch
-- [[REPA]]: Representation alignment for diffusion models inspired FLARE's design; FLARE extends REPA from current-frame to future-frame alignment and applies it to robot control
+- π0: FLARE inherits the flow-matching policy head and DiT architecture from π0, extending it with future alignment tokens
+- GR00T N1: FLARE uses the same DiT architecture and Eagle VLM backbone as GR00T N1; the "Policy Only" baseline is essentially GR00T N1 trained from scratch
+- REPA: Representation alignment for diffusion models inspired FLARE's design; FLARE extends REPA from current-frame to future-frame alignment and applies it to robot control
 
 ### Compared Against
 
-- [[UWM]]: Unified World Model — joint video + action diffusion objective; FLARE outperforms by 26% on GR-1 despite 5× fewer gradient steps
-- [[Diffusion Policy]]: U-Net denoising policy; FLARE outperforms by 18% on RoboCasa, 14% on GR-1
-- [[GR00T N1]]: Same architecture trained from scratch without future alignment; FLARE outperforms by 9.4% on RoboCasa
+- [UWM](UWM.md): Unified World Model — joint video + action diffusion objective; FLARE outperforms by 26% on GR-1 despite 5× fewer gradient steps
+- Diffusion Policy: U-Net denoising policy; FLARE outperforms by 18% on RoboCasa, 14% on GR-1
+- GR00T N1: Same architecture trained from scratch without future alignment; FLARE outperforms by 9.4% on RoboCasa
 
 ### Method Related
 
-- [[JEPA]]: Joint Embedding Predictive Architecture — the conceptual foundation for predicting in latent space rather than pixel space
-- [[Q-Former]]: Used for compressing vision-language tokens in the action-aware embedding model
-- [[SigLIP-2]]: Vision-language encoder serving as backbone for the action-aware embedding model
-- [[Flow Matching]]: Continuous generative framework used for both policy action generation and embedding model pretraining
-- [[Diffusion Transformer]]: Core policy backbone; the future tokens interact with action tokens via self-attention within the DiT layers
+- JEPA: Joint Embedding Predictive Architecture — the conceptual foundation for predicting in latent space rather than pixel space
+- Q-Former: Used for compressing vision-language tokens in the action-aware embedding model
+- SigLIP-2: Vision-language encoder serving as backbone for the action-aware embedding model
+- Flow Matching: Continuous generative framework used for both policy action generation and embedding model pretraining
+- Diffusion Transformer: Core policy backbone; the future tokens interact with action tokens via self-attention within the DiT layers
 
 ### Hardware / Data
 
-- [[GR-1 Humanoid]]: Target robot for real-world evaluation; 100 trajectories per task for post-training
-- [[Open X-Embodiment]]: Source of cross-embodiment pretraining data for the action-aware embedding model
-- [[DROID]]: Largest component of pretraining mixture (428 hours, 23.1M frames)
+- GR-1 Humanoid: Target robot for real-world evaluation; 100 trajectories per task for post-training
+- Open X-Embodiment: Source of cross-embodiment pretraining data for the action-aware embedding model
+- DROID: Largest component of pretraining mixture (428 hours, 23.1M frames)
 
 ---
 

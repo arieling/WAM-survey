@@ -27,13 +27,13 @@ created: 2026-05-20
 
 ## One-Line Summary
 
-> CosmosPolicy fine-tunes a pretrained 2B-parameter video [[Diffusion Policy|diffusion model]] into a robot policy by encoding actions, future states, and value estimates as latent frames in the video sequence — achieving state-of-the-art results on LIBERO (98.5%) and RoboCasa (67.1%) with no architectural changes.
+> CosmosPolicy fine-tunes a pretrained 2B-parameter video diffusion model into a robot policy by encoding actions, future states, and value estimates as latent frames in the video sequence — achieving state-of-the-art results on LIBERO (98.5%) and RoboCasa (67.1%) with no architectural changes.
 
 ---
 
 ## Core Contributions
 
-1. **Latent Frame Injection for Multi-Modal Unification**: CosmosPolicy introduces a mechanism to encode non-image modalities (robot proprioception, action chunks, state values) as latent frames interleaved with image frames in the video diffusion sequence. This requires no modifications to the model architecture — the same [[Diffusion Transformer|DiT]] backbone processes all modalities uniformly, allowing the policy to leverage the rich spatio-temporal priors learned by the video foundation model without adding new modules or training stages.
+1. **Latent Frame Injection for Multi-Modal Unification**: CosmosPolicy introduces a mechanism to encode non-image modalities (robot proprioception, action chunks, state values) as latent frames interleaved with image frames in the video diffusion sequence. This requires no modifications to the model architecture — the same DiT backbone processes all modalities uniformly, allowing the policy to leverage the rich spatio-temporal priors learned by the video foundation model without adding new modules or training stages.
 
 2. **Joint Training with Auxiliary Supervision**: Rather than training a policy-only model, CosmosPolicy jointly trains three capabilities in a single model: (a) policy prediction $p(a, s', V(s') \mid s)$ from demonstration data, (b) world model prediction $p(s', V(s') \mid s, a)$ from rollout data, and (c) value function prediction $p(V(s') \mid s, a, s')$ from rollouts. This auxiliary supervision provides richer training signal — the model must simultaneously predict actions, future observations, and value estimates — reducing overfitting and improving generalization compared to single-output policy learning.
 
@@ -49,10 +49,10 @@ Robot visuomotor policies must map raw visual observations to continuous action 
 
 ### Limitations of Existing Methods
 
-- **[[VLA|Vision-Language-Action models]]** (e.g., [[pi0]], [[pi0.5]], [[OpenVLA-OFT]]): Fine-tuned from vision-language models that process static image-text pairs. These models lack the temporal dynamics and physical motion priors present in video models, making them weaker at reasoning about contact mechanics and motion continuity. They also typically require large-scale robot action pretraining datasets to compensate.
-- **Video-based policy methods** (e.g., [[VideoPolicy]], [[UniVLA]], [[AVDC]]): Prior video-to-policy approaches require multiple training stages — first pretraining a video representation, then attaching a separate action prediction head. This multi-stage pipeline risks discarding the original video model's temporal priors and complicates training. Action decoding is often architecturally decoupled from the video generation process.
+- **Vision-Language-Action models** (e.g., pi0, pi0.5, OpenVLA-OFT): Fine-tuned from vision-language models that process static image-text pairs. These models lack the temporal dynamics and physical motion priors present in video models, making them weaker at reasoning about contact mechanics and motion continuity. They also typically require large-scale robot action pretraining datasets to compensate.
+- **Video-based policy methods** (e.g., [VideoPolicy](VideoPolicy.md), UniVLA, [AVDC](AVDC.md)): Prior video-to-policy approaches require multiple training stages — first pretraining a video representation, then attaching a separate action prediction head. This multi-stage pipeline risks discarding the original video model's temporal priors and complicates training. Action decoding is often architecturally decoupled from the video generation process.
 - **Traditional model-based RL** (e.g., Dyna, MBPO, TD-MPC, Dreamer): These methods maintain separate world models and policy networks with distinct learning objectives. Integration requires careful balancing of multiple loss terms and separate data pipelines, and the world models often struggle with high-dimensional visual observations.
-- **Single-output diffusion policies**: [[Diffusion Policy]] fine-tuned from video models typically predict only actions, leaving future state prediction capacity unutilized — thus failing to leverage the model's natural video generation strength as auxiliary supervision.
+- **Single-output diffusion policies**: Diffusion Policy fine-tuned from video models typically predict only actions, leaving future state prediction capacity unutilized — thus failing to leverage the model's natural video generation strength as auxiliary supervision.
 
 ### Motivation
 
@@ -64,11 +64,11 @@ The key insight is that a video generation model already "knows" how the world w
 
 ### Architecture Overview
 
-CosmosPolicy uses a **[[Latent Diffusion Model]]** backbone ([[Diffusion Transformer|DiT]]-based) with the following structure:
+CosmosPolicy uses a **Latent Diffusion Model** backbone (DiT-based) with the following structure:
 
 - **Input**: Multi-camera RGB images (e.g., wrist + third-person views), robot proprioception (joint positions/velocities), optional language instruction
-- **Backbone**: [[Cosmos-Predict2-2B]] video diffusion transformer, Wan2.1 spatiotemporal VAE tokenizer
-- **Core modules**: [[Latent Frame Injection]], joint training batch composition, [[Action Chunking|action chunk]] decoder, value head
+- **Backbone**: Cosmos-Predict2-2B video diffusion transformer, Wan2.1 spatiotemporal VAE tokenizer
+- **Core modules**: Latent Frame Injection, joint training batch composition, action chunk decoder, value head
 - **Output**: Action chunks (position/velocity targets), future proprioception, future camera images, state value estimate $V(s')$
 - **Total parameters**: ~2 billion (frozen VAE; trainable DiT denoiser)
 
@@ -110,7 +110,7 @@ For a 2-camera setup, the full latent sequence is:
 
 ![Figure 2 — Latent Frame Injection](https://arxiv.org/html/2601.16163v1/fig/cosmos_policy_diffusion_sequence_v2_main_version.001.jpeg)
 
-**Caption**: Latent frame injection mechanism. Raw images pass through the VAE encoder to produce image latent frames. Non-image modalities (proprioception, actions, values) are normalized and tiled into the same latent shape, then interleaved in the temporal sequence. The [[Diffusion Transformer]] processes all frames uniformly with temporal attention, treating the full sequence as a video to denoise.
+**Caption**: Latent frame injection mechanism. Raw images pass through the VAE encoder to produce image latent frames. Non-image modalities (proprioception, actions, values) are normalized and tiled into the same latent shape, then interleaved in the temporal sequence. The Diffusion Transformer processes all frames uniformly with temporal attention, treating the full sequence as a video to denoise.
 
 During training, the current observation frames (positions 1–5) are kept clean (noise $\sigma = 0$), while the output frames (positions 6–11) are corrupted with noise and the model learns to denoise them. This is identical to conditional video generation where the conditioning frames are the current robot observations.
 
@@ -145,9 +145,9 @@ This extends coverage into the high-noise regime. Additionally, at inference tim
 | 25% | Rollouts $(s, a, s')$ | $s', V(s')$ | World model + value (given $a$) |
 | 25% | Rollouts $(s, a, s')$ | $V(s')$ | Value function (given $s, a, s'$) |
 
-The training loss is the standard [[Diffusion Policy|denoising score matching]] loss applied to the output frames, with each training sample masking a different subset of output positions:
+The training loss is the standard denoising score matching loss applied to the output frames, with each training sample masking a different subset of output positions:
 
-[[Denoising Score Matching|Cosmos Policy Training Loss]]:
+Cosmos Policy Training Loss:
 
 $$
 \mathcal{L} = \mathbb{E}_{(s, a, s', V), \sigma, \epsilon}\left[\lambda(\sigma) \left\| D_\theta(x_\text{noisy}; \sigma, c) - x_\text{clean} \right\|_2^2 \right]
@@ -357,7 +357,7 @@ Analyzing failures of competing methods reveals CosmosPolicy's key advantages:
 
 1. **Multi-step lookahead planning**: Extending best-of-N to tree search with rollout (MCTS-style) would allow the model to evaluate action sequences several chunks ahead, potentially enabling better performance on tasks requiring coordinated multi-step reasoning like "fold shirt."
 
-2. **Faster inference via distillation**: Applying [[Consistency Model]] or [[Adversarial Diffusion Distillation（ADD）|ADD]]-style distillation to compress the policy to 1–2 denoising steps would enable planning-level action quality at direct-policy speeds, addressing the latency bottleneck.
+2. **Faster inference via distillation**: Applying Consistency Model or ADD-style distillation to compress the policy to 1–2 denoising steps would enable planning-level action quality at direct-policy speeds, addressing the latency bottleneck.
 
 3. **Online rollout collection**: Integrating online rollout collection during deployment (similar to online RL) would allow the planning checkpoint to continuously improve as the robot operates, potentially enabling self-supervised adaptation to new environments.
 
@@ -374,29 +374,29 @@ Analyzing failures of competing methods reveals CosmosPolicy's key advantages:
 
 ### Based On
 
-- [[Cosmos-Predict2-2B]]: CosmosPolicy directly fine-tunes the Cosmos-Predict2-2B-Video2World video diffusion model, treating it as the backbone. The entire value proposition rests on the temporal and physical priors encoded in this model during video pretraining.
-- [[Latent Diffusion Model]]: The architecture uses a latent diffusion framework where actions and observations are represented in the compressed latent space of the Wan2.1 VAE, keeping the denoising network operating in a low-dimensional space.
-- [[Action Chunking]]: CosmosPolicy predicts action chunks (sequences of future actions) rather than single-step actions, reducing compounding error and enabling smooth multi-step execution.
-- [[Diffusion Policy]]: The general principle of using diffusion models for visuomotor policy learning, extended here from standalone diffusion models to large pretrained video foundations.
+- Cosmos-Predict2-2B: CosmosPolicy directly fine-tunes the Cosmos-Predict2-2B-Video2World video diffusion model, treating it as the backbone. The entire value proposition rests on the temporal and physical priors encoded in this model during video pretraining.
+- Latent Diffusion Model: The architecture uses a latent diffusion framework where actions and observations are represented in the compressed latent space of the Wan2.1 VAE, keeping the denoising network operating in a low-dimensional space.
+- Action Chunking: CosmosPolicy predicts action chunks (sequences of future actions) rather than single-step actions, reducing compounding error and enabling smooth multi-step execution.
+- Diffusion Policy: The general principle of using diffusion models for visuomotor policy learning, extended here from standalone diffusion models to large pretrained video foundations.
 
 ### Compared Against
 
-- [[pi0]]: π0 fine-tunes a vision-language model (PaliGemma) with a separate flow-matching action head. CosmosPolicy outperforms it significantly on ALOHA (93.6 vs 77.9), attributing the gap to better temporal priors from video pretraining.
-- [[pi0.5]]: π0.5 extends π0 with a larger language model backbone and large-scale pretraining on diverse robot data. Despite this additional pretraining, CosmosPolicy matches or exceeds it while using no cross-embodiment robot action pretraining dataset.
-- [[OpenVLA-OFT]]: OpenVLA with Optimal Fine-Tuning, which uses a VLM backbone with parallel decoding for action prediction. CosmosPolicy substantially outperforms it (93.6 vs 62.0 on ALOHA), with OpenVLA-OFT+ showing clear mode-averaging failure on multimodal tasks.
-- [[VideoPolicy]]: A recent video-based policy requiring multi-stage training. CosmosPolicy achieves comparable performance with a simpler single-stage fine-tuning approach.
+- pi0: π0 fine-tunes a vision-language model (PaliGemma) with a separate flow-matching action head. CosmosPolicy outperforms it significantly on ALOHA (93.6 vs 77.9), attributing the gap to better temporal priors from video pretraining.
+- pi0.5: π0.5 extends π0 with a larger language model backbone and large-scale pretraining on diverse robot data. Despite this additional pretraining, CosmosPolicy matches or exceeds it while using no cross-embodiment robot action pretraining dataset.
+- OpenVLA-OFT: OpenVLA with Optimal Fine-Tuning, which uses a VLM backbone with parallel decoding for action prediction. CosmosPolicy substantially outperforms it (93.6 vs 62.0 on ALOHA), with OpenVLA-OFT+ showing clear mode-averaging failure on multimodal tasks.
+- [VideoPolicy](VideoPolicy.md): A recent video-based policy requiring multi-stage training. CosmosPolicy achieves comparable performance with a simpler single-stage fine-tuning approach.
 
 ### Method Related
 
-- [[Diffusion Transformer]]: The DiT architecture is the backbone of Cosmos-Predict2-2B, enabling scalable latent diffusion with transformer-based attention over the latent sequence.
-- [[世界模型|World Model]]: CosmosPolicy is simultaneously a world model — it predicts future visual states given current observations and actions. This dual role enables model-based planning without a separate architecture.
-- [[Action Chunking]]: Predicting $H$-step action chunks is critical to smooth execution. CosmosPolicy uses chunks of 16–50 steps depending on the task frequency.
+- Diffusion Transformer: The DiT architecture is the backbone of Cosmos-Predict2-2B, enabling scalable latent diffusion with transformer-based attention over the latent sequence.
+- World Model: CosmosPolicy is simultaneously a world model — it predicts future visual states given current observations and actions. This dual role enables model-based planning without a separate architecture.
+- Action Chunking: Predicting $H$-step action chunks is critical to smooth execution. CosmosPolicy uses chunks of 16–50 steps depending on the task frequency.
 
 ### Hardware / Data
 
-- [[LIBERO]]: Standard simulation benchmark for tabletop robot manipulation, providing 4 progressive difficulty suites to evaluate policy generalization.
-- [[RoboCasa]]: Kitchen manipulation benchmark emphasizing task diversity and real-world realism. Used here in a few-shot (50-demo) setting.
-- [[ALOHA]]: Bimanual robot platform for dexterous manipulation. Used for real-world evaluation across 4 high-precision tasks.
+- LIBERO: Standard simulation benchmark for tabletop robot manipulation, providing 4 progressive difficulty suites to evaluate policy generalization.
+- RoboCasa: Kitchen manipulation benchmark emphasizing task diversity and real-world realism. Used here in a few-shot (50-demo) setting.
+- ALOHA: Bimanual robot platform for dexterous manipulation. Used for real-world evaluation across 4 high-precision tasks.
 
 ---
 

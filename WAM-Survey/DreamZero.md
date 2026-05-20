@@ -27,13 +27,13 @@ created: 2026-05-20
 
 ## One-Line Summary
 
-> DreamZero is a 14B [[WAM|World Action Model]] built on video diffusion that jointly predicts future video frames and robot actions, achieving over 2× better zero-shot generalization than state-of-the-art [[VLA|Vision-Language-Action models]] by leveraging spatiotemporal priors from web-scale video pretraining.
+> DreamZero is a 14B World Action Model built on video diffusion that jointly predicts future video frames and robot actions, achieving over 2× better zero-shot generalization than state-of-the-art Vision-Language-Action models by leveraging spatiotemporal priors from web-scale video pretraining.
 
 ---
 
 ## Core Contributions
 
-1. **DreamZero Architecture**: A 14B [[WAM|World Action Model]] built on the Wan2.1-I2V-14B-480P [[视频生成模型|video diffusion]] backbone that jointly denoises video latents and action sequences via a single autoregressive [[DiT]] using [[Flow Matching|flow matching]]. This joint formulation enables the model to learn an implicit [[逆向动力学模型|inverse dynamics model]] (IDM) from every consecutive frame pair rather than relying solely on episode-level action labels.
+1. **DreamZero Architecture**: A 14B World Action Model built on the Wan2.1-I2V-14B-480P video diffusion backbone that jointly denoises video latents and action sequences via a single autoregressive DiT using flow matching. This joint formulation enables the model to learn an implicit inverse dynamics model (IDM) from every consecutive frame pair rather than relying solely on episode-level action labels.
 
 2. **Zero-shot Generalization**: Over 2× improvement in generalization to unseen tasks and motions compared to state-of-the-art VLAs (39.5% vs. <1–16% task progress on AgiBot; 49% vs. 7–31% on DROID-Franka), while also outperforming on seen-task evaluation (62.2% vs. 27.4%).
 
@@ -49,9 +49,9 @@ created: 2026-05-20
 
 ### Problem Being Solved
 
-State-of-the-art [[VLA|Vision-Language-Action (VLA) models]] achieve impressive semantic generalization — they can interpret natural language instructions and manipulate objects across different scenes — but fail when asked to execute novel *physical motions* or *manipulation skills* that are absent from their training data. A model trained on pick-and-place tasks can recognize the instruction "untie a shoelace" but cannot execute it because the spatiotemporal motor pattern was never demonstrated.
+State-of-the-art Vision-Language-Action (VLA) models achieve impressive semantic generalization — they can interpret natural language instructions and manipulate objects across different scenes — but fail when asked to execute novel *physical motions* or *manipulation skills* that are absent from their training data. A model trained on pick-and-place tasks can recognize the instruction "untie a shoelace" but cannot execute it because the spatiotemporal motor pattern was never demonstrated.
 
-The root cause is architectural: VLAs initialize from large [[VLM|vision-language models]] pretrained on static image-text pairs. These models encode excellent representations of *what objects are* and *what task semantics mean*, but they lack the spatiotemporal priors needed to understand *how physical motions unfold over time*.
+The root cause is architectural: VLAs initialize from large vision-language models pretrained on static image-text pairs. These models encode excellent representations of *what objects are* and *what task semantics mean*, but they lack the spatiotemporal priors needed to understand *how physical motions unfold over time*.
 
 ### Limitations of Existing Methods
 
@@ -71,7 +71,7 @@ The root cause is architectural: VLAs initialize from large [[VLM|vision-languag
 
 ### Motivation
 
-The key insight is that *video is a dense representation of how the physical world evolves*. Every consecutive frame pair implicitly encodes the robot's state transition and the associated motor command needed to produce it. If a model can predict realistic future video frames conditioned on a language instruction, it has implicitly learned the physics of how that task is performed — and an [[逆向动力学模型|inverse dynamics model]] can then extract the actions that produce those predicted futures.
+The key insight is that *video is a dense representation of how the physical world evolves*. Every consecutive frame pair implicitly encodes the robot's state transition and the associated motor command needed to produce it. If a model can predict realistic future video frames conditioned on a language instruction, it has implicitly learned the physics of how that task is performed — and an inverse dynamics model can then extract the actions that produce those predicted futures.
 
 This reframes robot learning as video generation: improving video generation quality *directly and automatically* improves policy quality, without requiring any change to the action labeling pipeline. Furthermore, video-only demonstrations (from humans or other robots) can be used as training signal without any action annotation, enabling extremely efficient cross-embodiment transfer.
 
@@ -81,10 +81,10 @@ This reframes robot learning as video generation: improving video generation qua
 
 ### Architecture Overview
 
-DreamZero uses an **autoregressive [[DiT|Diffusion Transformer]] with joint video-action denoising** built on top of the Wan2.1-I2V-14B-480P image-to-video model:
+DreamZero uses an **autoregressive Diffusion Transformer with joint video-action denoising** built on top of the Wan2.1-I2V-14B-480P image-to-video model:
 
 - **Input**: Visual observation history (image sequence), language instruction, proprioceptive state
-- **Backbone**: Autoregressive DiT (14B parameters) using [[Flow Matching|flow matching]] with causal attention masking
+- **Backbone**: Autoregressive DiT (14B parameters) using flow matching with causal attention masking
 - **Core modules**: Frozen VAE encoder, frozen text encoder, trainable state encoder, trainable action encoder, trainable DiT blocks, video decoder, trainable action decoder
 - **Output**: Jointly denoised future video frames and corresponding action sequences
 - **Total parameters**: 14 billion (backbone); encoder/decoder modules are lightweight additions
@@ -100,7 +100,7 @@ $$
 
 where $\mathbf{o}_{l:l+H}$ are future video frames, $\mathbf{a}_{l:l+H}$ are future actions, $\mathbf{c}$ is the language instruction, $\mathbf{q}_{l}$ is proprioceptive state, $\mathbf{o}_{0:l}$ is the visual observation history, and $H$ is the prediction horizon.
 
-**Crucially, DreamZero trains a single end-to-end model rather than two separate models.** The video prediction and [[逆向动力学模型|IDM]] components are jointly optimized via shared denoising timesteps, forcing deep integration between the two modalities. The predicted video serves as an implicit visual planner — the IDM head reads the denoised visual future and extracts the motor commands that produced it.
+**Crucially, DreamZero trains a single end-to-end model rather than two separate models.** The video prediction and IDM components are jointly optimized via shared denoising timesteps, forcing deep integration between the two modalities. The predicted video serves as an implicit visual planner — the IDM head reads the denoised visual future and extracts the motor commands that produced it.
 
 ![Figure 1: Overview of DreamZero's four capabilities](https://arxiv.org/html/2602.15922v1/x1.png)
 *By jointly predicting video and action, DreamZero inherits world physics priors that enable: (1) effective learning from diverse, non-repetitive data; (2) open-world generalization; (3) cross-embodiment learning from video-only data; (4) few-shot adaptation to new robots.*
@@ -131,7 +131,7 @@ where $\mathbf{o}_{l:l+H}$ are future video frames, $\mathbf{a}_{l:l+H}$ are fut
 
 ### Training Objective: Flow Matching with Coupled Noise
 
-**Approach**: [[Flow Matching|Flow matching]] with a linear interpolation noise schedule (not DDPM-style denoising).
+**Approach**: Flow matching with a linear interpolation noise schedule (not DDPM-style denoising).
 
 **Noise interpolation**: For each chunk $k$ with timestep $t_k \sim \mathcal{U}(0, 1)$:
 
@@ -349,7 +349,7 @@ The policy generalizes to novel objects and retains zero-shot language following
 
 Total: 5.7 seconds → 150 ms latency; enables 7 Hz closed-loop control on 2× GB200.
 
-**CFG Parallelism**: [[Classifier-Free Guidance|Classifier-free guidance]] requires conditional + unconditional forward passes. Distributing across two GPUs cuts per-step latency by 47%.
+**CFG Parallelism**: Classifier-free guidance requires conditional + unconditional forward passes. Distributing across two GPUs cuts per-step latency by 47%.
 
 **DiT Caching**: Exploits directional consistency of velocity predictions during flow matching. When cosine similarity between successive velocity predictions exceeds a threshold $\epsilon$, cached velocities are reused rather than recomputing the full DiT forward pass. Reduces effective denoising steps from 16 to 4 with minimal quality loss.
 
@@ -434,17 +434,17 @@ Reducing from 4 to 1 denoising step without Flash loses 31 pp. Flash recovers 22
 
 ### Based On
 
-- [[WAM|World Action Model (WAM)]]: DreamZero is the primary large-scale instantiation of the WAM paradigm — jointly predicting video and actions rather than predicting actions directly.
-- [[视频生成模型|Video Generation Model]]: Inherits spatiotemporal priors from Wan2.1-I2V-14B-480P, a web-scale image-to-video diffusion model.
-- [[Flow Matching|Flow Matching]]: Training objective uses flow matching with linear interpolation noise schedule rather than DDPM-style denoising.
-- [[DiT|Diffusion Transformer (DiT)]]: Backbone architecture for joint denoising of video and action tokens.
-- [[逆向动力学模型|Inverse Dynamics Model (IDM)]]: The action prediction head acts as an implicit IDM trained end-to-end with the video predictor.
-- [[Action Chunking]]: Actions are predicted and executed in 1.6-second chunks at 30 Hz.
+- World Action Model (WAM): DreamZero is the primary large-scale instantiation of the WAM paradigm — jointly predicting video and actions rather than predicting actions directly.
+- Video Generation Model: Inherits spatiotemporal priors from Wan2.1-I2V-14B-480P, a web-scale image-to-video diffusion model.
+- Flow Matching: Training objective uses flow matching with linear interpolation noise schedule rather than DDPM-style denoising.
+- Diffusion Transformer (DiT): Backbone architecture for joint denoising of video and action tokens.
+- Inverse Dynamics Model (IDM): The action prediction head acts as an implicit IDM trained end-to-end with the video predictor.
+- Action Chunking: Actions are predicted and executed in 1.6-second chunks at 30 Hz.
 
 ### Compared Against
 
-- [[VLA|VLA (Vision-Language-Action)]]: The primary comparison class — DreamZero consistently outperforms VLA baselines on generalization tasks, especially for novel physical motions absent from training.
-- [[Classifier-Free Guidance|CFG]]: Used during DreamZero inference; parallelized across two GPUs for 47% latency reduction.
+- VLA (Vision-Language-Action): The primary comparison class — DreamZero consistently outperforms VLA baselines on generalization tasks, especially for novel physical motions absent from training.
+- CFG: Used during DreamZero inference; parallelized across two GPUs for 47% latency reduction.
 - GR00T N1.6 (NVIDIA pretrained VLA): Best pretrained VLA baseline; achieves 27.4% on seen AgiBot tasks vs. DreamZero's 62.2%.
 - π₀.₅ (Physical Intelligence): Competitive pretrained VLA; outperformed by DreamZero on zero-shot unseen task evaluation.
 - Bidirectional WAM (BD): Ablation showing that autoregressive architecture has lower variance, smoother motions, and 3–4× faster inference.
