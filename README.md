@@ -86,25 +86,25 @@ Cascaded WAMs split further by how actions are extracted from predicted video:
 
 **Caption**: Three Cascaded WAM sub-architectures illustrated side by side. (1a) Explicit-Learned: video diffusion generates pixel frames, IDM extracts actions. (1b) Explicit-Geometric: video diffusion generates frames, geometric prior (flow/3D) extracts actions. (2) Implicit: latent world model predicts in embedding space, policy head generates actions without pixel rendering.
 
-| Method | Type | Visual Generation | Action Extraction | Year |
-|--------|------|-------------------|-------------------|------|
-| UniPi | Explicit-Learned | Video Diffusion | IDM | 2023 |
-| SuSIE | Explicit-Learned | Video Diffusion | IDM | 2023 |
-| AVDC | Explicit-Learned | Video Diffusion | IDM | 2023 |
-| GR-MG | Explicit-Learned | Video Diffusion | IDM | 2024 |
-| Gen2Act | Explicit-Learned | Video Diffusion | IDM | 2024 |
-| RoboEnvision | Explicit-Learned | Video Diffusion | IDM | 2024 |
-| SayDreamAct | Explicit-Learned | Video Diffusion | IDM | 2024 |
-| Mimic-Video | Explicit-Learned | Video Diffusion | IDM | 2024 |
-| Dream2Flow | Explicit-Learned | Video Diffusion | IDM | 2025 |
-| Im2Flow2Act | Explicit-Geometric | Optical Flow | Flow→Action | 2024 |
-| This&That | Explicit-Geometric | Point Tracking | Geometry | 2024 |
-| 4DGen | Explicit-Geometric | 4D Gaussian | Geometry | 2024 |
-| VLP | Implicit | Latent WM | Latent Policy | 2023 |
-| LV-P | Implicit | Latent WM | Latent Policy | 2024 |
-| ARDuP | Implicit | Latent WM | Policy Head | 2025 |
-| VLA-JEPA | Implicit | JEPA Latent | Policy Head | 2025 |
-| VILP | Implicit | Latent WM | Policy Head | 2025 |
+| Method       | Type               | Visual Generation | Action Extraction | Year |
+| ------------ | ------------------ | ----------------- | ----------------- | ---- |
+| [UniPi](WAM-Survey/UniPi.md)        | Explicit-Learned   | Video Diffusion   | IDM               | 2023 |
+| SuSIE        | Explicit-Learned   | Video Diffusion   | IDM               | 2023 |
+| [AVDC](WAM-Survey/AVDC.md)         | Explicit-Learned   | Video Diffusion   | IDM               | 2023 |
+| [GR-MG](WAM-Survey/GR-MG.md)        | Explicit-Learned   | Video Diffusion   | IDM               | 2024 |
+| [Gen2Act](WAM-Survey/Gen2Act.md)      | Explicit-Learned   | Video Diffusion   | IDM               | 2024 |
+| [RoboEnvision](WAM-Survey/RoboEnvision.md) | Explicit-Learned   | Video Diffusion   | IDM               | 2024 |
+| [SayDreamAct](WAM-Survey/SayDreamAct.md)  | Explicit-Learned   | Video Diffusion   | IDM               | 2024 |
+| [Mimic-Video](WAM-Survey/mimic-video.md)  | Explicit-Learned   | Video Diffusion   | IDM               | 2024 |
+| [Dream2Flow](WAM-Survey/Dream2Flow.md)   | Explicit-Learned   | Video Diffusion   | IDM               | 2025 |
+| [Im2Flow2Act](WAM-Survey/Im2Flow2Act.md)  | Explicit-Geometric | Optical Flow      | Flow→Action       | 2024 |
+| [This&That](WAM-Survey/ThisAndThat.md)    | Explicit-Geometric | Point Tracking    | Geometry          | 2024 |
+| [4DGen](WAM-Survey/4DGen.md)        | Explicit-Geometric | 4D Gaussian       | Geometry          | 2024 |
+| [VLP](WAM-Survey/VLP.md)          | Implicit           | Latent WM         | Latent Policy     | 2023 |
+| [LV-P](WAM-Survey/LV-P.md)         | Implicit           | Latent WM         | Latent Policy     | 2024 |
+| [ARDuP](WAM-Survey/ARDuP.md)        | Implicit           | Latent WM         | Policy Head       | 2025 |
+| [VLA-JEPA](WAM-Survey/VLA-JEPA.md)     | Implicit           | JEPA Latent       | Policy Head       | 2025 |
+| [VILP](WAM-Survey/VILP.md)         | Implicit           | Latent WM         | Policy Head       | 2025 |
 
 **Key observation**: Explicit pixel-level methods are most interpretable (you can watch the plan as a video) but slowest at inference — video diffusion at high resolution takes >1s per step. Implicit methods are fastest but sacrifice the interpretable world-state representation.
 
@@ -131,11 +131,11 @@ Representative works and their key design choices:
 
 | Method   | Backbone    | Visual Token | Action Token  | Year |
 | -------- | ----------- | ------------ | ------------- | ---- |
-| GR-1     | GPT         | DINO patches | Continuous    | 2023 |
-| GR-2     | GPT         | DINO patches | Continuous    | 2024 |
-| CoT-VLA  | VLM         | Visual CoT   | Action Head   | 2024 |
-| WorldVLA | LLM         | Image tokens | Action tokens | 2025 |
-| F1       | Transformer | Video tokens | Action tokens | 2025 |
+| [GR-1](WAM-Survey/GR-1.md)     | GPT         | DINO patches | Continuous    | 2023 |
+| [GR-2](WAM-Survey/GR-2.md)     | GPT         | DINO patches | Continuous    | 2024 |
+| [CoT-VLA](WAM-Survey/CoT-VLA.md)  | VLM         | Visual CoT   | Action Head   | 2024 |
+| [WorldVLA](WAM-Survey/WorldVLA.md) | LLM         | Image tokens | Action tokens | 2025 |
+| [F1](WAM-Survey/F1.md)       | Transformer | Video tokens | Action tokens | 2025 |
 
 ##### 2b. Diffusion-based Joint WAM
 
@@ -155,13 +155,13 @@ Diffusion WAMs jointly denoise both future visual observations and action sequen
 
 | Method | Stream | Coupling | Backbone | Year |
 |--------|--------|----------|----------|------|
-| PAD | Multi | Cross-Attn | DiT | 2024 |
-| UWM | Unified | — | DiT | 2024 |
+| [PAD](WAM-Survey/PAD.md) | Multi | Cross-Attn | DiT | 2024 |
+| [UWM](WAM-Survey/UWM.md) | Unified | — | DiT | 2024 |
 | DreamZero | Unified | — | DiT | 2024 |
 | CosmosPolicy | Unified | — | Video DiT | 2025 |
 | FLARE | Unified | — | DiT | 2025 |
 | FRAPPE | Unified | — | DiT | 2025 |
-| VideoVLA | Multi | Cross-Attn | Video DiT | 2025 |
+| [VideoVLA](WAM-Survey/VideoVLA.md) | Multi | Cross-Attn | Video DiT | 2025 |
 | CoVAR | Multi | Cross-Attn | DiT | 2025 |
 | LDA-1B | Multi | Hidden-State | DiT | 2025 |
 
