@@ -1,46 +1,6 @@
----
-title: "World Action Models: The Next Frontier in Embodied AI"
-method_name: "WAM Survey"
-authors: [Siyin Wang, Junhao Shi, Zhaoyang Fu, Xinzhe He, Feihong Liu, Chenchen Yang, Yikang Zhou, Zhaoye Fei, Jingjing Gong, Jinlan Fu, Mike Zheng Shou, Xuanjing Huang, Xipeng Qiu, Yu-Gang Jiang]
-year: 2026
-venue: arXiv cs.RO
-tags: [survey, embodied-ai, world-model, VLA, WAM, diffusion-policy, flow-matching, robotics]
-zotero_collection: 3-Robotics/WAM-Survey
-image_source: local
-created: 2026-05-20
----
-
-# Paper Note: World Action Models: The Next Frontier in Embodied AI
-
-## Metadata
-
-| Field | Content |
-|-------|---------|
-| Institution | Fudan University, National University of Singapore |
-| Date | May 2026 |
-| Project Page | [openmoss.github.io/Awesome-WAM](https://openmoss.github.io/Awesome-WAM) |
-| Baselines | VLA / World Model |
-| Links | [arXiv](https://arxiv.org/abs/2605.12090) / [Code](https://github.com/OpenMOSS/Awesome-WAM) |
-
----
-
-## One-Line Summary
-
-> Systematically surveys the emerging World Action Model (WAM) paradigm: WAMs jointly model future-state prediction and action generation, unifying the VLA and world-model research threads under a four-category taxonomy with seven open challenges.
-
----
-
-## Core Contributions
-
-1. **WAM paradigm definition**: Formally defines a World Action Model as an embodied foundation model learning the joint distribution $p(o', a \mid o, l)$, explicitly distinguishing it from VLAs (actions only) and world models (predictions only). This is not just a naming exercise — the formal definition clarifies what shared objective connects dozens of recent systems that were not previously recognized as a coherent family.
-2. **Four-dimensional systematic taxonomy**: Covers 70+ papers across architecture (Cascaded/Joint), generation modality (pixel/implicit/autoregressive/diffusion), training data, and evaluation criteria. The taxonomy provides a navigable map of the design space and makes clear which choices are independent vs. correlated.
-3. **Seven open challenges**: Identifies key unsolved problems — efficient inference, missing evaluation standards, cross-embodiment generalization, long-horizon planning, data annotation, architecture coupling trade-offs, and safety — as a research agenda for the field.
-
----
+World Action Models: The Next Frontier in Embodied AI
 
 ## Problem Background
-
-### Problem Being Solved
 
 The embodied AI field is split between two parallel paradigms that have developed largely independently:
 
@@ -55,23 +15,6 @@ Neither paradigm alone captures an agent that both understands the world and act
 - **WM limitations**: Action-conditioned WMs $p(o' \mid o, a)$ require actions as input and produce no actions themselves; language-conditioned WMs $p(o' \mid o, l)$ do not have an action head. In both cases the world model must be composed with a separate policy, which means their objectives are misaligned and cannot reinforce each other.
 - **Split optimization**: When state prediction and action generation are trained separately, the state predictor has no reason to produce representations that are useful for action, and the action policy has no reason to produce actions that are physically coherent over time.
 
-### Motivation
-
-The authors observe that several prominent recent systems — [GR-1](WAM-Survey/GR-1.md), [UWM](WAM-Survey/UWM.md), [UniPi](WAM-Survey/UniPi.md), [CoT-VLA](WAM-Survey/CoT-VLA.md) — already learn both state prediction and action generation simultaneously, but each frames it differently and there is no common vocabulary. The WAM survey provides that vocabulary, revealing that these systems share a single mathematical goal:
-
-$$
-\mathcal{L}_{WAM} = \mathbb{E}_{(o,l,o',a) \sim \mathcal{D}} \left[ -\log p(o', a \mid o, l) \right]
-$$
-
-**Meaning**: Jointly maximize the likelihood of both the next observation $o'$ and the action $a$ given current observation $o$ and language instruction $l$. This is strictly more general than either VLA or WM training alone.
-
-**Symbols**: $o$ — current observation; $o'$ — future observation; $a$ — action; $l$ — language instruction; $\mathcal{D}$ — training data.
-
-The hope is that co-training the world model and action policy causes each to benefit from the other: the world model provides a "physics prior" that regularizes action generation, while the action signal guides the world model to focus on action-relevant dynamics.
-
----
-
-## Method
 
 ### The Three-Paradigm Formal Comparison
 
@@ -238,7 +181,6 @@ This four-role framing is useful because it covers systems that do not fit clean
 
 ---
 
-## Experiments
 
 ### Training Data Ecosystem
 
@@ -360,9 +302,8 @@ Measures the distance between the distribution of real videos and generated vide
 | LIBERO | Simulated | 130 tasks across 4 suites | Cross-suite generalization |
 | Real Robot | Real | Lab-specific tasks | Task completion rate |
 
-### Key Findings from Surveyed Work
+### Summary
 
-The survey does not conduct new experiments but synthesizes patterns across 70+ surveyed papers:
 
 - **Cascaded Explicit-Learned WAMs** (e.g., [UniPi](WAM-Survey/UniPi.md), [GR-MG](WAM-Survey/GR-MG.md)): Produce visually compelling video plans but inference takes >1 second per step at useful resolution — incompatible with reactive robot control at >10 Hz. Best suited for offline plan generation followed by open-loop execution.
 - **Cascaded Implicit WAMs** (e.g., [VLA-JEPA](WAM-Survey/VLA-JEPA.md)): Inference is fast (comparable to standard VLAs) but the latent world model is uninterpretable. The world model acts as a learned feature extractor more than a simulator.
@@ -389,46 +330,10 @@ The survey concludes with seven research challenges that define the frontier of 
 
 7. **Safety and alignment**: A WAM that can simulate dangerous future states (e.g., collision, human injury) creates new safety risks if the generated plans are executed without verification. WAMs need constraint mechanisms — either in the world model (rejecting physically infeasible or unsafe predictions) or in the action policy (action safety filters).
 
----
 
-## Critical Analysis
 
-### Strengths
-
-1. **First systematic WAM survey**: The field lacked a unifying vocabulary — GR-1, UWM, UniPi were described using different frameworks. The WAM taxonomy resolves this and makes the design space navigable.
-2. **Comprehensive coverage**: 70+ methods spanning 2022–2025 with a consistent classification scheme. The temporal roadmap (Figure 1) makes it easy to see how the field evolved.
-3. **Challenge-oriented framing**: The seven open challenges are specific and actionable, not vague calls for "future work." Each maps to concrete research directions.
-4. **Data ecosystem analysis**: The 2D transfer/scaling framework for embodied data is a genuinely useful analytical tool that clarifies why scaling WAMs is harder than scaling LLMs.
-
-### Limitations
-
-1. **No unified empirical comparison**: All numbers come from individual papers on different benchmarks with different evaluation protocols. The survey cannot say which WAM architecture is best — only which ones have been tested and what they reported.
-2. **Fragmented evaluation**: There is no WAM-specific benchmark that evaluates world model quality and action quality jointly. The survey implicitly acknowledges this in Challenge 2 but does not propose a concrete solution.
-3. **Hardware barrier underemphasized**: Most SOTA Joint WAMs (CosmosPolicy, UWM) require 32–64 A100s for training. The survey lists this as a challenge but does not discuss whether there is a structural reason that WAMs are harder to train efficiently than VLAs of comparable parameter count.
-
-### Potential Improvements
-
-1. **WAM-specific benchmark**: A benchmark that evaluates the world model and policy jointly — e.g., measure whether the model's predicted video correctly anticipates the task outcome before execution, then evaluate whether the executed policy matches that prediction.
-2. **Lightweight WAM**: Consistency models or shortcut-based diffusion distillation applied to joint WAM training could potentially reduce inference to 1–4 steps while maintaining quality.
-3. **Cross-embodiment WAM**: A training recipe that leverages the full Ego4D corpus via inverse dynamics pseudo-labeling, with a morphology-conditioned architecture that handles variable action spaces.
-4. **Hierarchical WAM**: Separate fast-action policies (high-frequency joint control) from slow world model planning (keyframe prediction), with the world model operating at a coarser temporal resolution.
-
-### Reproducibility
-
-- [x] Code/paper list open-sourced: https://github.com/OpenMOSS/Awesome-WAM
-- [ ] Unified pretrained model (survey paper; no single model released)
-- [x] Training details complete (documented in individual surveyed papers)
-- [x] Datasets accessible (Open X-Embodiment, Bridge V2, Ego4D are all public)
 
 ---
-
-## Related Notes
-
-### Predecessors
-
-- VLA: Predecessor paradigm, models only $p(a \mid o, l)$
-- World Model: Predecessor paradigm, models state transitions $p(o' \mid o, a)$
-- Diffusion Policy: Core action generation baseline; most WAM action heads build on or compare against it
 
 ### Representative Methods (Cascaded WAM)
 
