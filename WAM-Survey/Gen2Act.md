@@ -34,7 +34,7 @@ created: 2026-05-20
 ## Core Contributions
 
 1. **Human Video as Generalization Bridge**: Uses pre-trained video generation models (VideoPoet) to synthesize plausible human manipulation videos for novel scenarios — leveraging web-scale knowledge without requiring real human demonstrations.
-2. **Point Track Auxiliary Loss**: A track prediction transformer with auxiliary loss $\mathcal{L}_\tau = \|\tau_m - \hat{\tau}_m\|_2$ forces the visual feature encoder to capture motion dynamics from generated videos, critical for motion-type generalization.
+2. **Point Track Auxiliary Loss**: A track prediction transformer with auxiliary loss $\mathcal L_\tau = \|\tau_m - \hat{\tau}_m\|_2$ forces the visual feature encoder to capture motion dynamics from generated videos, critical for motion-type generalization.
 3. **Factorized Generation + Policy Architecture**: Decouples video generation from policy learning — VideoPoet generates video, Perceiver-Resampler encodes it, cross-attention policy predicts actions — enabling independent scaling of each component.
 4. **Systematic Generalization Taxonomy**: Introduces four-level evaluation taxonomy (Mild, Standard, Object-Type, Motion-Type Generalization) capturing increasing levels of novelty in robot manipulation evaluation.
 
@@ -61,8 +61,8 @@ Pre-trained video generative models (VideoPoet) can synthesize plausible human m
 
 Gen2Act is a **two-stage factorized system**:
 
-1. **Video Generation** (offline): VideoPoet generates human manipulation video $\mathbf{V}_m = \mathcal{V}(\mathbf{I}_0, \mathcal{G})$ from initial scene image $\mathbf{I}_0$ and text goal $\mathcal{G}$
-2. **Closed-Loop Policy** (online): $\pi_\theta(\mathbf{I}_{t-k:t}, \mathbf{V}_m)$ — transformer policy conditioned on robot observations $\mathbf{I}_{t-k:t}$ and pre-generated video $\mathbf{V}_m$
+1. **Video Generation** (offline): VideoPoet generates human manipulation video $\mathbf V_m = \mathcal V(\mathbf I_0, \mathcal G)$ from initial scene image $\mathbf I_0$ and text goal $\mathcal G$
+2. **Closed-Loop Policy** (online): $\pi_\theta(\mathbf I_{t-k:t}, \mathbf V_m)$ — transformer policy conditioned on robot observations $\mathbf I_{t-k:t}$ and pre-generated video $\mathbf V_m$
 
 ### Core Modules
 
@@ -84,10 +84,10 @@ Gen2Act is a **two-stage factorized system**:
 VideoPoet generates a plausible human manipulation video conditioned on the initial scene image and task description:
 
 $$
-\mathbf{V}_m = \mathcal{V}(\mathbf{I}_0, \mathcal{G})
+\mathbf V_m = \mathcal V(\mathbf I_0, \mathcal G)
 $$
 
-where $\mathbf{I}_0$ is the square-cropped initial scene image from the robot camera, $\mathcal{G}$ is the language task description (e.g., "pick up the mug and place it in the tray"), and $\mathbf{V}_m$ is the resulting 16-frame generated human manipulation video.
+where $\mathbf I_0$ is the square-cropped initial scene image from the robot camera, $\mathcal G$ is the language task description (e.g., "pick up the mug and place it in the tray"), and $\mathbf V_m$ is the resulting 16-frame generated human manipulation video.
 
 #### Module 3: Video-Conditioned Robot Policy
 
@@ -96,10 +96,10 @@ where $\mathbf{I}_0$ is the square-cropped initial scene image from the robot ca
 The policy maps recent robot observations and the pre-generated video to an action chunk:
 
 $$
-\pi_\theta(\mathbf{I}_{t-k:t}, \mathbf{V}_m) \to a_{t:t+h}
+\pi_\theta(\mathbf I_{t-k:t}, \mathbf V_m) \to a_{t:t+h}
 $$
 
-where $\mathbf{I}_{t-k:t}$ denotes the last $k=8$ robot observation frames at time $t$, $\mathbf{V}_m$ is the fixed pre-generated human video (generated once before execution), and $a_{t:t+h}$ is the predicted action chunk (end-effector delta + gripper + termination).
+where $\mathbf I_{t-k:t}$ denotes the last $k=8$ robot observation frames at time $t$, $\mathbf V_m$ is the fixed pre-generated human video (generated once before execution), and $a_{t:t+h}$ is the predicted action chunk (end-effector delta + gripper + termination).
 
 #### Module 4: Point Track Prediction Auxiliary Loss
 
@@ -108,7 +108,7 @@ where $\mathbf{I}_{t-k:t}$ denotes the last $k=8$ robot observation frames at ti
 An off-the-shelf tracker (BOOTSTRAAP or TAP-Vid) extracts ground-truth 2D point tracks $\tau_m$ from random scene points in the generated video. A 6-layer self-attention transformer $\psi_m$ then predicts these tracks from the encoded video tokens:
 
 $$
-\mathcal{L}_\tau = \|\tau_m - \hat{\tau}_m\|_2
+\mathcal L_\tau = \|\tau_m - \hat{\tau}_m\|_2
 $$
 
 where $\tau_m$ are the ground-truth tracks from BOOTSTRAAP/TAP-Vid and $\hat{\tau}_m = \psi_m(P^0, i_m^0, z_m)$ are the predicted tracks from the transformer given initial 2D point positions $P^0$, the initial frame $i_m^0$, and encoded tokens $z_m$. An analogous loss is applied to robot observation tracks. The combined BC + track loss trains the encoder to represent motion, not just appearance.

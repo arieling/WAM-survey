@@ -23,7 +23,7 @@ To make the WAM definition precise, the survey contrasts three learning objectiv
 VLA learning objective:
 
 $$
-\mathcal{L}_{VLA} = \mathbb{E}_{(o,l,a) \sim \mathcal{D}} \left[ -\log p(a \mid o, l) \right]
+\mathcal L_{VLA} = \mathbb E_{(o,l,a) \sim \mathcal D} \left[ -\log p(a \mid o, l) \right]
 $$
 
 No future state is modeled. The policy is a pure reactive mapping from current observation to action.
@@ -31,7 +31,7 @@ No future state is modeled. The policy is a pure reactive mapping from current o
 WM learning objective (action-conditioned):
 
 $$
-\mathcal{L}_{WM} = \mathbb{E}_{(o,a,o') \sim \mathcal{D}} \left[ -\log p(o' \mid o, a) \right]
+\mathcal L_{WM} = \mathbb E_{(o,a,o') \sim \mathcal D} \left[ -\log p(o' \mid o, a) \right]
 $$
 
 The model predicts future states given the current state and an externally provided action. It cannot generate actions and cannot be used as a policy without a separate action source.
@@ -39,7 +39,7 @@ The model predicts future states given the current state and an externally provi
 WAM joint objective:
 
 $$
-\mathcal{L}_{WAM} = \mathbb{E}_{(o,l,o',a) \sim \mathcal{D}} \left[ -\log p(o', a \mid o, l) \right]
+\mathcal L_{WAM} = \mathbb E_{(o,l,o',a) \sim \mathcal D} \left[ -\log p(o', a \mid o, l) \right]
 $$
 
 Both outputs — future observation $o'$ and action $a$ — are generated jointly from the same language-conditioned model. This is the defining equation of the WAM paradigm.
@@ -76,7 +76,7 @@ $$
 
 Cascaded WAMs split further by how actions are extracted from predicted video:
 
-**Explicit-Learned (IDM)**: The world model generates pixel-level video frames $\hat{o}'$. A separate Inverse Dynamics Model (IDM) — typically a small CNN+MLP — takes consecutive frame pairs ($\hat o_t$, $\hat o_{t+1}$) and regresses the robot joint action $a_t$ that would cause that transition. Representative works: [UniPi](WAM-Survey/UniPi.md), [GR-MG](WAM-Survey/GR-MG.md), [RoboEnvision](WAM-Survey/RoboEnvision.md), Gen2Act.
+**Explicit-Learned (IDM)**: The world model generates pixel-level video frames $\hat o'$. A separate Inverse Dynamics Model (IDM) — typically a small CNN+MLP — takes consecutive frame pairs ($\hat o_t$, $\hat o_{t+1}$) and regresses the robot joint action $a_t$ that would cause that transition. Representative works: [UniPi](WAM-Survey/UniPi.md), [GR-MG](WAM-Survey/GR-MG.md), [RoboEnvision](WAM-Survey/RoboEnvision.md), Gen2Act.
 
 **Explicit-Geometric**: Instead of learning an IDM, geometric priors extract actions from predicted video — optical flow gives 2D motion that maps to end-effector velocity, 3D point tracking gives spatial displacement, 4D Gaussian Splatting gives full 3D trajectories. This is more interpretable and does not require action-annotated training data for the extraction step. Representative works: [Im2Flow2Act](WAM-Survey/Im2Flow2Act.md), [ThisAndThat](WAM-Survey/ThisAndThat.md), 4DGen.
 
@@ -145,7 +145,7 @@ Diffusion WAMs jointly denoise both future visual observations and action sequen
 
 **Caption**: Full taxonomy of diffusion Joint WAM architectures. Left branch: Unified Stream — visual and action tokens are concatenated and denoised by a single DiT, the simplest design. Right branch: Multi-Stream — visual and action denoising run in separate DiT branches coupled by one of three mechanisms: Cross-Attention (action queries attend to visual keys/values), Hidden-State Coupling (intermediate features are shared between branches), or Shared Representation (early layers are shared, late layers are specialized).
 
-**Unified Stream**: Visual tokens and action tokens are concatenated into a single sequence and passed through a shared DiT. A single denoising pass produces both $\hat{o}'$ and $\hat{a}$ simultaneously. This is architecturally simplest and has no coupling overhead, but visual tokens and action tokens must compete for the same attention capacity — visual tokens can "distract" the action head and vice versa. Representative: [UWM](WAM-Survey/UWM.md), CosmosPolicy, DreamZero, FLARE, FRAPPE.
+**Unified Stream**: Visual tokens and action tokens are concatenated into a single sequence and passed through a shared DiT. A single denoising pass produces both $\hat o'$ and $\hat a$ simultaneously. This is architecturally simplest and has no coupling overhead, but visual tokens and action tokens must compete for the same attention capacity — visual tokens can "distract" the action head and vice versa. Representative: [UWM](WAM-Survey/UWM.md), CosmosPolicy, DreamZero, FLARE, FRAPPE.
 
 **Multi-Stream — Cross-Attention Coupling**: Separate DiT branches for visual and action denoising. The action branch attends to visual features via cross-attention at each denoising step, allowing the action policy to read visual predictions without contaminating the visual stream. Representative: PAD, VideoVLA, CoVAR.
 
@@ -253,10 +253,10 @@ Measures luminance, contrast, and structure jointly. Range $[-1, 1]$; higher is 
 Learned Perceptual Image Patch Similarity:
 
 $$
-\text{LPIPS}(x, y) = \sum_l \frac{1}{H_l W_l} \sum_{h,w} \lVert w_l \odot \bigl( \hat{f}_l^{hw}(x) - \hat{f}_l^{hw}(y) \bigr) \rVert_2^2
+\text{LPIPS}(x, y) = \sum_l \frac{1}{H_l W_l} \sum_{h,w} \lVert w_l \odot \bigl( \hat f_l^{hw}(x) - \hat f_l^{hw}(y) \bigr) \rVert_2^2
 $$
 
-Uses pretrained deep network features to measure perceptual similarity. Lower is better. More aligned with human judgment than PSNR/SSIM for natural images. $\hat{f}_l$ — normalized feature map at layer $l$; $w_l$ — learned per-layer weights.
+Uses pretrained deep network features to measure perceptual similarity. Lower is better. More aligned with human judgment than PSNR/SSIM for natural images. $\hat f_l$ — normalized feature map at layer $l$; $w_l$ — learned per-layer weights.
 
 DreamSim similarity (human-calibrated perceptual distance):
 

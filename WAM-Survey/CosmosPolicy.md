@@ -124,7 +124,7 @@ During training, the current observation frames (positions 1–5) are kept clean
 
 **Design**: CosmosPolicy uses a **hybrid noise distribution**:
 
-- **70%** of training samples draw $\sigma$ from the original log-normal: $\log \sigma \sim \mathcal{N}(1.39, 1.2^2)$
+- **70%** of training samples draw $\sigma$ from the original log-normal: $\log \sigma \sim \mathcal N(1.39, 1.2^2)$
 - **30%** of samples draw $\sigma$ uniformly from $[1.0, 85.0]$
 
 This extends coverage into the high-noise regime. Additionally, at inference time, $\sigma_\text{min}$ is changed from $0.002$ to $4.0$, eliminating the low signal-to-noise final denoising steps that add noise but provide minimal information for action/value prediction.
@@ -150,7 +150,7 @@ The training loss is the standard denoising score matching loss applied to the o
 Cosmos Policy Training Loss:
 
 $$
-\mathcal{L} = \mathbb{E}_{(s, a, s', V), \sigma, \epsilon}\left[\lambda(\sigma) \left\| D_\theta(x_\text{noisy}; \sigma, c) - x_\text{clean} \right\|_2^2 \right]
+\mathcal L = \mathbb E_{(s, a, s', V), \sigma, \epsilon}\left[\lambda(\sigma) \left\| D_\theta(x_\text{noisy}; \sigma, c) - x_\text{clean} \right\|_2^2 \right]
 $$
 
 **Meaning**: The model $D_\theta$ denoises a corrupted version of the output frames $x_\text{noisy} = x_\text{clean} + \sigma \cdot \epsilon$ back to the clean targets $x_\text{clean}$, conditioned on the clean observation frames $c$ (current images + proprioception). The loss weight $\lambda(\sigma)$ follows the Karras et al. EDM formulation. The "output frames" are masked per the batch composition above — e.g., for demonstration data, the target includes action, future state, and value frames.
@@ -161,7 +161,7 @@ $$
 - $s'$: future state (images + proprioception)
 - $V(s')$: scalar state value of the future state
 - $\sigma$: noise level
-- $\epsilon \sim \mathcal{N}(0, I)$: Gaussian noise
+- $\epsilon \sim \mathcal N(0, I)$: Gaussian noise
 - $\lambda(\sigma)$: EDM loss weighting
 - $D_\theta$: learned denoiser (DiT backbone)
 - $c$: conditioning (clean observation frames)
@@ -184,8 +184,8 @@ The value targets $V(s')$ are computed from rollout data as discounted returns (
 1. Sample $N=5$ candidate action sequences $\{a_i\}$ using the base checkpoint (direct policy; parallel decoding, $K=10$ steps)
 2. For each $a_i$, use the planning checkpoint (additionally fine-tuned on rollouts) to predict $M=3$ future state samples $\{s'_{ij}\}$ via autoregressive decoding ($K=5$ steps)
 3. For each $(a_i, s'_{ij})$, predict $L=5$ value samples $\{V_{ijl}\}$ ($K=5$ steps)
-4. Aggregate: "majority mean" — threshold values at 50 to determine predicted success/failure majority, then average within the majority group to produce $\hat{V}(a_i)$
-5. Select $a^* = \arg\max_i \hat{V}(a_i)$ and execute
+4. Aggregate: "majority mean" — threshold values at 50 to determine predicted success/failure majority, then average within the majority group to produce $\hat V(a_i)$
+5. Select $a^* = \arg\max_i \hat V(a_i)$ and execute
 
 Total planning time per action chunk: ~5 seconds, limiting applicability to quasi-static tasks.
 

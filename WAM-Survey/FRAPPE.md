@@ -66,10 +66,10 @@ The key insight is that **implicit representation alignment can inject world-mod
 ### Architecture Overview
 
 FRAPPE uses a **two-stage fine-tuning strategy on top of a pretrained diffusion-based VLA** with:
-- **Input**: Language instruction $l$, current visual observation $\mathbf{o}_t$, noisy action chunk $\tilde{\mathbf{a}}_t$, denoising step $k$, learnable future-prefix tokens $\mathbf{p}_t$
+- **Input**: Language instruction $l$, current visual observation $\mathbf o_t$, noisy action chunk $\tilde{\mathbf a}_t$, denoising step $k$, learnable future-prefix tokens $\mathbf p_t$
 - **Backbone**: Robotic Diffusion Transformer (RDT-1B) — a 1B-parameter Diffusion Transformer pretrained on diverse robot demonstrations
 - **Core modules**: Future Prefix Tokens (n×d learnable tokens), Visual Foundation Model (VFM) teachers (CLIP 400M, DINOv2 142M, ViT 300M), MiPA (Mixture-of-Prefix-and-LoRA) router
-- **Output**: Denoised action chunk $\mathbf{a}_t$ (predicted directly; no future frame generation at inference)
+- **Output**: Denoised action chunk $\mathbf a_t$ (predicted directly; no future frame generation at inference)
 - **Total parameters (trainable at post-training)**: Prefix tokens + LoRA modules per expert; backbone frozen
 
 ![Figure 2 — FRAPPE Training and Inference Overview](https://arxiv.org/html/2602.17259v1/x5.png)
@@ -80,24 +80,24 @@ FRAPPE uses a **two-stage fine-tuning strategy on top of a pretrained diffusion-
 
 ### Future Prefix Tokens
 
-**Motivation**: Standard VLA models consume the current observation $\mathbf{o}_t$ and produce an action. They have no explicit pathway to represent what the world should look like in the near future. Introducing a set of dedicated learnable tokens that are trained to encode future visual states gives the backbone implicit access to predictive dynamics at every denoising step, without modifying the backbone architecture or adding inference-time world-model rollouts.
+**Motivation**: Standard VLA models consume the current observation $\mathbf o_t$ and produce an action. They have no explicit pathway to represent what the world should look like in the near future. Introducing a set of dedicated learnable tokens that are trained to encode future visual states gives the backbone implicit access to predictive dynamics at every denoising step, without modifying the backbone architecture or adding inference-time world-model rollouts.
 
-**Design**: A set of learnable tokens $\mathbf{p} \in \mathbb{R}^{n \times d}$ (where $n$ is prefix length and $d$ is the model's hidden dimension) is concatenated with the backbone's input sequence at every denoising step. During training, these tokens receive gradient signal from an alignment loss that encourages them to encode the visual foundation model's representation of a future observation $\mathbf{o}_{t+h}$ (horizon $h=8$ steps ahead). Because the tokens are fully differentiable and concatenated with the action inputs, the backbone learns to use them for action generation. During inference, the tokens simply exist as learned parameters—no future observation needs to be generated or fed in.
+**Design**: A set of learnable tokens $\mathbf p \in \mathbb R^{n \times d}$ (where $n$ is prefix length and $d$ is the model's hidden dimension) is concatenated with the backbone's input sequence at every denoising step. During training, these tokens receive gradient signal from an alignment loss that encourages them to encode the visual foundation model's representation of a future observation $\mathbf o_{t+h}$ (horizon $h=8$ steps ahead). Because the tokens are fully differentiable and concatenated with the action inputs, the backbone learns to use them for action generation. During inference, the tokens simply exist as learned parameters—no future observation needs to be generated or fed in.
 
 The denoising function becomes:
 
 $$
-\mathbf{a}_{t}, \mathbf{p}_{t} = f_{\theta}(l, \mathbf{o}_{t}, \tilde{\mathbf{a}}_{t}, k)
+\mathbf a_{t}, \mathbf p_{t} = f_{\theta}(l, \mathbf o_{t}, \tilde{\mathbf a}_{t}, k)
 $$
 
-**Meaning**: The backbone $f_\theta$ now outputs both the denoised action chunk $\mathbf{a}_t$ and an updated prefix representation $\mathbf{p}_t$ that is supervised to match the future-state encoder. This joint output means the backbone learns to internally reason about future states as part of producing actions.
+**Meaning**: The backbone $f_\theta$ now outputs both the denoised action chunk $\mathbf a_t$ and an updated prefix representation $\mathbf p_t$ that is supervised to match the future-state encoder. This joint output means the backbone learns to internally reason about future states as part of producing actions.
 
 **Symbols**:
-- $\mathbf{a}_t$: predicted action chunk at timestep $t$
-- $\mathbf{p}_t$: updated future-prefix representation
+- $\mathbf a_t$: predicted action chunk at timestep $t$
+- $\mathbf p_t$: updated future-prefix representation
 - $l$: language instruction
-- $\mathbf{o}_t$: current visual observation
-- $\tilde{\mathbf{a}}_t$: noisy action chunk at denoising step $k$
+- $\mathbf o_t$: current visual observation
+- $\tilde{\mathbf a}_t$: noisy action chunk at denoising step $k$
 - $k$: denoising step index
 
 ---
@@ -113,17 +113,17 @@ The alignment loss in mid-training uses cosine similarity between the predicted 
 Alignment Loss:
 
 $$
-\mathcal{L}_{\Phi} = \cos(\mathbf{p}_t, \text{sg}(\mathbf{e}))
+\mathcal L_{\Phi} = \cos(\mathbf p_t, \text{sg}(\mathbf e))
 $$
 
-**Meaning**: The cosine similarity between the prefix output $\mathbf{p}_t$ and the teacher embedding $\mathbf{e}$ (with stop-gradient so the teacher is not updated) is maximized. Using cosine rather than MSE makes the loss scale-invariant and avoids magnitude collapse.
+**Meaning**: The cosine similarity between the prefix output $\mathbf p_t$ and the teacher embedding $\mathbf e$ (with stop-gradient so the teacher is not updated) is maximized. Using cosine rather than MSE makes the loss scale-invariant and avoids magnitude collapse.
 
 **Symbols**:
-- $\mathbf{p}_t$: prefix output from the backbone
-- $\mathbf{e}$: teacher encoder embedding of future observation $\mathbf{o}_{t+h}$
+- $\mathbf p_t$: prefix output from the backbone
+- $\mathbf e$: teacher encoder embedding of future observation $\mathbf o_{t+h}$
 - $\text{sg}(\cdot)$: stop-gradient operator
 
-**Action-free co-training**: During mid-training, action-free human egocentric video data (TASTE-Rob) can be co-trained. For these samples, the action loss $\mathcal{L}_{\text{action}}$ is simply omitted and only $\mathcal{L}_\Phi$ is applied. This allows the model to learn future-state representations from web-scale video without requiring any robot demonstrations or action labels.
+**Action-free co-training**: During mid-training, action-free human egocentric video data (TASTE-Rob) can be co-trained. For these samples, the action loss $\mathcal L_{\text{action}}$ is simply omitted and only $\mathcal L_\Phi$ is applied. This allows the model to learn future-state representations from web-scale video without requiring any robot demonstrations or action labels.
 
 ---
 
@@ -132,7 +132,7 @@ $$
 **Motivation**: After mid-training the model can predict future representations from a single unified teacher. However, that teacher is a distillation—it may lose fine-grained specialization present in the individual VFMs. The post-training phase expands to multiple independent VFM teachers simultaneously, giving the model access to CLIP's language-semantic features, DINOv2's geometry-aware features, and ViT's general visual features in parallel.
 
 **Design**: Three expert streams are added to the frozen backbone. Each expert $i \in \{1, 2, 3\}$ consists of:
-- A dedicated set of learnable prefix tokens $\mathbf{p}^{(i)} \in \mathbb{R}^{n \times d}$
+- A dedicated set of learnable prefix tokens $\mathbf p^{(i)} \in \mathbb R^{n \times d}$
 - A set of LoRA modules injected into the backbone layers for that expert (backbone weights frozen; only LoRA $A$, $B$ matrices trained)
 - A corresponding frozen VFM teacher: expert 1 → CLIP (400M), expert 2 → DINOv2 (142M), expert 3 → ViT (300M)
 
@@ -141,7 +141,7 @@ A lightweight **router network** computes gating weights $\{w_i\}_{i=1}^{M}$ (wh
 Action Aggregation:
 
 $$
-\mathbf{a}_t = \text{MLP}\!\left(\sum_{i=1}^{M} w_i \cdot z_i\right)
+\mathbf a_t = \text{MLP}\!\left(\sum_{i=1}^{M} w_i \cdot z_i\right)
 $$
 
 **Meaning**: The router softly selects how much each expert's prediction contributes. Because different tasks may benefit from different visual features (e.g., a task requiring precise grasp may benefit more from DINOv2's geometric features), the router can adapt the blend per input.
@@ -154,7 +154,7 @@ $$
 The multi-encoder alignment loss sums individual alignment losses:
 
 $$
-\mathcal{L}_{\text{align}} = \sum_{i=1}^{M} \mathcal{L}_{\Phi_i}
+\mathcal L_{\text{align}} = \sum_{i=1}^{M} \mathcal L_{\Phi_i}
 $$
 
 To prevent mode collapse (where the router always assigns all weight to one expert), a **load-balancing loss** is applied:
@@ -162,10 +162,10 @@ To prevent mode collapse (where the router always assigns all weight to one expe
 Load Balance Loss:
 
 $$
-\mathcal{L}_{\text{balance}} = \frac{1}{B} \sum_{j=1}^{B} \left(\log \sum_{i=1}^{M} e^{\mathbf{g}_{i,j}}\right)^{2}
+\mathcal L_{\text{balance}} = \frac{1}{B} \sum_{j=1}^{B} \left(\log \sum_{i=1}^{M} e^{\mathbf g_{i,j}}\right)^{2}
 $$
 
-**Meaning**: This penalizes over-concentration of router logits $\mathbf{g}_{i,j}$ for sample $j$ in batch $B$, encouraging all three experts to be utilized.
+**Meaning**: This penalizes over-concentration of router logits $\mathbf g_{i,j}$ for sample $j$ in batch $B$, encouraging all three experts to be utilized.
 
 **Label smoothing** is additionally applied to router weights to prevent sharp overconfidence:
 
@@ -188,13 +188,13 @@ The full training objective combines three losses with scalar hyperparameters:
 Action Loss:
 
 $$
-\mathcal{L}_{\text{action}} := \text{MSE}(\mathbf{a}_t, f_\theta(l, \mathbf{o}_t, \tilde{\mathbf{a}}_t, k))
+\mathcal L_{\text{action}} := \text{MSE}(\mathbf a_t, f_\theta(l, \mathbf o_t, \tilde{\mathbf a}_t, k))
 $$
 
 **Meaning**: Standard diffusion denoising objective—mean squared error between predicted and ground-truth action chunks. This is the primary task signal.
 
 **Symbols**:
-- $\mathbf{a}_t$: ground-truth action chunk
+- $\mathbf a_t$: ground-truth action chunk
 - $f_\theta(\cdot)$: policy network (backbone + prefixes + LoRA)
 
 Combined objective:
@@ -202,7 +202,7 @@ Combined objective:
 FRAPPE Total Loss:
 
 $$
-\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{action}} + \lambda_1 \mathcal{L}_{\text{align}} + \lambda_2 \mathcal{L}_{\text{balance}}
+\mathcal L_{\text{total}} = \mathcal L_{\text{action}} + \lambda_1 \mathcal L_{\text{align}} + \lambda_2 \mathcal L_{\text{balance}}
 $$
 
 **Meaning**: The action generation objective is regularized by the world-modeling alignment signal and the diversity-encouraging balance loss. The alignment term is kept small ($\lambda_1 = 0.05$) to prevent it from overwhelming the action objective.
@@ -221,11 +221,11 @@ $$
 
 FRAPPE introduces **no additional computational overhead from world models at inference time**. The inference procedure is identical to the base RDT pipeline:
 
-1. Receive language instruction $l$ and current observation $\mathbf{o}_t$ from robot sensors
-2. Initialize noisy action $\tilde{\mathbf{a}}_t$ from Gaussian noise
+1. Receive language instruction $l$ and current observation $\mathbf o_t$ from robot sensors
+2. Initialize noisy action $\tilde{\mathbf a}_t$ from Gaussian noise
 3. Run $K$ denoising steps (default $K=5$; $K=3$ also tested for lower latency):
-   - For each step, compute $\mathbf{a}_t, \mathbf{p}_t = f_\theta(l, \mathbf{o}_t, \tilde{\mathbf{a}}_t, k)$ across all three MiPA expert streams in parallel
-   - Router computes $\{w_i\}$ and aggregates expert outputs via $\mathbf{a}_t = \text{MLP}(\sum_i w_i \cdot z_i)$
+   - For each step, compute $\mathbf a_t, \mathbf p_t = f_\theta(l, \mathbf o_t, \tilde{\mathbf a}_t, k)$ across all three MiPA expert streams in parallel
+   - Router computes $\{w_i\}$ and aggregates expert outputs via $\mathbf a_t = \text{MLP}(\sum_i w_i \cdot z_i)$
    - No alignment loss or VFM teachers run at inference
 4. Execute the denoised action chunk on the robot
 

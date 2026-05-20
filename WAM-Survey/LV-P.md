@@ -89,7 +89,7 @@ Each temporal token $x_k$ at position $k$ receives independently sampled noise l
 
 History guidance interpolates between a history-conditioned score and a text-only score, weighting temporal coherence against pure language guidance. Concretely, the combined score is defined as:
 
-$$\nabla \log \tilde{p}(x_k) = w_h \cdot \nabla \log p(x_k \mid x_{\text{hist}}, c_{\text{text}}, k) + (1-w_h) \cdot \nabla \log p(x_k \mid c_{\text{text}}, k)$$
+$$\nabla \log \tilde p(x_k) = w_h \cdot \nabla \log p(x_k \mid x_{\text{hist}}, c_{\text{text}}, k) + (1-w_h) \cdot \nabla \log p(x_k \mid c_{\text{text}}, k)$$
 
 - $w_h$: history guidance weight controlling the trade-off between temporal coherence (left term) and pure text conditioning (right term)
 - $x_{\text{hist}}$: latent history frames from prior execution steps

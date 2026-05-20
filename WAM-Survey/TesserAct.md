@@ -83,11 +83,11 @@ $$\epsilon^*_{d,n} = \text{DNProj}(h, \text{Conv3D}(\epsilon^*_v, [z_t; z_0]))$$
 
 where $h$ is the DiT hidden state, $\epsilon^*_v$ is the predicted RGB noise, and $z_t, z_0$ are the noisy and clean video latents. This allows depth/normal heads to leverage the RGB predictions for geometrically consistent output.
 
-The full joint denoising loss trains the DiT denoiser $\epsilon_\theta$ to simultaneously predict RGB noise $\epsilon_v$, depth noise $\epsilon_d$, and normal noise $\epsilon_n$ from noisy concatenated latents $\mathbf{x}_t = [\mathbf{v}_t, \mathbf{d}_t, \mathbf{n}_t]$:
+The full joint denoising loss trains the DiT denoiser $\epsilon_\theta$ to simultaneously predict RGB noise $\epsilon_v$, depth noise $\epsilon_d$, and normal noise $\epsilon_n$ from noisy concatenated latents $\mathbf x_t = [\mathbf v_t, \mathbf d_t, \mathbf n_t]$:
 
-$$\mathcal{L} = \mathbb{E}\left[\left\|[\epsilon_v, \epsilon_d, \epsilon_n] - \epsilon_\theta(\mathbf{x}_t, t, \mathbf{x}_0, \mathcal{T})\right\|^2\right]$$
+$$\mathcal L = \mathbb E\left[\left\|[\epsilon_v, \epsilon_d, \epsilon_n] - \epsilon_\theta(\mathbf x_t, t, \mathbf x_0, \mathcal T)\right\|^2\right]$$
 
-where $\mathbf{x}_0$ is the clean initial frame latent and $\mathcal{T}$ is the text instruction embedding.
+where $\mathbf x_0$ is the clean initial frame latent and $\mathcal T$ is the text instruction embedding.
 
 - Training frames: 49 (general), 13 (RLBench fine-tune)
 - Resolution: 512×512
@@ -99,15 +99,15 @@ where $\mathbf{x}_0$ is the clean initial frame latent and $\mathcal{T}$ is the 
 
 **Three-component optimization** at each frame:
 
-The 4D reconstruction algorithm minimizes a composite objective over the refined depth map $\tilde{\mathcal{D}}$ at each frame:
+The 4D reconstruction algorithm minimizes a composite objective over the refined depth map $\tilde{\mathcal D}$ at each frame:
 
-$$\arg\min_{\tilde{\mathcal{D}}} \; \mathcal{L}_s(\tilde{\mathcal{D}}, \mathcal{N}_i) + \mathcal{L}_c(\tilde{\mathcal{D}}, \hat{\mathcal{D}}_{i-1}, \mathcal{F}_i, \mathcal{F}_{i-1}) + \mathcal{L}_r(\tilde{\mathcal{D}}, \mathcal{D}_i)$$
+$$\arg\min_{\tilde{\mathcal D}} \; \mathcal L_s(\tilde{\mathcal D}, \mathcal N_i) + \mathcal L_c(\tilde{\mathcal D}, \hat{\mathcal D}_{i-1}, \mathcal F_i, \mathcal F_{i-1}) + \mathcal L_r(\tilde{\mathcal D}, \mathcal D_i)$$
 
-- $\mathcal{L}_s$: **Spatial loss** — enforces that the depth gradient matches the predicted surface normals $\mathcal{N}_i$ via normal integration (perspective geometry constraint)
-- $\mathcal{L}_c$: **Consistency loss** — enforces temporal coherence using optical flow $\mathcal{F}$ between consecutive frames, with separate weights $\lambda_{cd}$ for dynamic regions $\mathcal{M}_d$ and $\lambda_{cb}$ for background $\mathcal{M}_b$
-- $\mathcal{L}_r$: **Regularization loss** — keeps the refined depth $\tilde{\mathcal{D}}$ aligned with the raw predicted depth $\mathcal{D}_i$ from DNProj
+- $\mathcal L_s$: **Spatial loss** — enforces that the depth gradient matches the predicted surface normals $\mathcal N_i$ via normal integration (perspective geometry constraint)
+- $\mathcal L_c$: **Consistency loss** — enforces temporal coherence using optical flow $\mathcal F$ between consecutive frames, with separate weights $\lambda_{cd}$ for dynamic regions $\mathcal M_d$ and $\lambda_{cb}$ for background $\mathcal M_b$
+- $\mathcal L_r$: **Regularization loss** — keeps the refined depth $\tilde{\mathcal D}$ aligned with the raw predicted depth $\mathcal D_i$ from DNProj
 
-where $\hat{\mathcal{D}}_{i-1}$ is the refined depth from the previous frame and $\mathcal{F}_i, \mathcal{F}_{i-1}$ are optical flows between consecutive frames. This optimization runs for each frame in approximately 1 minute total (vs. ~2 hours for optimization-based baselines).
+where $\hat{\mathcal D}_{i-1}$ is the refined depth from the previous frame and $\mathcal F_i, \mathcal F_{i-1}$ are optical flows between consecutive frames. This optimization runs for each frame in approximately 1 minute total (vs. ~2 hours for optimization-based baselines).
 
 #### Module 3: 3D-Aware Robot Policy
 

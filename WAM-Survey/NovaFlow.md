@@ -34,7 +34,7 @@ created: 2026-05-20
 ## Core Contributions
 
 1. **Modular Zero-Shot Pipeline**: Fully modular architecture — video generator, depth estimator, 3D tracker, and executor are independently swappable — enabling continuous improvement as frontier models advance without retraining.
-2. **Depth-Calibrated 3D Flow Extraction**: MegaSaM monocular depth estimation anchored to ground-truth initial depth map via scaling factors, then TAPIP3D tracks 32×32 query points in calibrated XYZ coordinates — producing metric-scale 3D object flow $\mathcal{F} \in \mathbb{R}^{T \times M \times 3}$.
+2. **Depth-Calibrated 3D Flow Extraction**: MegaSaM monocular depth estimation anchored to ground-truth initial depth map via scaling factors, then TAPIP3D tracks 32×32 query points in calibrated XYZ coordinates — producing metric-scale 3D object flow $\mathcal F \in \mathbb R^{T \times M \times 3}$.
 3. **Unified Rigid + Deformable Execution**: Kabsch-algorithm rotation estimation for rigid objects; MPC with particle-based dynamics model for deformable objects — single pipeline handles both manipulation regimes.
 4. **VLM Rejection Sampling**: Generates N video candidates; Google Gemini selects the most plausible flow visualization — improving video quality without fine-tuning.
 
@@ -87,7 +87,7 @@ NovaFlow has **two main components**:
 3. TAPIP3D: tracks M=32×32 query points across T frames in calibrated XYZ space
 4. Grounded-SAM2 (Grounding DINO + SAM2): isolates target object regions, filtering background point tracks
 
-The resulting actionable 3D flow is a tensor $\mathcal{F} \in \mathbb{R}^{T \times M \times 3}$ representing M tracked keypoints in calibrated metric XYZ coordinates across T timesteps extracted from the generated manipulation video. This compact representation captures the task-level geometric plan in 3D space.
+The resulting actionable 3D flow is a tensor $\mathcal F \in \mathbb R^{T \times M \times 3}$ representing M tracked keypoints in calibrated metric XYZ coordinates across T timesteps extracted from the generated manipulation video. This compact representation captures the task-level geometric plan in 3D space.
 
 #### Module 3: Rigid Object Executor (Kabsch Algorithm)
 
@@ -226,7 +226,7 @@ Physical interaction (grasping, execution) is the primary bottleneck — upstrea
 ## Quick Reference Card
 
 > [!summary] NovaFlow (arXiv 2025)
-> - **Core**: Wan2.1/Veo video generation → MegaSaM depth calibration → TAPIP3D 3D tracking (32×32 pts) → Grounded-SAM2 object masking → $\mathcal{F} \in \mathbb{R}^{T \times M \times 3}$; rigid: Kabsch+LM IK; deformable: MPC particle control; Gemini rejection sampling
+> - **Core**: Wan2.1/Veo video generation → MegaSaM depth calibration → TAPIP3D 3D tracking (32×32 pts) → Grounded-SAM2 object masking → $\mathcal F \in \mathbb R^{T \times M \times 3}$; rigid: Kabsch+LM IK; deformable: MPC particle control; Gemini rejection sampling
 > - **Method**: Fully modular, no fine-tuning; goal image conditioning optional; N candidate rejection sampling via Gemini; ~2 min/task on H100
 > - **Results**: Outperforms AVDC/VidBot (zero-shot); competitive with Diffusion Policy (10–30 demos); block insertion 40%→80% with goal image conditioning
 > - **Code**: N/A

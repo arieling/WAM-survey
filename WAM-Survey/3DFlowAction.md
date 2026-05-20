@@ -33,7 +33,7 @@ created: 2026-05-20
 
 ## Core Contributions
 
-1. **3D Flow as Embodiment-Agnostic Action Representation**: Represents manipulation tasks as 3D point trajectory fields $\mathcal{F} \in \mathbb{R}^{T \times H \times W \times 4}$ (2D position + depth + visibility) — capturing object motion in 3D space without embodiment-specific information, enabling cross-robot transfer.
+1. **3D Flow as Embodiment-Agnostic Action Representation**: Represents manipulation tasks as 3D point trajectory fields $\mathcal F \in \mathbb R^{T \times H \times W \times 4}$ (2D position + depth + visibility) — capturing object motion in 3D space without embodiment-specific information, enabling cross-robot transfer.
 2. **ManiFlow-110k Dataset**: Large-scale 3D flow dataset synthesized from 110,000 instances across diverse sources (BridgeV2, RH20T, LIBERO, DROID, AGIBot, Robot Affordances) — enabling data-driven 3D flow world model training.
 3. **Closed-Loop Planning with GPT-4o Validation**: SVD-based transformation matrix estimation from first/last point clouds generates robot trajectories; GPT-4o validates rendered final states before execution, enabling closed-loop replanning.
 4. **Cross-Embodiment Zero-Shot Transfer**: 3D flow world model trained on mixed embodiment data generalizes to Franka (67.5%) and XTrainer (70%) without retraining — 3D flow is embodiment-agnostic.
@@ -62,7 +62,7 @@ Robot manipulation policies trained on robot-specific data fail to transfer acro
 
 3DFlowAction has **four main components**:
 
-1. **3D Flow World Model**: AnimateDiff + LoRA on SD — predicts $\mathcal{F}$ from RGB observations + task prompt
+1. **3D Flow World Model**: AnimateDiff + LoRA on SD — predicts $\mathcal F$ from RGB observations + task prompt
 2. **3D Flow Extraction Pipeline**: Grounding-SAM2 + Co-tracker3 + DepthAnythingV2 for dataset construction
 3. **Action Generation**: SVD transformation estimation + AnyGrasp pose selection + IK feasibility filtering
 4. **Closed-Loop Planning**: GPT-4o validates rendered final states before execution
@@ -77,12 +77,12 @@ Robot manipulation policies trained on robot-specific data fail to transfer acro
 - Backbone: Stable Diffusion U-Net with LoRA layers (preserves generative priors)
 - Motion module: AnimateDiff, trained from scratch (temporal self-attention across frames)
 - Conditioning: CLIP encoder processes RGB observation + task prompt; sinusoidal positional encoding for initial point features
-- Output: $\mathcal{F} \in \mathbb{R}^{T \times H \times W \times 4}$ — channels: $(u, v)$ image coordinates, depth $d$, visibility $\nu \in \{0,1\}$
+- Output: $\mathcal F \in \mathbb R^{T \times H \times W \times 4}$ — channels: $(u, v)$ image coordinates, depth $d$, visibility $\nu \in \{0,1\}$
 - Training: ManiFlow-110k dataset; AdamW (lr=1e-4, weight decay=0.01); batch 512; 500 epochs; 8×8 V100 GPUs, ~2 days
 
 The 3D flow field is formally defined as:
 
-$$\mathcal{F} \in \mathbb{R}^{T \times H \times W \times 4}$$
+$$\mathcal F \in \mathbb R^{T \times H \times W \times 4}$$
 
 Each spatial location $(h,w)$ carries 4 channels: image-plane coordinates $(u,v)$, depth $d$, and binary visibility $\nu$ — encoding where each observed point moves across all $T$ timesteps in 3D space.
 
@@ -107,8 +107,8 @@ $$f^{(t)}(k_{\text{initial}}) = \min \sum_i \|k_{\text{initial}}^i - k_{\text{pr
 This objective aligns initial keypoint positions with predicted flow timestep $t$, anchoring trajectory interpolation to the robot's actual state.
 
 **Implementation**:
-1. Transformation matrix estimation: SVD between first and last frame point clouds → rigid body transform $\mathbf{T}$
-2. Grasp pose selection: AnyGrasp generates candidates; $\mathbf{T}$ selects task-relevant pose by filtering IK-feasible candidates
+1. Transformation matrix estimation: SVD between first and last frame point clouds → rigid body transform $\mathbf T$
+2. Grasp pose selection: AnyGrasp generates candidates; $\mathbf T$ selects task-relevant pose by filtering IK-feasible candidates
 3. End-effector trajectory: interpolated along extracted 3D flow keypoints via inverse kinematics
 
 #### Module 4: Closed-Loop Planning with GPT-4o Validation
@@ -116,7 +116,7 @@ This objective aligns initial keypoint positions with predicted flow timestep $t
 **Design Motivation**: 3D flow predictions can be rendered to generate predicted final states — GPT-4o can evaluate whether the rendered final state matches the task goal, enabling replanning before execution.
 
 **Implementation**:
-- Render predicted final object state from estimated transformation $\mathbf{T}$
+- Render predicted final object state from estimated transformation $\mathbf T$
 - GPT-4o validates rendered image against task instruction
 - If validation fails: replan (regenerate flow or modify transformation)
 - Closed-loop validation prevents executing physically implausible plans
@@ -181,7 +181,7 @@ Large-scale pretraining is the most critical component (−40% without it); clos
 - **Flow World Model Backbone**: Stable Diffusion U-Net + LoRA (frozen encoder/decoder, LoRA in attention)
 - **Motion Module**: AnimateDiff (trained from scratch)
 - **Conditioning**: CLIP encoder for RGB + text; sinusoidal positional encoding for points
-- **Flow Format**: $\mathbb{R}^{T \times H \times W \times 4}$ (u, v, depth, visibility)
+- **Flow Format**: $\mathbb R^{T \times H \times W \times 4}$ (u, v, depth, visibility)
 - **Dataset Construction Tools**: Grounding-SAM2, Co-tracker3, DepthAnythingV2
 - **Optimizer**: AdamW, lr=1e-4, weight decay=0.01
 - **Batch Size**: 512
@@ -245,7 +245,7 @@ Large-scale pretraining is the most critical component (−40% without it); clos
 
 > [!summary] 3DFlowAction (arXiv 2025)
 > - **Core**: 3D flow world model (AnimateDiff+LoRA on SD, ManiFlow-110k) → SVD transform estimation + AnyGrasp pose selection + GPT-4o validation + IK → robot execution; embodiment-agnostic by design
-> - **Method**: $\mathcal{F} \in \mathbb{R}^{T \times H \times W \times 4}$; AdamW lr=1e-4, batch 512, 500 epochs, 8×8 V100 ~2 days; Grounding-SAM2 + Co-tracker3 + DepthAnythingV2 for labels
+> - **Method**: $\mathcal F \in \mathbb R^{T \times H \times W \times 4}$; AdamW lr=1e-4, batch 512, 500 epochs, 8×8 V100 ~2 days; Grounding-SAM2 + Co-tracker3 + DepthAnythingV2 for labels
 > - **Results**: 70% real-world (vs. 20–25% AVDC/Rekep/Im2Flow2Act); 67.5–70% zero-shot cross-embodiment; 55% novel objects, 50% novel backgrounds
 > - **Code**: Promised at GitHub
 

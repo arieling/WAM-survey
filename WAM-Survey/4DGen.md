@@ -91,7 +91,7 @@ Generating multi-view RGB-D videos with 3D consistency provides rich geometric i
 
 The geometric consistency of the generated views is measured by the intersection-over-union between native and reference-projected pointmaps:
 
-$$\text{mIoU} = \frac{|\mathcal{P}_{\text{native}} \cap \mathcal{P}_{\text{projected}}|}{|\mathcal{P}_{\text{native}} \cup \mathcal{P}_{\text{projected}}|}$$
+$$\text{mIoU} = \frac{|\mathcal P_{\text{native}} \cap \mathcal P_{\text{projected}}|}{|\mathcal P_{\text{native}} \cup \mathcal P_{\text{projected}}|}$$
 
 This metric quantifies how well both generated views describe the same underlying 3D scene.
 
@@ -99,9 +99,9 @@ This metric quantifies how well both generated views describe the same underlyin
 
 To enforce both visual quality and 3D geometric consistency in a single pass, the model is trained with a combined RGB + pointmap loss. The two objectives are weighted equally:
 
-$$\mathcal{L} = \mathcal{L}_{RGB} + \lambda \cdot \mathcal{L}_{PM}, \quad \lambda = 1$$
+$$\mathcal L = \mathcal L_{RGB} + \lambda \cdot \mathcal L_{PM}, \quad \lambda = 1$$
 
-$\mathcal{L}_{RGB}$ is the diffusion reconstruction loss applied to both camera views; $\mathcal{L}_{PM}$ penalizes misalignment between native and projected pointmaps. Equal weighting ($\lambda=1$) enforces geometric consistency without sacrificing visual quality.
+$\mathcal L_{RGB}$ is the diffusion reconstruction loss applied to both camera views; $\mathcal L_{PM}$ penalizes misalignment between native and projected pointmaps. Equal weighting ($\lambda=1$) enforces geometric consistency without sacrificing visual quality.
 
 **Implementation**:
 - Optimizer: AdamW, lr=1e-6
@@ -220,7 +220,7 @@ Cross-view attention is critical — removing it drops mIoU by 0.29 (41% relativ
 ## Quick Reference Card
 
 > [!summary] 4DGen (arXiv 2025)
-> - **Core**: SVD U-Net extended with cross-view cross-attention (2.4B params); joint RGB + pointmap generation for 2 views; cross-view alignment supervision ($\mathcal{L} = \mathcal{L}_{RGB} + \lambda \mathcal{L}_{PM}$, $\lambda=1$); FoundationPose 6-DoF tracking for action extraction
+> - **Core**: SVD U-Net extended with cross-view cross-attention (2.4B params); joint RGB + pointmap generation for 2 views; cross-view alignment supervision ($\mathcal L = \mathcal L_{RGB} + \lambda \mathcal L_{PM}$, $\lambda=1$); FoundationPose 6-DoF tracking for action extraction
 > - **Method**: 16-channel input (4c×2 views), 32×40 latent, 25-step EulerEDM; AdamW lr=1e-6 batch 4, ~60 epochs, 4×A6000; ~30s inference on RTX 4090
 > - **Results**: 64% avg manipulation success (vs. 12% Dreamitate, 12% Diffusion Policy, 25% DP3); mIoU 0.70 vs 0.41 without cross-attention
 > - **Code**: N/A

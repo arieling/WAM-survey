@@ -88,9 +88,9 @@ Dreamitate has **three stages**:
 
 The model is trained to reconstruct both camera views per frame. The training loss is a per-frame L2 reconstruction objective applied simultaneously to the left and right stereo streams:
 
-$$\mathcal{L} = \|\hat{v}_t^1 - v_t^1\|_2 + \|\hat{v}_t^2 - v_t^2\|_2$$
+$$\mathcal L = \|\hat v_t^1 - v_t^1\|_2 + \|\hat v_t^2 - v_t^2\|_2$$
 
-where $v_t^1$ and $v_t^2$ are the ground-truth left and right camera video frames at timestep $t$, and $\hat{v}_t^1$, $\hat{v}_t^2$ are the corresponding generated frames. This loss enforces consistency between generated and real demonstration frames across both views simultaneously.
+where $v_t^1$ and $v_t^2$ are the ground-truth left and right camera video frames at timestep $t$, and $\hat v_t^1$, $\hat v_t^2$ are the corresponding generated frames. This loss enforces consistency between generated and real demonstration frames across both views simultaneously.
 
 - Inference: 30 denoising steps, classifier-free guidance = 1.0
 - Resolution: 768×448, learning rate: 1e-5, batch size: 3–4, training steps: 15,360–17,408
@@ -104,9 +104,9 @@ where $v_t^1$ and $v_t^2$ are the ground-truth left and right camera video frame
 
 The robot action at each timestep is obtained by applying a composed transformation — MegaPose 6-DoF pose estimation followed by inverse kinematics — to the corresponding generated video frame:
 
-$$a_t = T(\hat{v}_t)$$
+$$a_t = T(\hat v_t)$$
 
-where $\hat{v}_t$ is the generated stereo video frame at timestep $t$ and $T(\cdot)$ denotes the full chain from MegaPose pose estimation to inverse kinematics. No additional robot-specific learning is required beyond this deterministic mapping.
+where $\hat v_t$ is the generated stereo video frame at timestep $t$ and $T(\cdot)$ denotes the full chain from MegaPose pose estimation to inverse kinematics. No additional robot-specific learning is required beyond this deterministic mapping.
 
 ---
 

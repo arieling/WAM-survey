@@ -91,9 +91,9 @@ The Veo-Act framework operates as follows: Veo-3 generates a task-level video tr
 - Head 2 (Gate): MLP → scalar gate $G_t \in [0, 1]$ indicating contact/interaction probability
 - The two heads are trained jointly with separate loss terms and weighting coefficients:
 
-$$\mathcal{L} = \lambda_{act} \cdot \mathcal{L}_{act}(a_t, \hat{a}_t) + \lambda_{gate} \cdot \mathcal{L}_{gate}(G_t, \hat{g}_t)$$
+$$\mathcal L = \lambda_{act} \cdot \mathcal L_{act}(a_t, \hat a_t) + \lambda_{gate} \cdot \mathcal L_{gate}(G_t, \hat g_t)$$
 
-where $a_t$ is the predicted robot action (joint angles), $\hat{a}_t$ is the ground-truth action, $G_t \in [0,1]$ is the predicted interaction gate (high = contact phase), and $\hat{g}_t$ is the ground-truth gate label.
+where $a_t$ is the predicted robot action (joint angles), $\hat a_t$ is the ground-truth action, $G_t \in [0,1]$ is the predicted interaction gate (high = contact phase), and $\hat g_t$ is the ground-truth gate label.
 
 #### Module 3: Action Smoothing
 
@@ -117,11 +117,11 @@ where $a_t$ is the predicted robot action (joint angles), $\hat{a}_t$ is the gro
 
 Two task-success metrics are used in evaluation. Instruction-following success requires the robot to reach within distance $\tau_{ins}$ of the target object:
 
-$$\text{Succ}_{ins} := \mathbb{1}\left[\min_t d_{ins}^t \leq \tau_{ins}\right] = 1$$
+$$\text{Succ}_{ins} := \mathbb 1\left[\min_t d_{ins}^t \leq \tau_{ins}\right] = 1$$
 
 Overall task success additionally requires the target object to be nearly stationary and at the goal location:
 
-$$\text{Succ}_{task} := \mathbb{1}\left[\exists t: \|v_{obj}^t\|_2 \leq \tau_{static} \wedge d_{task}^t \leq \tau_{task}\right] = 1$$
+$$\text{Succ}_{task} := \mathbb 1\left[\exists t: \|v_{obj}^t\|_2 \leq \tau_{static} \wedge d_{task}^t \leq \tau_{task}\right] = 1$$
 
 ---
 

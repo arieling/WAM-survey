@@ -88,19 +88,19 @@ This defines the noise levels at which the distilled 10-step model operates, ena
 
 **Implementation**:
 
-The discriminator is trained to distinguish ground-truth frames $x'$ from generated frames $\hat{x}'$ using a hinge loss:
+The discriminator is trained to distinguish ground-truth frames $x'$ from generated frames $\hat x'$ using a hinge loss:
 
-$$\mathcal{L}_{adv}^D = \mathbb{E}[\text{ReLU}(1 - D(x')) + \text{ReLU}(1 + D(\hat{x}'))]$$
+$$\mathcal L_{adv}^D = \mathbb E[\text{ReLU}(1 - D(x')) + \text{ReLU}(1 + D(\hat x'))]$$
 
 The generator is trained to fool the discriminator while staying close to the target reconstruction:
 
-$$\mathcal{L}_{adv}^G = \mathbb{E}[-D(\hat{x}')]$$
+$$\mathcal L_{adv}^G = \mathbb E[-D(\hat x')]$$
 
-$$\mathcal{L}_{rec} = \|\hat{x}_0 - x_0\|_2^2 \cdot \frac{(1 + \sigma_t)^2}{\sigma_t^2}$$
+$$\mathcal L_{rec} = \|\hat x_0 - x_0\|_2^2 \cdot \frac{(1 + \sigma_t)^2}{\sigma_t^2}$$
 
-The noise-schedule-dependent weighting in $\mathcal{L}_{rec}$ downweights the reconstruction term at low noise levels (where the model should already be accurate) and upweights it at high noise levels. The combined generator objective is:
+The noise-schedule-dependent weighting in $\mathcal L_{rec}$ downweights the reconstruction term at low noise levels (where the model should already be accurate) and upweights it at high noise levels. The combined generator objective is:
 
-$$\mathcal{L}_G = \lambda \cdot \mathcal{L}_{adv}^G + \mathcal{L}_{rec}, \quad \lambda = 0.1$$
+$$\mathcal L_G = \lambda \cdot \mathcal L_{adv}^G + \mathcal L_{rec}, \quad \lambda = 0.1$$
 
 This distillation achieves SSIM 0.70 at 10 steps (30 seconds) vs. 0.72 at 35 steps (86 seconds) — 3× speedup with only 0.02 SSIM degradation.
 

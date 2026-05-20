@@ -83,9 +83,9 @@ VLA-JEPA has three main components:
 - **Latent action tokens**: $K = 24/T$ learnable tokens encode action context for world model conditioning
 - The world model is trained with a latent prediction loss that minimizes the squared distance between student-predicted latent states and those produced by the frozen V-JEPA2 target encoder over T=8 future frames:
 
-$$\mathcal{L}_{WM} = \sum_{k=1}^{T} \mathbb{E}\left[\|\hat{s}_{t_k} - s_{t_k}\|^2\right]$$
+$$\mathcal L_{WM} = \sum_{k=1}^{T} \mathbb E\left[\|\hat s_{t_k} - s_{t_k}\|^2\right]$$
 
-where $\hat{s}_{t_k}$ are the student-predicted future latents and $s_{t_k}$ are the corresponding frozen V-JEPA2 target encoder outputs.
+where $\hat s_{t_k}$ are the student-predicted future latents and $s_{t_k}$ are the corresponding frozen V-JEPA2 target encoder outputs.
 
 #### Module 2: Qwen3-VL-2B VLM Backbone
 
@@ -101,14 +101,14 @@ where $\hat{s}_{t_k}$ are the student-predicted future latents and $s_{t_k}$ are
 - DiT-B architecture: 16 layers
 - The action head is trained with a flow-matching loss predicting velocity from the noisy action, conditioned on world model latents $z_a$:
 
-$$\mathcal{L}_{FM} = \mathbb{E}\left[\|v_\theta(a_t, t \mid z_a) - (a_0^H - \epsilon)\|_2^2\right]$$
+$$\mathcal L_{FM} = \mathbb E\left[\|v_\theta(a_t, t \mid z_a) - (a_0^H - \epsilon)\|_2^2\right]$$
 
 - Action dimension: 7 (delta position + delta axis-angle)
 - Denoising timesteps: 4
 
 The two objectives are combined into a single joint training loss weighted by $\beta$:
 
-$$\mathcal{L} = \mathcal{L}_{FM} + \beta \cdot \mathcal{L}_{WM}$$
+$$\mathcal L = \mathcal L_{FM} + \beta \cdot \mathcal L_{WM}$$
 
 ### Two-Stage Training
 
@@ -255,7 +255,7 @@ T=8 is optimal — sufficient horizon for manipulation dynamics without excessiv
 ## Quick Reference Card
 
 > [!summary] VLA-JEPA (arXiv 2026)
-> - **Core**: Qwen3-VL-2B + SigLIP-2; V-JEPA2 frozen target encoder + 12-layer time-causal transformer world model (T=8, latent space, leakage-free); DiT-B 16-layer flow-matching action head; $\mathcal{L} = \mathcal{L}_{FM} + \beta \cdot \mathcal{L}_{WM}$; K=24/T latent action tokens + ×32 embodied action token
+> - **Core**: Qwen3-VL-2B + SigLIP-2; V-JEPA2 frozen target encoder + 12-layer time-causal transformer world model (T=8, latent space, leakage-free); DiT-B 16-layer flow-matching action head; $\mathcal L = \mathcal L_{FM} + \beta \cdot \mathcal L_{WM}$; K=24/T latent action tokens + ×32 embodied action token
 > - **Method**: Stage1: 50K steps (SSv2 220K + DROID 76K); Stage2: 30K sim (LR 1e-5/1e-4, batch 256 32/GPU×8) + 20K real (100 demos); 4 denoising steps; 7-dim action
 > - **Results**: 97.2% LIBERO; 79.5% LIBERO-Plus (vs. 69.6% OFT); 65.2% SimplerEnv (vs. 44.9% villa-x); human videos → robustness not new skills
 > - **Code**: N/A

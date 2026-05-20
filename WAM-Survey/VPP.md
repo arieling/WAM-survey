@@ -78,7 +78,7 @@ VPP has **three main components**:
 - Language conditioning: CLIP embeddings injected via cross-attention
 - Training loss: weighted combination across dataset types, where $D_H$ is internet human manipulation (Something-Something-v2, 191,642 clips), $D_R$ is internet robot data (RT-1, Bridge, BC-Z, 155,541 trajectories), and $D_C$ is self-collected (Panda arm + dexterous hand, 4,476 trajectories):
 
-$$\mathcal{L}_{\text{video}} = \lambda_H \mathcal{L}_{D_H} + \lambda_R \mathcal{L}_{D_R} + \lambda_C \mathcal{L}_{D_C}$$
+$$\mathcal L_{\text{video}} = \lambda_H \mathcal L_{D_H} + \lambda_R \mathcal L_{D_R} + \lambda_C \mathcal L_{D_C}$$
 
 - Training: 8× A100 GPUs, 2–3 days (TVP)
 - At inference: single forward pass at fixed noise level (not full denoising) → predictive features
@@ -109,7 +109,7 @@ $$\mathcal{L}_{\text{video}} = \lambda_H \mathcal{L}_{D_H} + \lambda_R \mathcal{
 - Architecture: Diffusion Transformer with cross-attention conditioning on $Q''$
 - The diffusion transformer is trained to predict the clean action $a_0$ from the noisy action $a_k$, conditioned on language embedding $l_{\text{emb}}$ and Video Former tokens $Q''$:
 
-$$\mathcal{L}_{\text{diff}}(\psi; A) = \mathbb{E}_{a_0, \epsilon, k} \|D_\psi(a_k, l_{\text{emb}}, Q'') - a_0\|^2$$
+$$\mathcal L_{\text{diff}}(\psi; A) = \mathbb E_{a_0, \epsilon, k} \|D_\psi(a_k, l_{\text{emb}}, Q'') - a_0\|^2$$
 
 - Action chunk size: 10 steps
 - Inference: ~140ms per frame on RTX 4090 (7–10 Hz control)
@@ -246,7 +246,7 @@ SVD pretraining is by far the most critical component (−2.34 without it); inte
 
 > [!summary] VPP (ICML 2024)
 > - **Core**: SVD 1.5B (CLIP-conditioned) as vision encoder — single forward pass predictive features → Video Former (ST-attention) → diffusion transformer action head (10-step chunks); 375K trajectories (191K human + 156K robot + 5K self-collected)
-> - **Method**: $\mathcal{L}_{video} = \lambda_H \mathcal{L}_{D_H} + \lambda_R \mathcal{L}_{D_R} + \lambda_C \mathcal{L}_{D_C}$; TVP: batch 4, 8×A100; policy: batch 64–128, 4×A100; 140ms/frame RTX 4090
+> - **Method**: $\mathcal L_{video} = \lambda_H \mathcal L_{D_H} + \lambda_R \mathcal L_{D_R} + \lambda_C \mathcal L_{D_C}$; TVP: batch 4, 8×A100; policy: batch 64–128, 4×A100; 140ms/frame RTX 4090
 > - **Results**: 4.33 CALVIN avg. (vs. 3.65 RoboUniview); 68.2% MetaWorld (vs. 57.4% GR-1); SVD pretraining: +2.34 CALVIN
 > - **Code**: N/A
 

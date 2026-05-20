@@ -88,7 +88,7 @@ MWM has **two components** trained in two stages:
 
 The flow matching loss on mask latents is defined as follows. Let $z_s = (1-s)z_0 + s z_1$ be the linear interpolation between clean mask latent $z_0$ and noise $z_1$ at noise level $s$. The DiT velocity field $\nu_\theta$ is trained to predict the velocity $(z_1 - z_0)$ from the noisy interpolant:
 
-$$\mathcal{L}_{mask} = \mathbb{E}\left[w(s)\|\nu_\theta(z_s, s, c_t) - (z_1 - z_0)\|_2^2\right]$$
+$$\mathcal L_{mask} = \mathbb E\left[w(s)\|\nu_\theta(z_s, s, c_t) - (z_1 - z_0)\|_2^2\right]$$
 
 where $w(s)$ is a noise-level-dependent weighting schedule and $c_t$ is the text conditioning (with dropout probability 0.06 to enable classifier-free guidance). Noise injection with probability 0.1 is applied to input RGB frames for robustness.
 
@@ -246,7 +246,7 @@ Predictive Feature Bank (C2 vs. C1) provides +10.8%; full MWM with multi-view pr
 
 > [!summary] MWM (ICML 2026)
 > - **Core**: 28-layer DiT flow matching on semantic mask latents (3D VAE 256×256→8×8) + Predictive Feature Bank (multi-level features via cross-attention) + 28-layer action head; 2-stage training; RoboEngine mask labels
-> - **Method**: $\mathcal{L}_{mask} = \mathbb{E}[w(s)\|\nu_\theta(z_s,s,c_t)-(z_1-z_0)\|^2]$; Stage1: LR=3e-4 batch 128 30K 8×A100; Stage2: LR=5e-5 batch 128 18K; action $H_a=36$
+> - **Method**: $\mathcal L_{mask} = \mathbb E[w(s)\|\nu_\theta(z_s,s,c_t)-(z_1-z_0)\|^2]$; Stage1: LR=3e-4 batch 128 30K 8×A100; Stage2: LR=5e-5 batch 128 18K; action $H_a=36$
 > - **Results**: 98.3% LIBERO; 68.3% RLBench (vs. 30.8% GE-ACT); 67.5% real-world; 42.1% OOD (vs. 12.5% GE-ACT)
 > - **Code**: GitHub (https://github.com/LYFCLOUDFAN/mask-world-model)
 

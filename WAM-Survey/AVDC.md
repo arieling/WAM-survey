@@ -92,10 +92,10 @@ AVDC is a **3-stage pipeline** with no end-to-end training signal:
 The video diffusion model is trained to denoise noisy video sequences conditioned on text. The training objective minimizes the mean-squared error between the predicted and true noise:
 
 $$
-\mathcal{L}_{MSE} = \|\epsilon - \epsilon_\theta(\sqrt{1-\beta_t}\, img_{1:T} + \sqrt{\beta_t}\,\epsilon,\; t \mid txt)\|^2
+\mathcal L_{MSE} = \|\epsilon - \epsilon_\theta(\sqrt{1-\beta_t}\, img_{1:T} + \sqrt{\beta_t}\,\epsilon,\; t \mid txt)\|^2
 $$
 
-where $img_{1:T}$ are the clean video frames, $\epsilon \sim \mathcal{N}(0, I)$ is the added Gaussian noise, $\beta_t$ is the noise schedule scalar, $\epsilon_\theta$ is the video U-Net parameterized by $\theta$, and $txt$ is the CLIP-encoded text description.
+where $img_{1:T}$ are the clean video frames, $\epsilon \sim \mathcal N(0, I)$ is the added Gaussian noise, $\beta_t$ is the noise schedule scalar, $\epsilon_\theta$ is the video U-Net parameterized by $\theta$, and $txt$ is the CLIP-encoded text description.
 
 #### Module 2: Dense Optical Flow via GMFlow (Stage 2)
 
@@ -104,7 +104,7 @@ where $img_{1:T}$ are the clean video frames, $\epsilon \sim \mathcal{N}(0, I)$ 
 **Implementation**:
 - Apply frozen GMFlow between every consecutive pair $(I_t, I_{t+1})$ in generated video
 - GMFlow: Transformer-based global matching flow estimator
-- Output: flow field $\mathbf{F}_t = \{(u^i_t, v^i_t)\}$ for pixels $i$
+- Output: flow field $\mathbf F_t = \{(u^i_t, v^i_t)\}$ for pixels $i$
 - Flow computed on generated frames, not real observations — avoids domain gap issues
 
 #### Module 3: SE(3) Rigid Transform Estimation (Stage 3)
@@ -117,7 +117,7 @@ where $img_{1:T}$ are the clean video frames, $\epsilon \sim \mathcal{N}(0, I)$ 
 Given the lifted 3D points, the SE(3) rigid body transform $T_t$ is recovered by minimizing the reprojection error of the optical flow under the rigid transform assumption:
 
 $$
-\mathcal{L}_{Trans} = \sum_i \left\| u^i_t - \frac{(KT_t x_i)_1}{(KT_t x_i)_3} \right\|^2_2 + \left\| v^i_t - \frac{(KT_t x_i)_2}{(KT_t x_i)_3} \right\|^2_2
+\mathcal L_{Trans} = \sum_i \left\| u^i_t - \frac{(KT_t x_i)_1}{(KT_t x_i)_3} \right\|^2_2 + \left\| v^i_t - \frac{(KT_t x_i)_2}{(KT_t x_i)_3} \right\|^2_2
 $$
 
 Here $u^i_t, v^i_t$ are the optical flow displacements for pixel $i$ from GMFlow, $K$ is the camera intrinsic matrix, $T_t \in SE(3)$ is the rigid transform to recover, $x_i$ is the 3D point lifted from pixel $i$, and $(\cdot)_1, (\cdot)_2, (\cdot)_3$ denote the x, y, z components after projection. The recovered $T_t$ is directly converted to robot end-effector delta commands via known kinematics.

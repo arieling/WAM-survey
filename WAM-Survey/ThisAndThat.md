@@ -73,9 +73,9 @@ This&That uses a **two-stage video diffusion model** built on Stable Video Diffu
 **Design Motivation**: SVD lacks language conditioning; standard CLIP text embedding injection requires careful normalization.
 
 **Implementation**:
-- CLIP text encoder: $x_{text} \in \mathbb{R}^{b \times 77 \times 1024}$
-- SVD first-frame CLIP: $x_{I_0} \in \mathbb{R}^{b \times 1 \times 1024}$
-- Concatenate: $x_{concat} \in \mathbb{R}^{b \times 78 \times 1024}$
+- CLIP text encoder: $x_{text} \in \mathbb R^{b \times 77 \times 1024}$
+- SVD first-frame CLIP: $x_{I_0} \in \mathbb R^{b \times 1 \times 1024}$
+- Concatenate: $x_{concat} \in \mathbb R^{b \times 78 \times 1024}$
 - Apply LayerNorm before cross-attention integration (critical — without it, performance degrades significantly)
 - FiLM modulation: scales/shifts UNet feature maps conditioned on concatenated embeddings
 - Training: Gaussian noise injection into frames $I_{0:T}$, MSE denoising loss
@@ -100,10 +100,10 @@ where $I_0$ is the initial observation frame, $C_{text}$ is the CLIP-encoded lan
 - Input to gesture branch formed by concatenating the first-frame latent, noisy video latent, and gesture image latent channel-wise:
 
 $$
-\text{input} = [\mathcal{E}(I_0),\; \epsilon_t,\; \mathcal{E}(C_{gest})] \in \mathbb{R}^{(B \times T) \times 12 \times H \times W}
+\text{input} = [\mathcal E(I_0),\; \epsilon_t,\; \mathcal E(C_{gest})] \in \mathbb R^{(B \times T) \times 12 \times H \times W}
 $$
 
-where $\mathcal{E}(I_0)$ is the VAE latent of the first frame (4 channels), $\epsilon_t$ is the noisy video latent at denoising step $t$ (4 channels), and $\mathcal{E}(C_{gest})$ is the VAE latent of the sparse gesture image (4 channels), yielding a 12-channel dense input per frame that resolves the sparsity problem of naive gesture conditioning.
+where $\mathcal E(I_0)$ is the VAE latent of the first frame (4 channels), $\epsilon_t$ is the noisy video latent at denoising step $t$ (4 channels), and $\mathcal E(C_{gest})$ is the VAE latent of the sparse gesture image (4 channels), yielding a 12-channel dense input per frame that resolves the sparsity problem of naive gesture conditioning.
 
 - Freeze Stage 1 UNet weights; train only gesture branch
 - Zero convolution initialization for zero outputs at start of training
@@ -128,11 +128,11 @@ The following figure illustrates the full VDM architecture: Stage 1 shows the SV
 **Design Motivation**: Video-conditioned BC needs to handle temporal misalignment between generated video timing and actual execution; standard goal-image BC is brittle to frame selection.
 
 **Architecture**:
-- ResNet-18 (ImageNet pretrained, fine-tuned) processes observations and goal frames at 256×384×3 → $\mathbb{R}^{8 \times 12 \times 512}$ → flattened to $\mathbb{R}^{96 \times 512}$
+- ResNet-18 (ImageNet pretrained, fine-tuned) processes observations and goal frames at 256×384×3 → $\mathbb R^{8 \times 12 \times 512}$ → flattened to $\mathbb R^{96 \times 512}$
 - TokenLearner: 96 spatial tokens → 16 learned summary tokens per image
 - Pose encoding: MLP converts end-effector state $s_t$ to 1 token
-- Transformer encoder: 4 layers, self-attention + cross-attention to goal tokens $G \in \mathbb{R}^{N \times 16 \times 512}$
-- Transformer decoder: 7 layers with fixed 2D sinusoidal positional embeddings $\mathbb{R}^{k \times 512}$
+- Transformer encoder: 4 layers, self-attention + cross-attention to goal tokens $G \in \mathbb R^{N \times 16 \times 512}$
+- Transformer decoder: 7 layers with fixed 2D sinusoidal positional embeddings $\mathbb R^{k \times 512}$
 - Per-token MLPs: decode $k=10$ output tokens into action sequences
 - Loss: L1 (more stable than L2 for robot control)
 - Temporal noise augmentation: randomly sample goal frames from $N=25$ groups to handle temporal misalignment
@@ -203,7 +203,7 @@ Gesture conditioning is critical for out-of-distribution generalization (identic
 
 ### Implementation Details
 
-- **Base Video Model**: Stable Video Diffusion (SVD), latent space with VAE encoder $\mathcal{E}$ / decoder $\mathcal{D}$
+- **Base Video Model**: Stable Video Diffusion (SVD), latent space with VAE encoder $\mathcal E$ / decoder $\mathcal D$
 - **Language Encoder**: CLIP from Stable Diffusion 2.1 (1024-dim embeddings, 77 tokens)
 - **Stage 1 Training**: 99K iterations, batch size 1/GPU, lr=1e-5, AdamW 8-bit, 8× L40S GPUs
 - **Stage 2 Training**: 30K iterations (Bridge) / 15K (IsaacGym), lr=5e-6, 4× L40S GPUs

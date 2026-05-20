@@ -100,16 +100,16 @@ The finetuning uses the standard denoising diffusion probabilistic model (DDPM) 
 Diffusion Finetuning Loss:
 
 $$
-\mathcal{L}_{\text{diff}} = \mathbb{E}_{t, \mathbf{x}_0, \boldsymbol{\epsilon}} \left[ \left\| \boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta\!\left(\mathbf{x}_t, t, c_I, c_L\right) \right\|^2 \right]
+\mathcal L_{\text{diff}} = \mathbb E_{t, \mathbf x_0, \boldsymbol{\epsilon}} \left[ \left\| \boldsymbol{\epsilon} - \boldsymbol{\epsilon}_\theta\!\left(\mathbf x_t, t, c_I, c_L\right) \right\|^2 \right]
 $$
 
-**Meaning**: The UNet $\boldsymbol{\epsilon}_\theta$ is trained to predict the noise $\boldsymbol{\epsilon}$ added to the latent $\mathbf{x}_t$ at diffusion timestep $t$, conditioned on the input image conditioning $c_I$ (current observation encoded by VAE) and the language conditioning $c_L$ (instruction text encoded by CLIP text encoder).
+**Meaning**: The UNet $\boldsymbol{\epsilon}_\theta$ is trained to predict the noise $\boldsymbol{\epsilon}$ added to the latent $\mathbf x_t$ at diffusion timestep $t$, conditioned on the input image conditioning $c_I$ (current observation encoded by VAE) and the language conditioning $c_L$ (instruction text encoded by CLIP text encoder).
 
 **Symbols**:
-- $\mathbf{x}_t$: Noised latent of the target subgoal image at diffusion timestep $t$
+- $\mathbf x_t$: Noised latent of the target subgoal image at diffusion timestep $t$
 - $\boldsymbol{\epsilon}$: Gaussian noise added during forward process
 - $\boldsymbol{\epsilon}_\theta$: UNet noise prediction network (SD v1-5 architecture)
-- $c_I$: VAE encoding of the current observation $o_t$ (concatenated with $\mathbf{x}_t$ in channel dimension)
+- $c_I$: VAE encoding of the current observation $o_t$ (concatenated with $\mathbf x_t$ in channel dimension)
 - $c_L$: CLIP text encoding of the language instruction $l$
 
 The best-performing model checkpoint is trained for **40,000 gradient steps** on combined BridgeData + Something-Something data.
@@ -152,13 +152,13 @@ The overall system is trained in two independent stages — there is **no joint 
 Low-Level Policy Loss:
 
 $$
-\mathcal{L}_{\text{BC}} = \mathbb{E}_{(o_t, g, a_t) \sim \mathcal{D}} \left[ \left\| a_t - \pi_\phi(o_t, g) \right\|^2 \right]
+\mathcal L_{\text{BC}} = \mathbb E_{(o_t, g, a_t) \sim \mathcal D} \left[ \left\| a_t - \pi_\phi(o_t, g) \right\|^2 \right]
 $$
 
 **Meaning**: The policy $\pi_\phi$ is trained to predict demonstrated actions $a_t$ given current observation and goal image, under mean-squared-error loss. In the diffusion policy variant, this loss is applied to the denoised action prediction rather than a direct regression.
 
 **Symbols**:
-- $\mathcal{D}$: BridgeData V2 robot demonstration dataset
+- $\mathcal D$: BridgeData V2 robot demonstration dataset
 - $o_t$: Current observation image
 - $g$: Goal image sampled by delta-goal relabeling from the same trajectory
 - $a_t$: Demonstrated robot action (end-effector delta or joint velocities)

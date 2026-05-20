@@ -62,8 +62,8 @@ Video diffusion models trained on diverse, cross-embodiment data learn embodimen
 
 Vidar has **two main components**:
 
-1. **Embodied Video Foundation Model** $G: \mathcal{L} \times \mathcal{O} \to \mathbb{P}(\mathcal{V})$: Rectified flow video diffusion model; Wan2.2 (5B) for simulation, Vidu 2.0 for real-world; conditioned on unified observation space; generates 60-frame videos at 8fps
-2. **Masked Inverse Dynamics Model** $I: \mathcal{V} \to \mathcal{A}$: U-Net mask predictor (92M) + ResNet-50 action regressor; trained exclusively on fine-tuning data; converts video windows to robot joint commands
+1. **Embodied Video Foundation Model** $G: \mathcal L \times \mathcal O \to \mathbb P(\mathcal V)$: Rectified flow video diffusion model; Wan2.2 (5B) for simulation, Vidu 2.0 for real-world; conditioned on unified observation space; generates 60-frame videos at 8fps
+2. **Masked Inverse Dynamics Model** $I: \mathcal V \to \mathcal A$: U-Net mask predictor (92M) + ResNet-50 action regressor; trained exclusively on fine-tuning data; converts video windows to robot joint commands
 
 ### Core Modules
 
@@ -73,22 +73,22 @@ Vidar has **two main components**:
 
 **Implementation**: The unified observation space pairs an aggregated multi-view image tensor with a structured language description covering robot platform, camera layout, and task:
 
-$$\mathcal{U} = \{\langle \mathbf{o}, \mathbf{l} \rangle \mid \mathbf{o} = \text{aggregate}(\mathbf{I}^{(1)}, \ldots, \mathbf{I}^{(V)}),\; \mathbf{l} = \text{concatenate}(l_r, l_c, l_t)\}$$
+$$\mathcal U = \{\langle \mathbf o, \mathbf l \rangle \mid \mathbf o = \text{aggregate}(\mathbf I^{(1)}, \ldots, \mathbf I^{(V)}),\; \mathbf l = \text{concatenate}(l_r, l_c, l_t)\}$$
 
-where $\mathbf{o} = \bigoplus_{k=1}^V \phi_{r_k}(\mathbf{I}^{(k)})$ is the spatially resized and tiled aggregation of up to $V$ camera views; $l_r$ is the robot platform instruction (e.g., "The aloha robot is currently performing..."); $l_c$ is the camera configuration description; and $l_t$ is the task instruction. The video model conditions on $\mathbf{l}$ via text encoding and does not predict actions (action-free video generation).
+where $\mathbf o = \bigoplus_{k=1}^V \phi_{r_k}(\mathbf I^{(k)})$ is the spatially resized and tiled aggregation of up to $V$ camera views; $l_r$ is the robot platform instruction (e.g., "The aloha robot is currently performing..."); $l_c$ is the camera configuration description; and $l_t$ is the task instruction. The video model conditions on $\mathbf l$ via text encoding and does not predict actions (action-free video generation).
 
 #### Module 2: Rectified Flow Video Generation Model
 
 **Design Motivation**: Rectified flow models produce high-quality videos with straight-line ODE trajectories and fewer sampling steps than DDPM.
 
 **Implementation**:
-- Parameterizes velocity field $v: \mathcal{V} \times \mathbb{R} \times \mathcal{L} \to \mathcal{V}$
+- Parameterizes velocity field $v: \mathcal V \times \mathbb R \times \mathcal L \to \mathcal V$
 - ODE: $dx_t/dt = v(x_t, t, c)$ from Gaussian $x_0$ to video $x_1$
 - The rectified flow training objective trains the velocity field $v$ to predict the constant flow direction from Gaussian noise to the target video:
 
-$$\mathcal{L}_G = \mathbb{E}_{c, t, x_0, x_1}\left[\left\|(x_1 - x_0) - v(tx_1 + (1-t)x_0, t, c)\right\|^2\right]$$
+$$\mathcal L_G = \mathbb E_{c, t, x_0, x_1}\left[\left\|(x_1 - x_0) - v(tx_1 + (1-t)x_0, t, c)\right\|^2\right]$$
 
-where $x_0 \sim \mathcal{N}(0, I)$ is Gaussian noise, $x_1$ is the target video frame sequence, $t \in [0, 1]$ is flow time, and $c$ is the structured conditioning from unified observation space $\mathcal{U}$.
+where $x_0 \sim \mathcal N(0, I)$ is Gaussian noise, $x_1$ is the target video frame sequence, $t \in [0, 1]$ is flow time, and $c$ is the structured conditioning from unified observation space $\mathcal U$.
 
 - Pre-trained on internet-scale videos; continues pre-training on 750K robotic episodes; fine-tuned on target platform with SFT (full-parameter)
 - Batch size: 128; Pre-training: 10K steps; Fine-tuning: 12K steps (Wan2.2) / 13K steps (Vidu 2.0)
@@ -97,7 +97,7 @@ where $x_0 \sim \mathcal{N}(0, I)$ is Gaussian noise, $x_1$ is the target video 
 
 The overall policy factorization through video space is written as:
 
-$$\pi = I \circ G, \quad G: \mathcal{L} \times \mathcal{O} \to \mathbb{P}(\mathcal{V}), \quad I: \mathcal{V} \to \mathcal{A}$$
+$$\pi = I \circ G, \quad G: \mathcal L \times \mathcal O \to \mathbb P(\mathcal V), \quad I: \mathcal V \to \mathcal A$$
 
 This factorization separates the large pretrained video generator $G$ from the lightweight inverse dynamics model $I$, enabling few-shot adaptation to new embodiments by retraining only $I$.
 
@@ -108,10 +108,10 @@ This factorization separates the large pretrained video generator $G$ from the l
 **Implementation**:
 - Mask predictor $U$: U-Net architecture, 5 down/up-sampling layers, 92M parameters
 - Action regressor $R$: ResNet-50
-- Forward pass: $m = U(x)$, $\hat{a} = R(\text{Round}(m) \odot x)$
+- Forward pass: $m = U(x)$, $\hat a = R(\text{Round}(m) \odot x)$
 - The MIDM training loss combines a Huber action regression term with an L1 sparsity regularizer that encourages minimal, task-critical masks without segmentation supervision:
 
-$$\mathcal{L}_I = \mathbb{E}_{x, a}\left[l(\hat{a} - a) + \lambda \|m\|_1\right], \quad m = U(x), \quad \hat{a} = R(\text{Round}(m) \odot x)$$
+$$\mathcal L_I = \mathbb E_{x, a}\left[l(\hat a - a) + \lambda \|m\|_1\right], \quad m = U(x), \quad \hat a = R(\text{Round}(m) \odot x)$$
 
 where $m \in [0, 1]^{H \times W}$ is the spatial attention mask, $l(\cdot)$ is the Huber loss, $\lambda = 3 \times 10^{-3}$ is the sparsity weight, and $\odot$ is element-wise multiplication (mask application). Straight-through estimators allow training through the Round(·) operation.
 
@@ -127,7 +127,7 @@ Sample MIDM visualizations show input images from unseen backgrounds (including 
 **Implementation**:
 - Generate $K=3$ candidate videos with different random seeds in parallel
 - Rank candidates using GPT-4o: assess physical plausibility + instruction alignment from 5–7 sampled frames
-- Select $\arg\max_i q_\eta(\tilde{v}^{(i)}_{1:T})$
+- Select $\arg\max_i q_\eta(\tilde v^{(i)}_{1:T})$
 - Cost: ~$0.003 per comparison; TTS accounts for ~25% of total inference latency
 
 ---

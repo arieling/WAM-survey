@@ -27,7 +27,7 @@ created: 2026-05-20
 
 ## One-Sentence Summary
 
-> PAD is a unified DiT (up to 661M, XL/2) that jointly denoises k future RGB frames, depth maps, and robot actions in a single diffusion process — pretrained on BridgeData-v2 (60K trajectories, no action labels) and fine-tuned for manipulation, achieving 72.5% MetaWorld 50-task (+26.3% over GR-1) with image prediction contributing +29% and a joint loss $\mathcal{L} = \lambda_I \mathcal{L}_{diff}^I + \lambda_A \mathcal{L}_{diff}^A + \lambda_E \mathcal{L}_{diff}^E$.
+> PAD is a unified DiT (up to 661M, XL/2) that jointly denoises k future RGB frames, depth maps, and robot actions in a single diffusion process — pretrained on BridgeData-v2 (60K trajectories, no action labels) and fine-tuned for manipulation, achieving 72.5% MetaWorld 50-task (+26.3% over GR-1) with image prediction contributing +29% and a joint loss $\mathcal L = \lambda_I \mathcal L_{diff}^I + \lambda_A \mathcal L_{diff}^A + \lambda_E \mathcal L_{diff}^E$.
 
 ---
 
@@ -91,11 +91,11 @@ PAD uses a **Diffusion Transformer (DiT)** with configurable sizes:
 
 The unified objective for jointly denoising future RGB frames ($I$), actions ($A$), and depth ($E$) is:
 
-$$\mathcal{L}(\theta) = \lambda_I \mathcal{L}_{diff}^I + \lambda_A \mathcal{L}_{diff}^A + \lambda_E \mathcal{L}_{diff}^E$$
+$$\mathcal L(\theta) = \lambda_I \mathcal L_{diff}^I + \lambda_A \mathcal L_{diff}^A + \lambda_E \mathcal L_{diff}^E$$
 
 where each per-modality loss follows the standard DDPM noise prediction objective:
 
-$$\mathcal{L}_{diff}^\delta(\theta) = \mathbb{E}\left[\|\epsilon^\delta - \epsilon_\theta^\delta(z_t^\delta, t, C, l)\|_2^2\right]$$
+$$\mathcal L_{diff}^\delta(\theta) = \mathbb E\left[\|\epsilon^\delta - \epsilon_\theta^\delta(z_t^\delta, t, C, l)\|_2^2\right]$$
 
 Here $\epsilon^\delta$ is the noise added to modality $\delta$, $C$ is the observation conditioning, and $l$ is the language embedding. During action-free pretraining, $\lambda_A = \lambda_E = 0$ and only the image prediction loss is active. During task adaptation, $\lambda_A$ and $\lambda_E$ are linearly increased from 0.0 to 2.0 over 100K steps.
 
@@ -239,7 +239,7 @@ PAD shows monotonic improvement with compute scale — scale matters for joint d
 ## Quick Reference Card
 
 > [!summary] PAD (arXiv 2024)
-> - **Core**: DiT XL/2 (661M, 28L 1152H 16heads); joint DDPM denoising over k=3 future RGB + depth + action; $\mathcal{L} = \lambda_I \mathcal{L}_{diff}^I + \lambda_A \mathcal{L}_{diff}^A + \lambda_E \mathcal{L}_{diff}^E$; masked attention for missing modalities; frozen VAE (32×32×4) + CLIP
+> - **Core**: DiT XL/2 (661M, 28L 1152H 16heads); joint DDPM denoising over k=3 future RGB + depth + action; $\mathcal L = \lambda_I \mathcal L_{diff}^I + \lambda_A \mathcal L_{diff}^A + \lambda_E \mathcal L_{diff}^E$; masked attention for missing modalities; frozen VAE (32×32×4) + CLIP
 > - **Method**: Pretrain: 200K steps BridgeData-v2 60K (action-free); Adapt: 100K steps LR=1e-4 batch=256 4×A100; $\lambda_A,\lambda_E$ 0→2.0 linear schedule; DDIM 75 steps inference
 > - **Results**: 72.5% MetaWorld 50-task (vs. 57.4% GR-1); 78% real-world (PAD-Depth); +29% from image prediction; +28% OOD objects
 > - **Code**: N/A

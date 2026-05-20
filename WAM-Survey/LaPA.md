@@ -81,9 +81,9 @@ LAPA has a **three-stage pipeline**:
 
 The quantization objective combines frame reconstruction with codebook alignment:
 
-$$\mathcal{L}_{VQ} = \mathcal{L}_{recon} + \mathcal{L}_{codebook}$$
+$$\mathcal L_{VQ} = \mathcal L_{recon} + \mathcal L_{codebook}$$
 
-$\mathcal{L}_{recon}$ trains the VQ-VAE to reconstruct $x_{t+H}$ from $x_t$ and the quantized latent action $z_t$; $\mathcal{L}_{codebook}$ enforces codebook alignment via the NSVQ commitment and codebook losses, preventing gradient collapse and maximizing codebook utilization.
+$\mathcal L_{recon}$ trains the VQ-VAE to reconstruct $x_{t+H}$ from $x_t$ and the quantized latent action $z_t$; $\mathcal L_{codebook}$ enforces codebook alignment via the NSVQ commitment and codebook losses, preventing gradient collapse and maximizing codebook utilization.
 
 The discrete latent action token is produced by quantizing the C-ViViT encoder output from the frame pair:
 

@@ -27,7 +27,7 @@ created: 2026-05-20
 
 ## One-Sentence Summary
 
-> GR-1 is a 195M GPT-style causal transformer that jointly predicts future video frames and robot actions in a single autoregressive forward pass — pretrained on Ego4D (800K clips, 8M frames) video prediction, then fine-tuned on CALVIN with combined $\mathcal{L}_{finetune} = \mathcal{L}_{arm} + \mathcal{L}_{gripper} + \mathcal{L}_{video}$ — achieving 4.21 CALVIN avg. task length and 85.4% zero-shot unseen scene generalization (vs. 53.3% prior SOTA).
+> GR-1 is a 195M GPT-style causal transformer that jointly predicts future video frames and robot actions in a single autoregressive forward pass — pretrained on Ego4D (800K clips, 8M frames) video prediction, then fine-tuned on CALVIN with combined $\mathcal L_{finetune} = \mathcal L_{arm} + \mathcal L_{gripper} + \mathcal L_{video}$ — achieving 4.21 CALVIN avg. task length and 85.4% zero-shot unseen scene generalization (vs. 53.3% prior SOTA).
 
 ---
 
@@ -111,7 +111,7 @@ The pre-training objective is to predict a future frame given an observation con
 
 $$\pi(l, o_{t-h:t}) \to o_{t+\Delta t}$$
 
-The video U-Net is trained to reconstruct future frame $o_{t+\Delta t}$ from language instruction $l$ and observation history $o_{t-h:t}$, with MSE loss $\mathcal{L}_{video}$ applied between reconstructed and original image patches.
+The video U-Net is trained to reconstruct future frame $o_{t+\Delta t}$ from language instruction $l$ and observation history $o_{t-h:t}$, with MSE loss $\mathcal L_{video}$ applied between reconstructed and original image patches.
 
 - Hyperparameters: batch 1,024; LR 3.6e-4; AdamW + cosine decay; 5 warmup epochs; 50 total epochs
 
@@ -128,11 +128,11 @@ $$\pi(l, o_{t-h:t}, s_{t-h:t}) \to o_{t+\Delta t}, a_t$$
 
 where $s_{t-h:t}$ is the robot state history and $a_t$ is the action at the current step. The combined fine-tuning loss is:
 
-$$\mathcal{L}_{finetune} = \mathcal{L}_{arm} + \mathcal{L}_{gripper} + \mathcal{L}_{video}$$
+$$\mathcal L_{finetune} = \mathcal L_{arm} + \mathcal L_{gripper} + \mathcal L_{video}$$
 
-- $\mathcal{L}_{arm}$: Smooth-L1 for continuous arm actions
-- $\mathcal{L}_{gripper}$: Binary Cross-Entropy for gripper open/close
-- $\mathcal{L}_{video}$: MSE for future frame prediction
+- $\mathcal L_{arm}$: Smooth-L1 for continuous arm actions
+- $\mathcal L_{gripper}$: Binary Cross-Entropy for gripper open/close
+- $\mathcal L_{video}$: MSE for future frame prediction
 
 Video prediction remains a continuous auxiliary objective during robot fine-tuning, providing spatial future context that conditions action quality.
 
@@ -259,7 +259,7 @@ The choice of future prediction offset $\Delta t$ affects how informative the pr
 ## Quick Reference Card
 
 > [!summary] GR-1 (ICLR 2024)
-> - **Core**: 195M GPT-style causal transformer (12L 12H 384D, 46M trainable); joint future frame + action prediction; Ego4D (800K clips) video pre-train → CALVIN fine-tune; $\mathcal{L}_{finetune} = \mathcal{L}_{arm} + \mathcal{L}_{gripper} + \mathcal{L}_{video}$; $\Delta t=3$ future offset
+> - **Core**: 195M GPT-style causal transformer (12L 12H 384D, 46M trainable); joint future frame + action prediction; Ego4D (800K clips) video pre-train → CALVIN fine-tune; $\mathcal L_{finetune} = \mathcal L_{arm} + \mathcal L_{gripper} + \mathcal L_{video}$; $\Delta t=3$ future offset
 > - **Method**: Pre-train: batch 1024 LR 3.6e-4 50ep; Fine-tune: batch 512 LR 1e-3 20ep; 10-frame input; CLIP+ViT+MAE frozen
 > - **Results**: 4.21 CALVIN avg (vs. 2.52 HULC); 85.4% zero-shot unseen scene (vs. 53.3%); 79% real-world seen objects
 > - **Code**: N/A

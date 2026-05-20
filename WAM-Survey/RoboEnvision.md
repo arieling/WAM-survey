@@ -75,21 +75,21 @@ RoboEnvision is a **4-stage pipeline**:
 
 **Implementation**:
 - DiT architecture (spatial attention + temporal attention → 3D attention + cross-attention + feedforward)
-- Text encoder embeds $K$ instructions into $K$ embeddings $\tau^i \in \mathbb{R}^{B \times 1 \times N_\tau \times D_\tau}$
+- Text encoder embeds $K$ instructions into $K$ embeddings $\tau^i \in \mathbb R^{B \times 1 \times N_\tau \times D_\tau}$
 
-The keyframe diffusion model is trained with a standard DDPM noise prediction objective. At training time, keyframe latent $z \in \mathbb{R}^{B \times K \times C \times H_z \times W_z}$ is noised via:
+The keyframe diffusion model is trained with a standard DDPM noise prediction objective. At training time, keyframe latent $z \in \mathbb R^{B \times K \times C \times H_z \times W_z}$ is noised via:
 
-$$z_t = \sqrt{\alpha_t} z + \sqrt{1 - \alpha_t} \epsilon, \quad \epsilon \sim \mathcal{N}(0, \mathbf{I})$$
+$$z_t = \sqrt{\alpha_t} z + \sqrt{1 - \alpha_t} \epsilon, \quad \epsilon \sim \mathcal N(0, \mathbf I)$$
 
 and the denoiser is trained to predict the added noise given all $K$ instruction embeddings:
 
-$$\min_\theta \mathbb{E}_{t, (z, \tau) \sim p_{data}, \epsilon \sim \mathcal{N}(0, \mathbf{I})} \left\| \epsilon - \epsilon_\theta\!\left(z_t, t, \bigoplus_{i=1}^{K} \tau^i\right) \right\|^2_2$$
+$$\min_\theta \mathbb E_{t, (z, \tau) \sim p_{data}, \epsilon \sim \mathcal N(0, \mathbf I)} \left\| \epsilon - \epsilon_\theta\!\left(z_t, t, \bigoplus_{i=1}^{K} \tau^i\right) \right\|^2_2$$
 
 where $\bigoplus_{i=1}^{K} \tau^i$ denotes concatenation of all $K$ instruction embeddings.
 
-To prevent semantic blurring — where features from one keyframe attend to the wrong instruction — a diagonal block cross-attention mask $\mathcal{M} \in \mathbb{R}^{B \times (KH_z W_z) \times (KN_\tau)}$ (0 on diagonal blocks, $-\infty$ off-diagonal) ensures each keyframe attends only to its paired instruction:
+To prevent semantic blurring — where features from one keyframe attend to the wrong instruction — a diagonal block cross-attention mask $\mathcal M \in \mathbb R^{B \times (KH_z W_z) \times (KN_\tau)}$ (0 on diagonal blocks, $-\infty$ off-diagonal) ensures each keyframe attends only to its paired instruction:
 
-$$\mathcal{A} = \text{softmax}(QK^T + \mathcal{M})V$$
+$$\mathcal A = \text{softmax}(QK^T + \mathcal M)V$$
 
 Here $Q$ contains keyframe DiT feature queries and $K, V$ contain the instruction embedding keys and values.
 

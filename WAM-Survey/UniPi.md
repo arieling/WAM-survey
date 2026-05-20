@@ -74,12 +74,12 @@ UniPi adopts a **cascaded video diffusion** architecture with two decoupled comp
 
 #### Module 1: Unified Predictive Decision Process (UPDP)
 
-**Design Motivation**: Replaces the MDP with a formulation that uses images $\mathcal{X}$ and text $\mathcal{C}$ as universal interfaces, avoiding per-environment reward functions.
+**Design Motivation**: Replaces the MDP with a formulation that uses images $\mathcal X$ and text $\mathcal C$ as universal interfaces, avoiding per-environment reward functions.
 
 **Formal Definition**:
-- UPDP tuple: $\mathcal{G} = \langle \mathcal{X}, \mathcal{C}, H, \rho \rangle$
-- Planner: $\rho(\cdot | x_0, c) : \mathcal{X} \times \mathcal{C} \to \Delta(\mathcal{X}^H)$ — conditional distribution over $H$-step image sequences
-- Policy: $\pi(\cdot | \{x_h\}_{h=0}^H, c) : \mathcal{X}^{H+1} \times \mathcal{C} \to \Delta(\mathcal{A}^H)$ — maps synthesized trajectory to actions
+- UPDP tuple: $\mathcal G = \langle \mathcal X, \mathcal C, H, \rho \rangle$
+- Planner: $\rho(\cdot | x_0, c) : \mathcal X \times \mathcal C \to \Delta(\mathcal X^H)$ — conditional distribution over $H$-step image sequences
+- Policy: $\pi(\cdot | \{x_h\}_{h=0}^H, c) : \mathcal X^{H+1} \times \mathcal C \to \Delta(\mathcal A^H)$ — maps synthesized trajectory to actions
 
 #### Module 2: Trajectory Consistency via Tiling
 
@@ -116,20 +116,20 @@ UniPi adopts a **cascaded video diffusion** architecture with two decoupled comp
 ### Formula 1: Continuous-Time Forward Process
 
 $$
-q_k(\tau_k | \tau) = \mathcal{N}(\cdot; \alpha_k \tau, \sigma_k^2 I), \quad k \in [0, 1]
+q_k(\tau_k | \tau) = \mathcal N(\cdot; \alpha_k \tau, \sigma_k^2 I), \quad k \in [0, 1]
 $$
 
 **Meaning**: Forward noising process that gradually corrupts image trajectory $\tau$ to Gaussian noise.
 
 **Symbol Explanation**:
-- $\tau = [x_1, \ldots, x_H] \in \mathcal{X}^H$: image trajectory (sequence of $H$ frames)
+- $\tau = [x_1, \ldots, x_H] \in \mathcal X^H$: image trajectory (sequence of $H$ frames)
 - $\alpha_k, \sigma_k^2$: predefined noise schedule scalars (log SNR range $[-20, 20]$)
 - $k \in [0, 1]$: continuous diffusion time
 
 ### Formula 2: Classifier-Free Guidance Sampling
 
 $$
-\hat{s}(\tau_k, k | c, x_0) = (1 + \omega) s(\tau_k, k | c, x_0) - \omega s(\tau_k, k)
+\hat s(\tau_k, k | c, x_0) = (1 + \omega) s(\tau_k, k | c, x_0) - \omega s(\tau_k, k)
 $$
 
 **Meaning**: Combines conditional and unconditional denoiser predictions to amplify the effect of text and first-frame conditioning during sampling.
@@ -142,7 +142,7 @@ $$
 ### Formula 3: Trajectory-Task Conditioned Policy
 
 $$
-\pi(\cdot | \{x_h\}_{h=0}^H, c) : \mathcal{X}^{H+1} \times \mathcal{C} \to \Delta(\mathcal{A}^H)
+\pi(\cdot | \{x_h\}_{h=0}^H, c) : \mathcal X^{H+1} \times \mathcal C \to \Delta(\mathcal A^H)
 $$
 
 **Meaning**: Given the synthesized image trajectory and text goal, the inverse dynamics model infers the corresponding action sequence to execute.
@@ -150,7 +150,7 @@ $$
 **Symbol Explanation**:
 - $\{x_h\}_{h=0}^H$: synthesized $H$-step image trajectory from planner
 - $c$: text task description
-- $\mathcal{A}^H$: space of $H$-step action sequences (7-DOF joint controls)
+- $\mathcal A^H$: space of $H$-step action sequences (7-DOF joint controls)
 
 ---
 

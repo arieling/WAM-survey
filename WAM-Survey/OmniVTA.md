@@ -35,7 +35,7 @@ created: 2026-05-20
 
 1. **OmniViTac Dataset**: 21,879 trajectories across 86 tasks, 126 objects, 6 interaction patterns (assembly, cutting, adjustment, peeling, wiping, grasping), 4 tactile sensor types — largest multi-modal visuo-tactile robot dataset.
 2. **TactileVAE**: Causal 3D-conv VAE with Implicit Neural Representation (INR) decoder modeling continuous deformation field $d(x) = D_\theta(\gamma(x), \Phi(z_t, x))$ — substantially outperforms PCA and PointNet-AE on reconstruction.
-3. **Two-Stream VTWM**: Parallel visual (SD-VAE) + tactile (TactileVAE) diffusion transformer with dynamic-aware weighted loss ($\mathcal{L}_{VTWM} = \mathcal{L}_{diff} + \lambda_1 \mathcal{L}_{dyn} + \lambda_2 \mathcal{L}_{amp}$) — predicts future visual and tactile jointly.
+3. **Two-Stream VTWM**: Parallel visual (SD-VAE) + tactile (TactileVAE) diffusion transformer with dynamic-aware weighted loss ($\mathcal L_{VTWM} = \mathcal L_{diff} + \lambda_1 \mathcal L_{dyn} + \lambda_2 \mathcal L_{amp}$) — predicts future visual and tactile jointly.
 4. **Hierarchical Slow-Fast Control**: Slow Policy (action chunks from VTWM predictions) + Fast Policy (60Hz RLTC corrective actions from real-time tactile feedback) — RLTC adds +21% on Wipe task.
 
 ---
@@ -84,7 +84,7 @@ $$d(x) = D_\theta(\gamma(x), \Phi(z_t, x))$$
 
 This formulation enables the decoder to generalize to arbitrary spatial coordinates rather than being tied to a fixed grid resolution.
 
-- Loss: $\mathcal{L}_{TacVAE} = \|d(x) - \hat{d}(x)\|_2^2 + \lambda_{KL} \cdot \mathcal{L}_{KL}$, $\lambda_{KL} = 10^{-6}$
+- Loss: $\mathcal L_{TacVAE} = \|d(x) - \hat d(x)\|_2^2 + \lambda_{KL} \cdot \mathcal L_{KL}$, $\lambda_{KL} = 10^{-6}$
 - Training: 50 epochs, 8× A100
 
 #### Module 2: Visuo-Tactile World Model (VTWM)
@@ -99,11 +99,11 @@ This formulation enables the decoder to generalize to arbitrary spatial coordina
 
 The VTWM is trained with a dynamic-aware weighted loss that emphasizes temporally changing and high-amplitude tactile signals. Let $w_{dyn}^i$ weight tokens by temporal difference and $w_{amp}^i$ weight tokens by signal amplitude; $m_i$ is a validity mask:
 
-$$\mathcal{L}_{dyn} = \mathbb{E}\left[\sum w_{dyn}^i \odot (1-m_i) \odot \|\epsilon_i - \epsilon_\theta(z_{o,t})_i\|_2^2\right]$$
+$$\mathcal L_{dyn} = \mathbb E\left[\sum w_{dyn}^i \odot (1-m_i) \odot \|\epsilon_i - \epsilon_\theta(z_{o,t})_i\|_2^2\right]$$
 
-$$\mathcal{L}_{amp} = \mathbb{E}\left[\sum w_{amp}^i \odot (1-m_i) \odot \|\epsilon_i - \epsilon_\theta(z_{o,t})\|_2^2\right]$$
+$$\mathcal L_{amp} = \mathbb E\left[\sum w_{amp}^i \odot (1-m_i) \odot \|\epsilon_i - \epsilon_\theta(z_{o,t})\|_2^2\right]$$
 
-$$\mathcal{L}_{VTWM} = \mathcal{L}_{diff} + \lambda_1 \mathcal{L}_{dyn} + \lambda_2 \mathcal{L}_{amp}, \quad \lambda_1=\lambda_2=1.0$$
+$$\mathcal L_{VTWM} = \mathcal L_{diff} + \lambda_1 \mathcal L_{dyn} + \lambda_2 \mathcal L_{amp}, \quad \lambda_1=\lambda_2=1.0$$
 
 The dynamic-aware terms ensure that the world model focuses its capacity on predicting regions where tactile signals change rapidly and where contact forces are strong — the most informative parts for control.
 
@@ -123,16 +123,16 @@ where $f_t^c$ is the current tactile feature, $f_t^p$ is the predicted future ta
 
 **Adaptive Fusion**:
 - Contact probability $p_{contact}$ from gating network → normalized weights $W_t + W_v = 1$
-- Fused representation: $f_{vt} = \text{concat}(W_v \odot f_v, W_t \odot \tilde{f}_t)$
+- Fused representation: $f_{vt} = \text{concat}(W_v \odot f_v, W_t \odot \tilde f_t)$
 
 **Action Chunk Generation**:
 
 The AFP generates action chunks using diffusion policy with FiLM modulation. The denoising update follows:
 
-$$A_{c,t-1} = \alpha_t A_{c,t} - \gamma_k \epsilon_\theta(A_{c,t}, t, f_c) + \sigma_t \mathcal{N}(0,I)$$
+$$A_{c,t-1} = \alpha_t A_{c,t} - \gamma_k \epsilon_\theta(A_{c,t}, t, f_c) + \sigma_t \mathcal N(0,I)$$
 
 - 6 actions per chunk, interpolated to 60Hz
-- Training: 250K steps, $\mathcal{L}_{AFP} = \mathcal{L}_{act} + \lambda_{ct} \mathcal{L}_{bce}$, $\lambda_{ct}=0.2$
+- Training: 250K steps, $\mathcal L_{AFP} = \mathcal L_{act} + \lambda_{ct} \mathcal L_{bce}$, $\lambda_{ct}=0.2$
 
 #### Module 4: Reflexive Latent Tactile Controller (RLTC)
 
@@ -143,7 +143,7 @@ $$A_{c,t-1} = \alpha_t A_{c,t} - \gamma_k \epsilon_\theta(A_{c,t}, t, f_c) + \si
 - Input: single-frame tactile repeated M times for temporal consistency
 - Output: corrective actions in TCP coordinate frame
 - Training: supervised on recovery segments from abnormal tactile states
-- Loss: $\mathcal{L}_{RLTC} = \|a_r - \hat{a}_r\|_2^2$
+- Loss: $\mathcal L_{RLTC} = \|a_r - \hat a_r\|_2^2$
 - Final actions: weighted sum of AFP chunks + RLTC corrections
 
 ---

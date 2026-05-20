@@ -83,7 +83,7 @@ Dream2Flow is a **three-stage pipeline**:
 
 The core 3D flow extraction operation lifts 2D tracked points into metric 3D space using calibrated depth:
 
-$$\mathcal{F} = \text{Lift}(\text{Track}(V_{\text{gen}}), D_{\text{calib}})$$
+$$\mathcal F = \text{Lift}(\text{Track}(V_{\text{gen}}), D_{\text{calib}})$$
 
 where $V_{\text{gen}}$ is the generated video, $D_{\text{calib}}$ is the metric depth anchored to the initial RGB-D observation, $\text{Track}$ performs 2D point tracking across frames, and $\text{Lift}$ projects 2D tracked coordinates into 3D using the calibrated depth.
 

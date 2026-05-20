@@ -82,7 +82,7 @@ UWM uses a **shared diffusion transformer** with:
 
 The joint training objective is a weighted sum of denoising losses for action and observation, with independently sampled timesteps:
 
-$$\ell(\theta) = \mathbb{E}\left[w_a \|\epsilon_\theta^a - \epsilon_a\|_2^2 + w_{o'} \|\epsilon_\theta^{o'} - \epsilon_{o'}\|_2^2\right]$$
+$$\ell(\theta) = \mathbb E\left[w_a \|\epsilon_\theta^a - \epsilon_a\|_2^2 + w_{o'} \|\epsilon_\theta^{o'} - \epsilon_{o'}\|_2^2\right]$$
 
 where $t_a, t_{o'} \sim U(0,T)$ independently, and $w_a$, $w_{o'}$ are weights that balance the two objectives.
 

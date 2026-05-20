@@ -75,17 +75,17 @@ ARDuP has **three learned components**:
 
 **Implementation**:
 - Co-Tracker: dense point tracking on video frames with grid size $M=60$
-- Point movement per timestep: $\Delta \mathbf{p}_h = \|\mathbf{p}_h - \mathbf{p}_{h-1}\|_2$
+- Point movement per timestep: $\Delta \mathbf p_h = \|\mathbf p_h - \mathbf p_{h-1}\|_2$
 
 Active points are selected using their average per-step movement across the sequence. A point is deemed "active" (task-relevant) when its average displacement exceeds a pixel threshold:
 
-$$\Delta \bar{\mathbf{p}} = \frac{1}{H}\sum_{h=1}^{H} \|\mathbf{p}_h - \mathbf{p}_{h-1}\|_2 > \tau, \quad \tau = 2$$
+$$\Delta \bar{\mathbf p} = \frac{1}{H}\sum_{h=1}^{H} \|\mathbf p_h - \mathbf p_{h-1}\|_2 > \tau, \quad \tau = 2$$
 
-Points satisfying this condition are then passed to SAM to obtain coherent region masks $\mathbf{M}$.
+Points satisfying this condition are then passed to SAM to obtain coherent region masks $\mathbf M$.
 
 The resulting active region frame composites the original initial frame $x_0$ within the detected mask against a white background $x_b$, producing a clean spatial conditioning signal:
 
-$$o = x_0 \circ \mathbf{M} + x_b \circ (1 - \mathbf{M})$$
+$$o = x_0 \circ \mathbf M + x_b \circ (1 - \mathbf M)$$
 
 This representation shows only task-relevant objects while suppressing irrelevant background regions.
 
@@ -97,7 +97,7 @@ This representation shows only task-relevant objects while suppressing irrelevan
 - Backbone: modified UNet (Stable Diffusion based)
 - Text conditioning: T5-XXL text encoder
 - Input: initial frame latent + task text embedding
-- Output: active region frame latent $\hat{o}$ (masked image showing task-relevant regions on white background)
+- Output: active region frame latent $\hat o$ (masked image showing task-relevant regions on white background)
 
 #### Module 3: Video Planner $\phi$
 

@@ -34,7 +34,7 @@ created: 2026-05-20
 ## Core Contributions
 
 1. **Continuous Action Transformer Module**: Adds a continuous action head with parallel decoding and bidirectional attention to the Chameleon-based WorldVLA discrete framework — continuous actions (L1 regression) substantially outperform discrete bins in real-world deployment while maintaining comparable simulation accuracy.
-2. **Dual-Loss Joint Training**: Combined loss $\mathcal{L} = \mathcal{L}_{dis} + \alpha \cdot \mathcal{L}_{conti}$ ($\alpha=10$) trains discrete VLA + world model (cross-entropy) alongside continuous action head (L1) — enables both training objectives jointly.
+2. **Dual-Loss Joint Training**: Combined loss $\mathcal L = \mathcal L_{dis} + \alpha \cdot \mathcal L_{conti}$ ($\alpha=10$) trains discrete VLA + world model (cross-entropy) alongside continuous action head (L1) — enables both training objectives jointly.
 3. **World Model Real-World Boost**: World model training increases real-world success from <30% to >80% — demonstrates that world model provides critical generalization capability for sim-to-real transfer.
 4. **Fast Inference**: Continuous action head with parallel decoding achieves 7.75–48.20 Hz (vs. 2.74–3.69 Hz for discrete+chunking) — practical for real-time robot control.
 
@@ -98,9 +98,9 @@ The masking scheme ensures that each action chunk is predicted independently fro
 
 The combined training loss jointly optimizes the discrete world model prediction (cross-entropy on image and action tokens) and the continuous action regression (L1):
 
-$$\mathcal{L} = \mathcal{L}_{dis} + \alpha \cdot \mathcal{L}_{conti}, \quad \alpha = 10$$
+$$\mathcal L = \mathcal L_{dis} + \alpha \cdot \mathcal L_{conti}, \quad \alpha = 10$$
 
-where $\mathcal{L}_{dis} = \mathcal{L}_{dis\_action} + \mathcal{L}_{img}$ is the cross-entropy loss on discrete action tokens and future image tokens (the world model objective), and $\mathcal{L}_{conti}$ is the L1 regression loss on continuous action values. The weight $\alpha=10$ gives substantially higher priority to continuous action quality than the world model loss weighting used in WorldVLA ($\alpha=0.04$ for the world model loss there).
+where $\mathcal L_{dis} = \mathcal L_{dis\_action} + \mathcal L_{img}$ is the cross-entropy loss on discrete action tokens and future image tokens (the world model objective), and $\mathcal L_{conti}$ is the L1 regression loss on continuous action values. The weight $\alpha=10$ gives substantially higher priority to continuous action quality than the world model loss weighting used in WorldVLA ($\alpha=0.04$ for the world model loss there).
 
 **Dataset**:
 - LIBERO (4 suites: Spatial, Object, Goal, Long)
@@ -128,7 +128,7 @@ where $\mathcal{L}_{dis} = \mathcal{L}_{dis\_action} + \mathcal{L}_{img}$ is the
 - **Historical Frames**: M=2
 - **Action Chunk**: K=5 (short tasks), K=10 (long tasks)
 - **World Model**: N=1 future frame per chunk
-- **Loss Weight**: $\alpha=10$ for continuous; $\mathcal{L}_{dis} = \mathcal{L}_{dis\_action} + \mathcal{L}_{img}$
+- **Loss Weight**: $\alpha=10$ for continuous; $\mathcal L_{dis} = \mathcal L_{dis\_action} + \mathcal L_{img}$
 - **Robot**: LeRobot SO100 (real-world); LIBERO sim (Franka)
 - **Data Preprocessing**: Remove failed trajectories; filter no-op actions
 
@@ -227,7 +227,7 @@ Continuous parallel decoding achieves up to 48 Hz — suitable for real-time con
 ## Quick Reference Card
 
 > [!summary] RynnVLA-002 (arXiv 2025)
-> - **Core**: Chameleon backbone; VQ-GAN (ratio 16, codebook 8192) + BPE + 256-bin discrete + continuous head (parallel decode, bidirectional attn, L1); action masking; $\mathcal{L} = \mathcal{L}_{dis} + 10 \cdot \mathcal{L}_{conti}$; M=2 frames, K=5–10 chunk, N=1 world model
+> - **Core**: Chameleon backbone; VQ-GAN (ratio 16, codebook 8192) + BPE + 256-bin discrete + continuous head (parallel decode, bidirectional attn, L1); action masking; $\mathcal L = \mathcal L_{dis} + 10 \cdot \mathcal L_{conti}$; M=2 frames, K=5–10 chunk, N=1 world model
 > - **Method**: LIBERO + LeRobot SO100 (248+249 demos); filter failed/no-op; dual discrete+continuous training
 > - **Results**: 97.4% LIBERO continuous (93.3% discrete); real-world <30%→>80% with world model; 48.20 Hz continuous inference
 > - **Code**: N/A

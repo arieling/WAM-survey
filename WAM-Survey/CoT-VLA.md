@@ -33,7 +33,7 @@ created: 2026-05-20
 
 ## Core Contributions
 
-1. **Visual Chain-of-Thought Reasoning**: Two-stage prediction: (1) generate intermediate future visual state $\hat{s}_{t+n}$ as visual subgoal, (2) generate action sequence conditioned on current observation + predicted subgoal — making reasoning explicit and interpretable.
+1. **Visual Chain-of-Thought Reasoning**: Two-stage prediction: (1) generate intermediate future visual state $\hat s_{t+n}$ as visual subgoal, (2) generate action sequence conditioned on current observation + predicted subgoal — making reasoning explicit and interpretable.
 2. **VILA-U Unified Backbone**: Uses VILA-U (7B), a unified multimodal model supporting both image/video understanding and generation — single model handles visual CoT prediction and action prediction.
 3. **Hybrid Attention Mechanism**: Causal attention for image/text generation (visual CoT); full attention for action prediction — different attention patterns for different prediction types.
 4. **Residual Quantization Image Encoding**: 256×256 → 16×16×4 tokens with depth-4 residual quantization — compact yet expressive visual subgoal representation.
@@ -65,15 +65,15 @@ CoT-VLA uses **VILA-U (7B)** with two prediction stages:
 
 The model first generates a predicted future state (visual subgoal) conditioned on the current observation and language instruction. Residual quantization encodes this subgoal as 16×16×4 discrete tokens (depth-4), and causal attention ensures the image tokens are generated autoregressively:
 
-$$\hat{s}_{t+n} \sim P_\theta(s_{t+n} \mid s_t, l)$$
+$$\hat s_{t+n} \sim P_\theta(s_{t+n} \mid s_t, l)$$
 
-where $s_t$ is the current observation and $l$ is the language instruction. The predicted future state $\hat{s}_{t+n}$ is $n$ steps ahead.
+where $s_t$ is the current observation and $l$ is the language instruction. The predicted future state $\hat s_{t+n}$ is $n$ steps ahead.
 
 **Stage 2 — Action Generation**:
 
 With the visual subgoal available, the action chunk is generated conditioned on the current observation, language, and the predicted future state. Full attention (rather than causal) is used for action tokens to allow all tokens to interact:
 
-$$\{\hat{a}_t, \ldots, \hat{a}_{t+m}\} \sim P_\theta(\{a_t, \ldots, a_{t+m}\} \mid s_t, l, \hat{s}_{t+n})$$
+$$\{\hat a_t, \ldots, \hat a_{t+m}\} \sim P_\theta(\{a_t, \ldots, a_{t+m}\} \mid s_t, l, \hat s_{t+n})$$
 
 Action discretization uses 256 bins × 7 dimensions. The visual CoT provides explicit spatial planning context that conditions which actions to take.
 
@@ -198,7 +198,7 @@ The ablation below isolates the contribution of hybrid attention and the full vi
 ## Quick Reference Card
 
 > [!summary] CoT-VLA (arXiv 2025)
-> - **Core**: VILA-U 7B; Visual CoT: generate future subgoal $\hat{s}_{t+n}$ (causal attn, 16×16×4 residual quant) → action chunk (full attn, 256-bin 7-dim); joint visual token + action CE loss
+> - **Core**: VILA-U 7B; Visual CoT: generate future subgoal $\hat s_{t+n}$ (causal attn, 16×16×4 residual quant) → action chunk (full attn, 256-bin 7-dim); joint visual token + action CE loss
 > - **Method**: Pre-train: LR=1e-4 batch 2048 10ep 12×8×A100 11K GPU-hrs; Fine-tune: LR=1e-5 150ep; OpenX + EPIC-K + SSv2 pre-training
 > - **Results**: 81.13% LIBERO avg (vs. 76.5% OpenVLA); 87.6% goal tasks; 60% motion gen (vs. 45%); 46.7% relative gain from pre-training
 > - **Code**: N/A

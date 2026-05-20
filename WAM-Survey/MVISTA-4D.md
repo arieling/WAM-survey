@@ -89,7 +89,7 @@ MVISTA-4D has **four main components**:
 
 Camera pose is embedded using a spherical coordinate system with Fourier features. Given angles $(\psi, \theta, \phi)$ and radial distance $\rho$, the spherical camera embedding is computed as:
 
-$$\text{CamEmb}(\psi, \theta, \phi, \rho) = \text{FourierFeatures}(\psi, \theta, \phi, \log\rho, K=2) \in \mathbb{R}^{13}$$
+$$\text{CamEmb}(\psi, \theta, \phi, \rho) = \text{FourierFeatures}(\psi, \theta, \phi, \log\rho, K=2) \in \mathbb R^{13}$$
 
 This 13-dimensional representation is injected into the cross-view attention module to make the model aware of each camera's viewpoint. For each query in view $i$, $K$ candidate positions are sampled along the epipolar line in each of the $V-1$ other views, and MLP-predicted offsets refine the sampling locations (deformable). Aggregated attention across sparse epipolar candidates enables efficient cross-view feature fusion.
 
@@ -101,7 +101,7 @@ This 13-dimensional representation is injected into the cross-view attention mod
 - TCN-VAE compresses action sequences into compact trajectory latent codes
 - Training follows a standard ELBO with $\beta$-weighted KL divergence:
 
-$$\mathcal{L}_{VAE} = \mathbb{E}[\log p(a \mid z)] - \beta \cdot \text{KL}(q(z \mid a) \| p(z))$$
+$$\mathcal L_{VAE} = \mathbb E[\log p(a \mid z)] - \beta \cdot \text{KL}(q(z \mid a) \| p(z))$$
 
 where $z$ is the learned trajectory latent and $a$ is the action sequence. This $\beta$-VAE objective ensures the latent is both informative (reconstruction term) and regularized (KL term).
 
@@ -114,13 +114,13 @@ where $z$ is the learned trajectory latent and $a$ is the action sequence. This 
 
 **Stage 1 — Latent Optimization**:
 
-The core optimization finds the trajectory latent $z^*$ whose corresponding world model output best matches the target future video $\bar{V}$:
+The core optimization finds the trajectory latent $z^*$ whose corresponding world model output best matches the target future video $\bar V$:
 
-$$z^* = \arg\min_z \; \mathcal{D}(G(\mathbf{l}, z), \bar{V}) + \lambda \|z\|_2^2$$
+$$z^* = \arg\min_z \; \mathcal D(G(\mathbf l, z), \bar V) + \lambda \|z\|_2^2$$
 
-- $G$: frozen world model generator conditioned on observation $\mathbf{l}$ and trajectory latent $z$
-- $\bar{V}$: target future RGBD video
-- $\mathcal{D}$: feature-level reconstruction distance
+- $G$: frozen world model generator conditioned on observation $\mathbf l$ and trajectory latent $z$
+- $\bar V$: target future RGBD video
+- $\mathcal D$: feature-level reconstruction distance
 - $\lambda$: regularization weight; L2 regularization prevents trivial solutions
 - Optimization runs for 100 backpropagation steps through the frozen generator.
 

@@ -181,7 +181,7 @@ LDA-1B uses a flow-matching objective over both action and visual modalities. Th
 Action Flow Matching Loss:
 
 $$
-l_{\mathrm{action}}^\theta = \mathbb{E}_{\substack{(o_{t:t+k}, a_{t+1:t+k}, \ell) \sim \mathcal{D} \\ \tau_a \sim \mathcal{U}(0, T_\tau) \\ \epsilon_a \sim \mathcal{N}(\mathbf{0}, \mathbf{I})}} \|v_a^\theta - (\epsilon_a - a_{t+1:t+k})\|_2^2
+l_{\mathrm{action}}^\theta = \mathbb E_{\substack{(o_{t:t+k}, a_{t+1:t+k}, \ell) \sim \mathcal D \\ \tau_a \sim \mathcal U(0, T_\tau) \\ \epsilon_a \sim \mathcal N(\mathbf 0, \mathbf I)}} \|v_a^\theta - (\epsilon_a - a_{t+1:t+k})\|_2^2
 $$
 
 **Meaning**: Minimizes the L2 error between the predicted action velocity field $v_a^\theta$ and the ground-truth flow direction $(\epsilon_a - a_{t+1:t+k})$. Only active for data samples with valid action supervision (high-quality data for policy; any trajectory for inverse dynamics).
@@ -195,7 +195,7 @@ $$
 Observation Flow Matching Loss:
 
 $$
-l_{\mathrm{obs}}^\theta = \mathbb{E}_{\substack{(o_{t:t+k}, a_{t+1:t+k}, \ell) \sim \mathcal{D} \\ \tau_o \sim \mathcal{U}(0, T_\tau) \\ \epsilon_o \sim \mathcal{N}(\mathbf{0}, \mathbf{I})}} \|v_o^\theta - (\epsilon_o - o_{t+1:t+k})\|_2^2
+l_{\mathrm{obs}}^\theta = \mathbb E_{\substack{(o_{t:t+k}, a_{t+1:t+k}, \ell) \sim \mathcal D \\ \tau_o \sim \mathcal U(0, T_\tau) \\ \epsilon_o \sim \mathcal N(\mathbf 0, \mathbf I)}} \|v_o^\theta - (\epsilon_o - o_{t+1:t+k})\|_2^2
 $$
 
 **Meaning**: Minimizes the L2 error between the predicted visual velocity field and the ground-truth flow direction in DINO feature space. Active for forward dynamics, inverse dynamics, and visual forecasting objectives.

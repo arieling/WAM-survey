@@ -79,7 +79,7 @@ VideoPolicy has **two U-Net components**:
 - Resolution: 256×256 (simulation), 448×320 (real-world)
 - The video U-Net is trained with the following denoising loss — predicting noise $\epsilon$ from noisy latent $z_i$ given CLIP text embedding $\phi(c)$ and initial frame $z_{i,0}$:
 
-$$\mathcal{L}_{\text{video}} = \mathbb{E}_{z_0, \epsilon, i}\left[\|\epsilon - \mu_\theta(z_i, i, \phi(c), z_{i,0})\|^2\right]$$
+$$\mathcal L_{\text{video}} = \mathbb E_{z_0, \epsilon, i}\left[\|\epsilon - \mu_\theta(z_i, i, \phi(c), z_{i,0})\|^2\right]$$
 
 - Training: lr=1e-5, batch 32, 8×A100, ~2 weeks (RoboCasa: 368,866 steps)
 
@@ -103,7 +103,7 @@ $$\mathcal{L}_{\text{video}} = \mathbb{E}_{z_0, \epsilon, i}\left[\|\epsilon - \
 - Output: clean action sequence $\{a_t\}$
 - The action denoising objective predicts noise from the noisy action $a_i$ conditioned on the frozen video decoder features $h_i$:
 
-$$\mathcal{L}_{\text{action}} = \mathbb{E}_{a_0, \epsilon, i}\left[\|\epsilon - \alpha_\theta(a_i, i, h_i)\|^2\right]$$
+$$\mathcal L_{\text{action}} = \mathbb E_{a_0, \epsilon, i}\left[\|\epsilon - \alpha_\theta(a_i, i, h_i)\|^2\right]$$
 
 where gradient does not propagate to $\mu_\theta$.
 
@@ -248,7 +248,7 @@ Longer video prediction horizons consistently improve success rate, especially u
 ## Quick Reference Card
 
 > [!summary] VideoPolicy (arXiv 2025)
-> - **Core**: SVD fine-tuned as video policy (Stage 1: $\mathcal{L}_{video}$, lr=1e-5); 5 decoder layers → CNN adapters → $h_i$; 1D action U-Net ($\mathcal{L}_{action}$, stop-gradient, lr=5e-5) conditioned on $h_i$; decoupled 2-stage
+> - **Core**: SVD fine-tuned as video policy (Stage 1: $\mathcal L_{video}$, lr=1e-5); 5 decoder layers → CNN adapters → $h_i$; 1D action U-Net ($\mathcal L_{action}$, stop-gradient, lr=5e-5) conditioned on $h_i$; decoupled 2-stage
 > - **Method**: 25 frames (8/cam×3cams+pad), 256×256→448×320; batch 32; 8×A100 ~2 weeks; 30-step inference (9s); RoboCasa 368K steps
 > - **Results**: 94% LIBERO-10 (vs. 85% π₀, 54% OpenVLA); 63% RoboCasa (50 demos); 60%+ unseen tasks (action-free pre-train)
 > - **Code**: N/A

@@ -87,14 +87,14 @@ FLARE uses a **Diffusion Transformer (DiT) policy with future latent alignment**
 
 **Motivation**: A policy that can predict how the scene will look after executing its planned actions must internally represent the causal consequences of those actions. By adding $M$ learnable future tokens to the DiT input and penalizing their intermediate-layer projections for diverging from actual future observation embeddings, FLARE creates a training signal that forces the shared self-attention mechanism to encode future-relevant information into all tokens, including the action-prediction tokens. The critical design choice is to use *future* embeddings (not current-frame embeddings as in REPA) — this is what makes the loss a world-model objective rather than a representation-regularization objective.
 
-**Design**: The DiT input sequence is augmented with $M = 32$ learnable future token embeddings appended to the state and action tokens. All tokens attend to each other via self-attention and receive vision-language context via cross-attention. At internal layer $L = 6$ (out of typically 16 or more total layers), the hidden states corresponding to the $M$ future tokens are extracted and passed through a lightweight MLP $f_\theta: \mathbb{R}^{B \times M \times D_{\text{DiT}}} \to \mathbb{R}^{B \times M \times D_{\text{embed}}}$. These projected features are compared to the output of the frozen future embedding model $g(\phi_{t+H}) \in \mathbb{R}^{B \times M \times D_{\text{embed}}}$, where $\phi_{t+H}$ is the vision-language embedding of the observation $H$ steps ahead. The alignment is computed as cosine similarity, negated to form a minimization objective.
+**Design**: The DiT input sequence is augmented with $M = 32$ learnable future token embeddings appended to the state and action tokens. All tokens attend to each other via self-attention and receive vision-language context via cross-attention. At internal layer $L = 6$ (out of typically 16 or more total layers), the hidden states corresponding to the $M$ future tokens are extracted and passed through a lightweight MLP $f_\theta: \mathbb R^{B \times M \times D_{\text{DiT}}} \to \mathbb R^{B \times M \times D_{\text{embed}}}$. These projected features are compared to the output of the frozen future embedding model $g(\phi_{t+H}) \in \mathbb R^{B \times M \times D_{\text{embed}}}$, where $\phi_{t+H}$ is the vision-language embedding of the observation $H$ steps ahead. The alignment is computed as cosine similarity, negated to form a minimization objective.
 
 **Layer selection rationale**: Using too early a layer (e.g., layer 4) hurts performance because the representations have not yet integrated cross-attention context. Using too deep a layer forces the same neurons to serve both action prediction and future prediction, causing conflicts. Layer 6 is empirically optimal, providing a good trade-off between information richness and separation from the action output head.
 
 Alignment Loss:
 
 $$
-\mathcal{L}_{\text{align}}(\theta) = -\mathbb{E}_\tau\left[\cos\!\left(f_\theta(\phi_t, A_t^\tau, q_t),\; g(\phi_{t+H})\right)\right]
+\mathcal L_{\text{align}}(\theta) = -\mathbb E_\tau\left[\cos\!\left(f_\theta(\phi_t, A_t^\tau, q_t),\; g(\phi_{t+H})\right)\right]
 $$
 
 **Meaning**: Minimizing this loss (making cosine similarity approach 1) forces the MLP projection of future token activations to match the direction of the future observation embedding. The expectation over $\tau$ means this alignment is required to hold regardless of the noise level in the denoising trajectory, preventing the world-model signal from only being informative at specific noise scales.
@@ -159,7 +159,7 @@ FLARE training combines two objectives. The primary objective is the flow-matchi
 Action Flow-Matching Loss:
 
 $$
-\mathcal{L}_{\text{fm}}(\theta) = \mathbb{E}_\tau\left[\left\|V_\theta(\phi_t, A_t^\tau, q_t) - (\epsilon - A_t)\right\|^2\right]
+\mathcal L_{\text{fm}}(\theta) = \mathbb E_\tau\left[\left\|V_\theta(\phi_t, A_t^\tau, q_t) - (\epsilon - A_t)\right\|^2\right]
 $$
 
 **Meaning**: The DiT velocity head $V_\theta$ is trained to predict the residual $(\epsilon - A_t)$ at each noise level $\tau$, so that integrating along the flow trajectory recovers the clean action chunk $A_t$.
@@ -167,7 +167,7 @@ $$
 **Symbols**:
 - $V_\theta$: DiT velocity prediction head
 - $A_t^\tau = \tau A_t + (1-\rho)\epsilon$: noised action at timestep $\tau$
-- $\epsilon \sim \mathcal{N}(0, I)$: sampled noise
+- $\epsilon \sim \mathcal N(0, I)$: sampled noise
 - $\tau \in [0,1]$: flow-matching timestep, sampled from $p(\tau) = \text{Beta}\!\left(\frac{s-\tau}{s}; 1.5, 1\right)$ with $s=0.999$
 
 The combined training loss is:
@@ -175,7 +175,7 @@ The combined training loss is:
 Combined Objective:
 
 $$
-\mathcal{L} = \mathcal{L}_{\text{fm}} + \lambda\,\mathcal{L}_{\text{align}}
+\mathcal L = \mathcal L_{\text{fm}} + \lambda\,\mathcal L_{\text{align}}
 $$
 
 **Meaning**: The alignment coefficient $\lambda = 0.2$ balances the world-model signal against the action prediction objective. Ablations show that the model is robust across $\lambda \in [0.2, 1.0]$, but $\lambda = 0.2$ is empirically optimal.
@@ -183,13 +183,13 @@ $$
 **Symbols**:
 - $\lambda$: alignment loss weight; optimal $\lambda = 0.2$
 
-**Human video co-training**: For action-free human egocentric videos, only $\mathcal{L}_{\text{align}}$ is applied (no action labels are required). Robot demonstrations receive both $\mathcal{L}_{\text{fm}}$ and $\mathcal{L}_{\text{align}}$.
+**Human video co-training**: For action-free human egocentric videos, only $\mathcal L_{\text{align}}$ is applied (no action labels are required). Robot demonstrations receive both $\mathcal L_{\text{fm}}$ and $\mathcal L_{\text{align}}$.
 
 ---
 
 ### Inference
 
-At inference time, action generation proceeds by iterative denoising over $K=4$ steps starting from pure noise $A_t^0 \sim \mathcal{N}(0, I)$:
+At inference time, action generation proceeds by iterative denoising over $K=4$ steps starting from pure noise $A_t^0 \sim \mathcal N(0, I)$:
 
 Euler Integration Step:
 
@@ -380,6 +380,6 @@ The real robot qualitative analysis reveals a mechanistically interesting behavi
 
 > [!summary] FLARE (2025)
 > - **Core**: Implicit world modeling by aligning diffusion transformer hidden states with future observation latent embeddings via cosine similarity loss
-> - **Method**: $M=32$ future tokens added to DiT input; aligned at layer 6 to action-aware Q-Former embeddings; combined loss $\mathcal{L} = \mathcal{L}_{\text{fm}} + 0.2\,\mathcal{L}_{\text{align}}$; enables action-free human video co-training
+> - **Method**: $M=32$ future tokens added to DiT input; aligned at layer 6 to action-aware Q-Former embeddings; combined loss $\mathcal L = \mathcal L_{\text{fm}} + 0.2\,\mathcal L_{\text{align}}$; enables action-free human video co-training
 > - **Results**: 70.1% on RoboCasa (+8.2% over Policy Only), 55.0% on GR-1 simulation (+11.0%), 95.1% on real GR-1 humanoid (+14%); novel object generalization ~80% with human egocentric co-training
 > - **Code**: N/A

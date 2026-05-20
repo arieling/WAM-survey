@@ -65,7 +65,7 @@ WorldVLA uses **Chameleon** (mixed-modal early-fusion transformer) as a unified 
 2. **Text Tokenizer**: BPE, vocabulary 65,536 — language instructions tokenized
 3. **Action Tokens**: 7 discrete tokens per timestep, 256 bins each (3 position dims, 3 rotation dims, 1 gripper)
 4. **Unified Sequence**: Interleaved [text, image, action, future_image] tokens processed autoregressively
-5. **Joint Loss**: $\mathcal{L} = \mathcal{L}_{action} + \alpha \cdot \mathcal{L}_{world}$, $\alpha=0.04$
+5. **Joint Loss**: $\mathcal L = \mathcal L_{action} + \alpha \cdot \mathcal L_{world}$, $\alpha=0.04$
 
 ### Core Modules
 
@@ -96,11 +96,11 @@ Formally, action tokens at step $t$ are masked from attending to action tokens a
 
 **Training**:
 - Joint training on LIBERO dataset (90%/10% train/val split)
-- $\mathcal{L}_{action}$: cross-entropy over 7 discrete action token bins
-- $\mathcal{L}_{world}$: cross-entropy over VQ-GAN image token prediction
+- $\mathcal L_{action}$: cross-entropy over 7 discrete action token bins
+- $\mathcal L_{world}$: cross-entropy over VQ-GAN image token prediction
 - The two objectives are combined as a weighted joint training loss with $\alpha=0.04$ weighting the world model as an auxiliary objective:
 
-$$\mathcal{L} = \mathcal{L}_{action} + \alpha \cdot \mathcal{L}_{world}, \quad \alpha = 0.04$$
+$$\mathcal L = \mathcal L_{action} + \alpha \cdot \mathcal L_{world}, \quad \alpha = 0.04$$
 
 **Inference**:
 - Predict K-step action chunk → execute → predict next frame → repeat
@@ -221,7 +221,7 @@ Action-conditioned world model achieves slightly better FVD (250.0 vs. 255.1) �
 ## Quick Reference Card
 
 > [!summary] WorldVLA (arXiv 2025)
-> - **Core**: Chameleon mixed-modal early-fusion; VQ-GAN (ratio 16, codebook 8192) image tokens + BPE text + 7-dim 256-bin action tokens; action attention masking (no prior action→current action attention); $\mathcal{L} = \mathcal{L}_{action} + 0.04 \cdot \mathcal{L}_{world}$; M=2 obs, K=5–10 action chunk, N=1 world model frame
+> - **Core**: Chameleon mixed-modal early-fusion; VQ-GAN (ratio 16, codebook 8192) image tokens + BPE text + 7-dim 256-bin action tokens; action attention masking (no prior action→current action attention); $\mathcal L = \mathcal L_{action} + 0.04 \cdot \mathcal L_{world}$; M=2 obs, K=5–10 action chunk, N=1 world model frame
 > - **Method**: LIBERO 90%/10% split; 512×512; mutual enhancement: world model improves action +19%, action improves world model FVD ~10%
 > - **Results**: 81.8% LIBERO avg (vs. 62.8% w/o world model); FVD 250.0 action-conditioned
 > - **Code**: GitHub (https://github.com/alibaba-damo-academy/WorldVLA)

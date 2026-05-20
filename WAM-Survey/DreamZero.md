@@ -95,10 +95,10 @@ DreamZero uses an **autoregressive Diffusion Transformer with joint video-action
 The high-level design decomposes the joint policy as:
 
 $$
-\underbrace{\pi_{\theta}(\mathbf{o}_{l:l+H}, \mathbf{a}_{l:l+H} \mid \mathbf{o}_{0:l}, \mathbf{c}, \mathbf{q}_{l})}_{\text{DreamZero}} = \underbrace{\pi_{\theta}(\mathbf{o}_{l:l+H} \mid \mathbf{o}_{0:l}, \mathbf{c}, \mathbf{q}_{l})}_{\text{video prediction}} \cdot \underbrace{\pi_{\theta}(\mathbf{a}_{l:l+H} \mid \mathbf{o}_{0:l+H}, \mathbf{q}_{l})}_{\text{IDM}}
+\underbrace{\pi_{\theta}(\mathbf o_{l:l+H}, \mathbf a_{l:l+H} \mid \mathbf o_{0:l}, \mathbf c, \mathbf q_{l})}_{\text{DreamZero}} = \underbrace{\pi_{\theta}(\mathbf o_{l:l+H} \mid \mathbf o_{0:l}, \mathbf c, \mathbf q_{l})}_{\text{video prediction}} \cdot \underbrace{\pi_{\theta}(\mathbf a_{l:l+H} \mid \mathbf o_{0:l+H}, \mathbf q_{l})}_{\text{IDM}}
 $$
 
-where $\mathbf{o}_{l:l+H}$ are future video frames, $\mathbf{a}_{l:l+H}$ are future actions, $\mathbf{c}$ is the language instruction, $\mathbf{q}_{l}$ is proprioceptive state, $\mathbf{o}_{0:l}$ is the visual observation history, and $H$ is the prediction horizon.
+where $\mathbf o_{l:l+H}$ are future video frames, $\mathbf a_{l:l+H}$ are future actions, $\mathbf c$ is the language instruction, $\mathbf q_{l}$ is proprioceptive state, $\mathbf o_{0:l}$ is the visual observation history, and $H$ is the prediction horizon.
 
 **Crucially, DreamZero trains a single end-to-end model rather than two separate models.** The video prediction and IDM components are jointly optimized via shared denoising timesteps, forcing deep integration between the two modalities. The predicted video serves as an implicit visual planner — the IDM head reads the denoised visual future and extracts the motor commands that produced it.
 
@@ -122,7 +122,7 @@ where $\mathbf{o}_{l:l+H}$ are future video frames, $\mathbf{a}_{l:l+H}$ are fut
 
 ### Attention Masking Strategy
 
-**Training phase**: The current noisy chunk (video latents $\mathbf{z}_{t_k}^k$ and action latents $\mathbf{a}_{t_k}^k$) attends via causal cross-attention to all clean previous chunks $\mathcal{C}_k = \{(\mathbf{z}_1^j, \mathbf{a}_1^j)\}_{j=1}^{k-1}$. Language instruction tokens attend to all positions. This is a teacher-forcing setup: the model sees clean context and must denoise the current noisy target.
+**Training phase**: The current noisy chunk (video latents $\mathbf z_{t_k}^k$ and action latents $\mathbf a_{t_k}^k$) attends via causal cross-attention to all clean previous chunks $\mathcal C_k = \{(\mathbf z_1^j, \mathbf a_1^j)\}_{j=1}^{k-1}$. Language instruction tokens attend to all positions. This is a teacher-forcing setup: the model sees clean context and must denoise the current noisy target.
 
 **Inference phase**: KV-cache of the initial conditioning frames is computed once and concatenated for all subsequent predictions. After each action chunk executes, the KV cache is updated with ground-truth encoded observations.
 
@@ -133,27 +133,27 @@ where $\mathbf{o}_{l:l+H}$ are future video frames, $\mathbf{a}_{l:l+H}$ are fut
 
 **Approach**: Flow matching with a linear interpolation noise schedule (not DDPM-style denoising).
 
-**Noise interpolation**: For each chunk $k$ with timestep $t_k \sim \mathcal{U}(0, 1)$:
+**Noise interpolation**: For each chunk $k$ with timestep $t_k \sim \mathcal U(0, 1)$:
 
 $$
-\mathbf{z}_{t_k}^k = t_k \mathbf{z}_1^k + (1 - t_k) \mathbf{z}_0^k, \qquad \mathbf{a}_{t_k}^k = t_k \mathbf{a}_1^k + (1 - t_k) \mathbf{a}_0^k
+\mathbf z_{t_k}^k = t_k \mathbf z_1^k + (1 - t_k) \mathbf z_0^k, \qquad \mathbf a_{t_k}^k = t_k \mathbf a_1^k + (1 - t_k) \mathbf a_0^k
 $$
 
-where $\mathbf{z}_0^k \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ is Gaussian noise, $\mathbf{z}_1^k$ is the clean video latent, $\mathbf{a}_0^k \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$ is action noise, and $\mathbf{a}_1^k$ is the clean normalized action. All frames within a chunk share the same timestep $t_k$; different chunks have independent timesteps.
+where $\mathbf z_0^k \sim \mathcal N(\mathbf 0, \mathbf I)$ is Gaussian noise, $\mathbf z_1^k$ is the clean video latent, $\mathbf a_0^k \sim \mathcal N(\mathbf 0, \mathbf I)$ is action noise, and $\mathbf a_1^k$ is the clean normalized action. All frames within a chunk share the same timestep $t_k$; different chunks have independent timesteps.
 
 **Key design choice**: Video and action share the same denoising timestep $t_k^{\text{video}} = t_k^{\text{action}} = t_k$. This coupled schedule accelerates training convergence compared to approaches that use separate schedules, forcing the model to develop integrated representations.
 
 **Flow-matching loss**:
 
 $$
-\mathcal{L}(\theta) = \mathbb{E}_{\mathbf{z}, \mathbf{a}, \{t_k\}} \left[ \frac{1}{K} \sum_{k=1}^{K} w(t_k) \left\lVert \mathbf{u}_{\theta}\!\left([\mathbf{z}_{t_k}^k, \mathbf{a}_{t_k}^k]; \mathcal{C}_k, \mathbf{c}, \mathbf{q}_k, t_k\right) - \mathbf{v}^k \right\rVert^2 \right]
+\mathcal L(\theta) = \mathbb E_{\mathbf z, \mathbf a, \{t_k\}} \left[ \frac{1}{K} \sum_{k=1}^{K} w(t_k) \left\lVert \mathbf u_{\theta}\!\left([\mathbf z_{t_k}^k, \mathbf a_{t_k}^k]; \mathcal C_k, \mathbf c, \mathbf q_k, t_k\right) - \mathbf v^k \right\rVert^2 \right]
 $$
 
 where:
 - $w(t_k) > 0$ is a predefined weighting function
-- $\mathbf{u}_{\theta}$ is the joint video-action DiT that predicts the velocity field
-- $\mathbf{v}^k \coloneqq [\mathbf{z}_1^k, \mathbf{a}_1^k] - [\mathbf{z}_0^k, \mathbf{a}_0^k]$ is the velocity target (clean minus noise)
-- $\mathcal{C}_k = \{(\mathbf{z}_1^j, \mathbf{a}_1^j)\}_{j=1}^{k-1}$ is the clean context (teacher-forcing)
+- $\mathbf u_{\theta}$ is the joint video-action DiT that predicts the velocity field
+- $\mathbf v^k \coloneqq [\mathbf z_1^k, \mathbf a_1^k] - [\mathbf z_0^k, \mathbf a_0^k]$ is the velocity target (clean minus noise)
+- $\mathcal C_k = \{(\mathbf z_1^j, \mathbf a_1^j)\}_{j=1}^{k-1}$ is the clean context (teacher-forcing)
 
 ### Trainable vs. Frozen Components
 
@@ -177,20 +177,20 @@ where:
 
 **Solution**: Decouple the noise schedules for video and action during training.
 
-*Standard DreamZero*: $t_k^{\text{video}} = t_k^{\text{action}} = t_k$, where $t_k \sim \mathcal{U}(0, 1)$
+*Standard DreamZero*: $t_k^{\text{video}} = t_k^{\text{action}} = t_k$, where $t_k \sim \mathcal U(0, 1)$
 
 *DreamZero-Flash*: 
 
 $$
-t_k^{\text{video}} = 1 - \eta, \quad \eta \sim \text{Beta}(\alpha, \beta), \qquad t_k^{\text{action}} \sim \mathcal{U}(0, 1)
+t_k^{\text{video}} = 1 - \eta, \quad \eta \sim \text{Beta}(\alpha, \beta), \qquad t_k^{\text{action}} \sim \mathcal U(0, 1)
 $$
 
-with $\alpha > \beta$ (specifically $\alpha = 7, \beta = 1$). The expected video timestep is $\mathbb{E}[t_k^{\text{video}}] = 1 - \mathbb{E}[\eta] = 1 - \frac{\alpha}{\alpha + \beta} = 1 - \frac{7}{8} = 0.125$.
+with $\alpha > \beta$ (specifically $\alpha = 7, \beta = 1$). The expected video timestep is $\mathbb E[t_k^{\text{video}}] = 1 - \mathbb E[\eta] = 1 - \frac{\alpha}{\alpha + \beta} = 1 - \frac{7}{8} = 0.125$.
 
 **Effect**: Video timesteps are biased toward high-noise states (near pure noise), while action timesteps remain uniformly distributed. This trains the model explicitly to predict clean actions even when the visual context is heavily corrupted — precisely the regime encountered during single-step inference.
 
 ![Figure 5: Decoupled Noise Schedules](https://arxiv.org/html/2602.15922v1/x5.png)
-*DreamZero (blue) uses coupled noise for video and action (both uniform $\mathcal{U}(0,1)$). DreamZero-Flash (red) biases video toward high-noise states via $\text{Beta}(7,1)$ while keeping action noise uniform — closing the train-test gap for single-step inference.*
+*DreamZero (blue) uses coupled noise for video and action (both uniform $\mathcal U(0,1)$). DreamZero-Flash (red) biases video toward high-noise states via $\text{Beta}(7,1)$ while keeping action noise uniform — closing the train-test gap for single-step inference.*
 
 **Result**: DreamZero-Flash at 1 denoising step achieves 74% task progress vs. 83% for standard DreamZero at 4 steps — recovering ~89% of 4-step performance at 2.33× the speed.
 
@@ -203,13 +203,13 @@ with $\alpha > \beta$ (specifically $\alpha = 7, \beta = 1$). The expected video
 **Asynchronous redesign**: The motion controller continuously executes the most recently computed action chunk while inference runs concurrently on the latest observation. The latency constraint shifts from "inference must complete before motion starts" to "inference must complete before the current chunk expires." This converts a hard real-time constraint into a softer throughput requirement.
 
 **Full closed-loop algorithm**:
-1. **Prefill** ($t=0$): Encode initial image to video latent $\mathbf{z}_{\text{init}}$; initialize KV cache with clean conditioning frames.
-2. **Autoregressive loop**: Sample Gaussian noise $\mathbf{x}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$; for each denoising step $i$ from 0 to $N-1$:
+1. **Prefill** ($t=0$): Encode initial image to video latent $\mathbf z_{\text{init}}$; initialize KV cache with clean conditioning frames.
+2. **Autoregressive loop**: Sample Gaussian noise $\mathbf x_0 \sim \mathcal N(\mathbf 0, \mathbf I)$; for each denoising step $i$ from 0 to $N-1$:
    - Check DiT cache: if cosine similarity between successive velocity predictions exceeds threshold $\epsilon$, reuse cached velocities (DiT Caching).
-   - Otherwise run full velocity prediction: $\mathbf{v}_i \leftarrow \mathbf{u}_{\theta}(\mathbf{x}_{t_i}; \mathcal{C}, \mathbf{c}, \mathbf{q}, t_i)$
-   - Solver step: $\mathbf{x}_{t_{i+1}} \leftarrow \mathbf{x}_{t_i} + \text{Step}(\mathbf{v}_i, t_i, t_{i+1})$
-3. **Action extraction**: $\hat{\mathbf{a}} \leftarrow \text{SavitzkyGolayFilter}(\mathbf{x}_1^{\text{action}})$; execute asynchronously on robot.
-4. **Cache update (critical)**: Receive ground-truth observation $\mathbf{o}_{\text{real}}$; encode to $\mathbf{z}_{\text{real}} \leftarrow \text{VAE}(\mathbf{o}_{\text{real}})$; replace predicted video latents in KV cache with $\mathbf{z}_{\text{real}}$.
+   - Otherwise run full velocity prediction: $\mathbf v_i \leftarrow \mathbf u_{\theta}(\mathbf x_{t_i}; \mathcal C, \mathbf c, \mathbf q, t_i)$
+   - Solver step: $\mathbf x_{t_{i+1}} \leftarrow \mathbf x_{t_i} + \text{Step}(\mathbf v_i, t_i, t_{i+1})$
+3. **Action extraction**: $\hat{\mathbf a} \leftarrow \text{SavitzkyGolayFilter}(\mathbf x_1^{\text{action}})$; execute asynchronously on robot.
+4. **Cache update (critical)**: Receive ground-truth observation $\mathbf o_{\text{real}}$; encode to $\mathbf z_{\text{real}} \leftarrow \text{VAE}(\mathbf o_{\text{real}})$; replace predicted video latents in KV cache with $\mathbf z_{\text{real}}$.
 
 The KV cache replacement with ground-truth observations prevents compounding hallucination errors — predicted frames that were slightly wrong are never propagated into future predictions.
 

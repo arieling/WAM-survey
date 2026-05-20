@@ -94,13 +94,13 @@ where $f_t$ denotes the N keypoint 2D positions tracked in the current frame, $x
 **Design Motivation**: Complete task flow is generated offline (before execution), but the policy executes step-by-step. A temporal alignment module predicts "remaining flow" from the current state, synchronizing offline flow plan with online execution.
 
 **Implementation**:
-- Transformer encoder: predicts remaining task flow $\hat{z}_t$ in latent space from current state $s_t$ and full task flow latent $z$
+- Transformer encoder: predicts remaining task flow $\hat z_t$ in latent space from current state $s_t$ and full task flow latent $z$
 
 The temporal alignment is trained with an L2 loss in latent space that uses a stop-gradient on the prediction to prevent trivial collapse:
 
-$$\mathcal{L}_{align} = \|\hat{z}_t^{\text{detach}} - z_t\|^2$$
+$$\mathcal L_{align} = \|\hat z_t^{\text{detach}} - z_t\|^2$$
 
-where $\hat{z}_t$ is the temporal alignment module's predicted remaining flow and $z_t$ is the ground-truth remaining flow latent at the current execution timestep. At inference, the predicted $\hat{z}_t$ conditions the diffusion policy at each step.
+where $\hat z_t$ is the temporal alignment module's predicted remaining flow and $z_t$ is the ground-truth remaining flow latent at the current execution timestep. At inference, the predicted $\hat z_t$ conditions the diffusion policy at each step.
 
 #### Module 4: Diffusion-Based Action Policy
 
@@ -227,7 +227,7 @@ Object-centric flow provides +30% over grid flow on cross-embodiment tasks.
 
 > [!summary] Im2Flow2Act (arXiv 2024)
 > - **Core**: Object-centric keypoint flow (SD+AnimateDiff, N keypoints on target object) as cross-domain interface; temporal alignment transformer predicts remaining flow; diffusion policy generates 6-DOF actions — trained entirely in MuJoCo simulation
-> - **Method**: SD U-Net (frozen encoder + LoRA decoder) + AnimateDiff motion modules; Grounding DINO detection; temporal alignment loss $\|\hat{z}_t^{\text{detach}} - z_t\|^2$; 4,800 sim trajectories; Bézier-curve exploration
+> - **Method**: SD U-Net (frozen encoder + LoRA decoder) + AnimateDiff motion modules; Grounding DINO detection; temporal alignment loss $\|\hat z_t^{\text{detach}} - z_t\|^2$; 4,800 sim trajectories; Bézier-curve exploration
 > - **Results**: 81% avg real-world success; 90–100% sim; +40% over ATM (language-cond); +30% over grid flow; no robot training data
 > - **Code**: N/A
 

@@ -80,7 +80,7 @@ VideoVLA uses **CogVideoX-5B** as a unified joint diffusion model:
 - Output: 13 future frame latents (simulation) or 4 latents (real-world); 6 action steps (first 3 executed)
 - Both video latents and action tokens are concatenated into a unified token sequence and denoised with the standard DDPM loss:
 
-$$\mathcal{L}(\theta) = \mathbb{E}\left[\|\epsilon - \epsilon_\theta(z_t, t, c)\|^2\right]$$
+$$\mathcal L(\theta) = \mathbb E\left[\|\epsilon - \epsilon_\theta(z_t, t, c)\|^2\right]$$
 
 where $z_t$ concatenates noisy video latents and action tokens and $c$ is the T5 language conditioning.
 

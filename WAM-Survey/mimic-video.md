@@ -108,7 +108,7 @@ where $v_0$ is the initial observation and $h^{\tau_v}$ encodes intermediate vid
 - Two-layer MLPs with AdaLN (Adaptive LayerNorm) modulation for timestep injection
 - The decoder is trained by minimizing the distance from the ground-truth conditional flow vector field:
 
-$$\mathcal{L} = \mathbb{E}\left[\|v_\theta(a^\tau, \tau, h^{\tau_v}) - (a^0 - \epsilon)\|^2\right]$$
+$$\mathcal L = \mathbb E\left[\|v_\theta(a^\tau, \tau, h^{\tau_v}) - (a^0 - \epsilon)\|^2\right]$$
 
 where $a^\tau$ is the noisy action at flow-time $\tau$, $a^0$ is the clean target action, and $\epsilon$ is noise. The decoder learns to predict the velocity $(a^0 - \epsilon)$ conditioned on the video latent $h^{\tau_v}$.
 

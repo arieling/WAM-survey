@@ -84,11 +84,11 @@ VILP has **two main components**:
 - Input: noisy latent video of H frames per camera view
 - The unconditional latent video diffusion training objective is the standard DDPM denoising score matching in latent space:
 
-$$\mathcal{L}(\theta) = \mathbb{E}\left[(\epsilon^k - \epsilon_\theta(z_t^k, k))^2\right]$$
+$$\mathcal L(\theta) = \mathbb E\left[(\epsilon^k - \epsilon_\theta(z_t^k, k))^2\right]$$
 
 where the model predicts noise $\epsilon^k$ from noisy latent $z_t^k$ at diffusion step $k$. When conditioned on the current observation $o_t$ via cross-attention, this becomes:
 
-$$\mathcal{L}(\theta) = \mathbb{E}\left[(\epsilon^k - \epsilon_\theta(o_t, z_t^k, k))^2\right]$$
+$$\mathcal L(\theta) = \mathbb E\left[(\epsilon^k - \epsilon_\theta(o_t, z_t^k, k))^2\right]$$
 
 - Inference: DDIM with 4, 8, or 16 steps (VILP-4, VILP-8, VILP-16)
 - Video frames per generation: 5–8 frames

@@ -86,7 +86,7 @@ S-VAM has **four main components** after one SVD forward pass:
 **Implementation**:
 - Architecture: Spatio-temporal transformer
 - Teacher targets $Y_{\text{geo}}$: DPAv3 (Dynamic Perspective-Aware v3) representations extracted from multi-step generated videos (not ground-truth future frames)
-- Training loss: $\mathcal{L}_{\text{geo}} = \|\tilde{F}_{\text{geo}}^K - Y_{\text{geo}}\|_2^2$
+- Training loss: $\mathcal L_{\text{geo}} = \|\tilde F_{\text{geo}}^K - Y_{\text{geo}}\|_2^2$
 - Stage 2 training: 50K steps on single H100
 
 The key insight is that using the diffusion model's own multi-step generations as teacher targets (rather than ground-truth future frames) preserves alignment with the diffusion trajectory, which ablation confirms is critical (using GT targets hurts by −0.34 avg. task length on CALVIN).
@@ -98,12 +98,12 @@ The key insight is that using the diffusion model's own multi-step generations a
 **Implementation**:
 - Architecture: Spatio-temporal transformer
 - Teacher targets $Y_{\text{sem}}$: DINOv2 patch-level features extracted from multi-step generated videos
-- Training loss: $\mathcal{L}_{\text{sem}} = \|\tilde{F}_{\text{sem}}^K - Y_{\text{sem}}\|_2^2$
+- Training loss: $\mathcal L_{\text{sem}} = \|\tilde F_{\text{sem}}^K - Y_{\text{sem}}\|_2^2$
 - Joint training with Geometric Decoupler in Stage 2
 
-Both decouplers share the same self-distillation form. For decoupler $i \in \{\text{geo}, \text{sem}\}$, the training loss minimizes the L2 distance between the decoupler output $\tilde{F}_i^K$ (produced from single-step SVD features) and the VFM-derived teacher target $Y_i$:
+Both decouplers share the same self-distillation form. For decoupler $i \in \{\text{geo}, \text{sem}\}$, the training loss minimizes the L2 distance between the decoupler output $\tilde F_i^K$ (produced from single-step SVD features) and the VFM-derived teacher target $Y_i$:
 
-$$\mathcal{L}_i = \|\tilde{F}_i^K - Y_i\|_2^2, \quad i \in \{\text{geo}, \text{sem}\}$$
+$$\mathcal L_i = \|\tilde F_i^K - Y_i\|_2^2, \quad i \in \{\text{geo}, \text{sem}\}$$
 
 #### Module 4: Uni-Perceiver + DiT Action Head
 
@@ -115,9 +115,9 @@ $$\mathcal{L}_i = \|\tilde{F}_i^K - Y_i\|_2^2, \quad i \in \{\text{geo}, \text{s
 
 The complete inference pipeline uses a single SVD forward pass, producing actions as:
 
-$$\{a_t\} = \text{DiT}(\text{Uni-Perceiver}(\tilde{F}_{\text{geo}}, \tilde{F}_{\text{sem}}, F), \tau_{\text{task}})$$
+$$\{a_t\} = \text{DiT}(\text{Uni-Perceiver}(\tilde F_{\text{geo}}, \tilde F_{\text{sem}}, F), \tau_{\text{task}})$$
 
-where $\tilde{F}_{\text{geo}}$ and $\tilde{F}_{\text{sem}}$ are the decoupled geometric and semantic features, $F$ are the original one-step SVD intermediate features, and $\tau_{\text{task}}$ is the task embedding. The entire pipeline runs in a single SVD forward pass at inference, achieving 25 Hz real-time control.
+where $\tilde F_{\text{geo}}$ and $\tilde F_{\text{sem}}$ are the decoupled geometric and semantic features, $F$ are the original one-step SVD intermediate features, and $\tau_{\text{task}}$ is the task embedding. The entire pipeline runs in a single SVD forward pass at inference, achieving 25 Hz real-time control.
 
 - Stage 3 training: 60K steps CALVIN / 40K others; 4×H100; SVD + decouplers frozen
 
@@ -253,7 +253,7 @@ DPAv3 + DINOv2 is the optimal combination; dynamic depth (DPAv3) substantially b
 
 > [!summary] S-VAM (arXiv 2026)
 > - **Core**: SVD 1-step features → Geometric Decoupler (DPAv3 targets) + Semantic Decoupler (DINOv2 targets) via self-distillation from generated video; Uni-Perceiver (QFormer) aggregation → DiT action head; 3-stage training
-> - **Method**: Self-distil loss $\mathcal{L}_i = \|\tilde{F}_i^K - Y_i\|_2^2$; Stage1: 100K steps 4×H100; Stage2: 50K steps 1×H100; Stage3: 60K steps 4×H100; 25 Hz inference
+> - **Method**: Self-distil loss $\mathcal L_i = \|\tilde F_i^K - Y_i\|_2^2$; Stage1: 100K steps 4×H100; Stage2: 50K steps 1×H100; Stage3: 60K steps 4×H100; 25 Hz inference
 > - **Results**: 4.16 CALVIN avg (task 5: 68.9% vs. 51.8% VPP); 72.8% MetaWorld (68.4% hard); 32% real-world hard task (vs. 16% VPP)
 > - **Code**: N/A
 

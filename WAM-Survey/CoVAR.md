@@ -84,7 +84,7 @@ $$
 X_0 = (x_0^1,\; x_0^2)
 $$
 
-where $x_0^1 \in \mathbb{R}^{d_1}$ is the video latent and $x_0^2 \in \mathbb{R}^{d_2}$ is the flattened robot action sequence. The corresponding noise sample is $X_1 = (x_1^1, x_1^2)$ drawn from independent Gaussians. Rectified flow constructs a straight-line interpolation path:
+where $x_0^1 \in \mathbb R^{d_1}$ is the video latent and $x_0^2 \in \mathbb R^{d_2}$ is the flattened robot action sequence. The corresponding noise sample is $X_1 = (x_1^1, x_1^2)$ drawn from independent Gaussians. Rectified flow constructs a straight-line interpolation path:
 
 $$
 X_t = (1-t)\,X_0 + t\,X_1, \quad t \in [0,1]
@@ -99,7 +99,7 @@ $$
 The network $v_\theta = (v_\theta^1,\, v_\theta^2)$ predicts this velocity for both modalities simultaneously. The **joint training loss** is:
 
 $$
-\mathcal{L} = \bigl\|x_1^1 - x_0^1 - v_\theta^1\bigr\|_2 \;+\; \bigl\|x_1^2 - x_0^2 - v_\theta^2\bigr\|_2
+\mathcal L = \bigl\|x_1^1 - x_0^1 - v_\theta^1\bigr\|_2 \;+\; \bigl\|x_1^2 - x_0^2 - v_\theta^2\bigr\|_2
 $$
 
 where $v_\theta^1$ is predicted by the video DiT branch and $v_\theta^2$ by the action DiT branch. Both terms are trained end-to-end together, so improvements in video prediction directly improve action prediction and vice versa. This contrasts with two-stage methods where video and action losses are optimized independently.
@@ -110,7 +110,7 @@ Robot actions are low-dimensional joint-state vectors at each timestep. Rather t
 
 ### Bridge Attention Module
 
-**Motivation**: In a standard joint model, video tokens $f_v \in \mathbb{R}^{B \times N_v \times C}$ and action tokens $f_a \in \mathbb{R}^{B \times N_a \times C}$ are concatenated and fed through a shared self-attention layer with single sets of Q/K/V matrices. This forces the same projection to handle both semantically different token types. For video tokens (spatial patches from a pretrained model), the learned projections encode visual texture and motion; for action tokens (joint-state embeddings), the projections must encode temporal dynamics. Sharing them creates a conflict that degrades both modalities.
+**Motivation**: In a standard joint model, video tokens $f_v \in \mathbb R^{B \times N_v \times C}$ and action tokens $f_a \in \mathbb R^{B \times N_a \times C}$ are concatenated and fed through a shared self-attention layer with single sets of Q/K/V matrices. This forces the same projection to handle both semantically different token types. For video tokens (spatial patches from a pretrained model), the learned projections encode visual texture and motion; for action tokens (joint-state embeddings), the projections must encode temporal dynamics. Sharing them creates a conflict that degrades both modalities.
 
 **Design**: Bridge Attention maintains **separate** Q, K, V projections for each modality ($q_1, k_1, v_1$ for video; $q_2, k_2, v_2$ for actions) but computes attention **jointly** over the concatenated token sequence. This allows modality-specific feature extraction while still enabling information exchange:
 

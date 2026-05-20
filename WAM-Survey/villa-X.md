@@ -89,7 +89,7 @@ villa-X has **two main components**:
 - 2-layer MLP conditioned on embodiment context $c_e$ (dataset ID + control frequency embeddings)
 - Predicts future robot states and actions from current proprioceptive state, latent action, and embodiment context:
 
-$$(\hat{q}_{t+1}, \ldots, \hat{q}_{t+k}, \hat{a}_{t+1}, \ldots, \hat{a}_{t+k}) = \text{proprio-FDM}(q_t, z_t, c_e)$$
+$$(\hat q_{t+1}, \ldots, \hat q_{t+k}, \hat a_{t+1}, \ldots, \hat a_{t+k}) = \text{proprio-FDM}(q_t, z_t, c_e)$$
 
 - This proprioceptive grounding grounds latent actions in physical robot dynamics, capturing subtle motions invisible in pixel-space video.
 

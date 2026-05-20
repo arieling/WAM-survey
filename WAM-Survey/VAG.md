@@ -63,7 +63,7 @@ Joint generation of video and action sequences enforces temporal consistency bet
 VAG has **two parallel flow-matching streams** sharing training:
 
 1. **Video Stream**: Cosmos-Predict2 (2B parameters) DiT denoiser — generates T=93 frames at 432×768 (480P) from text instruction + initial frame
-2. **Action Stream**: Modified 1D U-Net from Diffusion Policy — generates action sequence $A \in \mathbb{R}^{T \times D}$ conditioned on compressed video features
+2. **Action Stream**: Modified 1D U-Net from Diffusion Policy — generates action sequence $A \in \mathbb R^{T \times D}$ conditioned on compressed video features
 3. **Cross-Modal Bridge**: Adaptive 3D average pooling (non-learnable) compresses video DiT intermediate features from spatiotemporal tensor to action-compatible token sequence
 
 The overall architecture is illustrated by the video and action streams running in parallel during training, with the adaptive 3D pooling bridge transferring spatiotemporal video features into action U-Net conditioning. Both streams share the same flow-matching training objective.
@@ -80,7 +80,7 @@ The overall architecture is illustrated by the video and action streams running 
 - Conditioned on: text instruction + initial scene frame
 - Training loss — the video DiT is trained with a flow-matching objective minimizing the distance between the predicted velocity and the target velocity computed from the clean latent:
 
-$$\mathcal{L}(\theta_1) = \|\phi_1(D(z'; \theta_1)) - z\|^2$$
+$$\mathcal L(\theta_1) = \|\phi_1(D(z'; \theta_1)) - z\|^2$$
 
 where $D(z'; \theta_1)$ is the Cosmos-Predict2 DiT denoiser output given noisy latent $z'$, $z$ is the clean video latent (ground truth), and $\phi_1$ is the flow-matching velocity target function.
 
@@ -92,13 +92,13 @@ where $D(z'; \theta_1)$ is the Cosmos-Predict2 DiT denoiser output given noisy l
 
 **Implementation**:
 - Architecture: 1D U-Net (from Diffusion Policy), modified for video conditioning
-- Output: action sequence $A \in \mathbb{R}^{T \times D}$ where $D \in \{7, 14, 16\}$ depending on robot embodiment
+- Output: action sequence $A \in \mathbb R^{T \times D}$ where $D \in \{7, 14, 16\}$ depending on robot embodiment
 - Action embedding dimension: $C'' = 132$
 - Training loss — the action stream is trained with an analogous flow-matching objective:
 
-$$\mathcal{L}(\theta_2) = \|\phi_2(U(A'; \theta_2)) - A\|^2$$
+$$\mathcal L(\theta_2) = \|\phi_2(U(A'; \theta_2)) - A\|^2$$
 
-where $U(A'; \theta_2)$ is the 1D U-Net denoiser output given noisy action sequence $A'$, $A \in \mathbb{R}^{T \times D}$ is the clean action sequence (ground truth), and $\phi_2$ is the flow-matching velocity target function for actions.
+where $U(A'; \theta_2)$ is the 1D U-Net denoiser output given noisy action sequence $A'$, $A \in \mathbb R^{T \times D}$ is the clean action sequence (ground truth), and $\phi_2$ is the flow-matching velocity target function for actions.
 
 #### Module 3: Adaptive 3D Pooling Bridge
 
@@ -233,7 +233,7 @@ VAG generates plausible video-action pairs for custom real-world manipulation ta
 
 > [!summary] VAG (arXiv 2026)
 > - **Core**: Dual-stream flow-matching: Cosmos-Predict2 (2B) video DiT + 1D U-Net action branch; adaptive 3D pooling bridge (non-learnable) for video→action conditioning; joint training for temporal alignment
-> - **Method**: 480P @ 10Hz, T=93 frames; action dim 7–16; 35 denoising steps; 8×H20, 20–40K iterations; losses $\mathcal{L}(\theta_1) = \|\phi_1(D(z';\theta_1))-z\|^2$, $\mathcal{L}(\theta_2) = \|\phi_2(U(A';\theta_2))-A\|^2$
+> - **Method**: 480P @ 10Hz, T=93 frames; action dim 7–16; 35 denoising steps; 8×H20, 20–40K iterations; losses $\mathcal L(\theta_1) = \|\phi_1(D(z';\theta_1))-z\|^2$, $\mathcal L(\theta_2) = \|\phi_2(U(A';\theta_2))-A\|^2$
 > - **Results**: LIBERO 79% vs 66% AnyPos; VLA pretraining 35%→55% (+20%) with synthetic VAG data
 > - **Code**: N/A
 
