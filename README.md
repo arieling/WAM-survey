@@ -76,7 +76,7 @@ $$
 
 Cascaded WAMs split further by how actions are extracted from predicted video:
 
-**Explicit-Learned (IDM)**: The world model generates pixel-level video frames $\hat{o}'$. A separate Inverse Dynamics Model (IDM) — typically a small CNN+MLP — takes consecutive frame pairs $(\hat{o}_t, \hat{o}_{t+1})$ and regresses the robot joint action $a_t$ that would cause that transition. Representative works: [UniPi](WAM-Survey/UniPi.md), [GR-MG](WAM-Survey/GR-MG.md), [RoboEnvision](WAM-Survey/RoboEnvision.md), Gen2Act.
+**Explicit-Learned (IDM)**: The world model generates pixel-level video frames $\hat{o}'$. A separate Inverse Dynamics Model (IDM) — typically a small CNN+MLP — takes consecutive frame pairs ($\hat{o}_t$, $\hat{o}_{t+1}$) and regresses the robot joint action $a_t$ that would cause that transition. Representative works: [UniPi](WAM-Survey/UniPi.md), [GR-MG](WAM-Survey/GR-MG.md), [RoboEnvision](WAM-Survey/RoboEnvision.md), Gen2Act.
 
 **Explicit-Geometric**: Instead of learning an IDM, geometric priors extract actions from predicted video — optical flow gives 2D motion that maps to end-effector velocity, 3D point tracking gives spatial displacement, 4D Gaussian Splatting gives full 3D trajectories. This is more interpretable and does not require action-annotated training data for the extraction step. Representative works: [Im2Flow2Act](WAM-Survey/Im2Flow2Act.md), [ThisAndThat](WAM-Survey/ThisAndThat.md), 4DGen.
 
