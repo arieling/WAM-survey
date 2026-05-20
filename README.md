@@ -159,7 +159,7 @@ Diffusion WAMs jointly denoise both future visual observations and action sequen
 | [UWM](WAM-Survey/UWM.md)           | Unified | —            | DiT       | 2024 |
 | [DreamZero](WAM-Survey/DreamZero.md)                    | Unified | —            | DiT       | 2024 |
 | [CosmosPolicy](WAM-Survey/CosmosPolicy.md)              | Unified | —            | Video DiT | 2025 |
-| FLARE                                                   | Unified | —            | DiT       | 2025 |
+| [FLARE](WAM-Survey/FLARE.md)                            | Unified | —            | DiT       | 2025 |
 | [FRAPPE](WAM-Survey/FRAPPE.md)                          | Unified | —            | DiT       | 2025 |
 | [VideoVLA](WAM-Survey/VideoVLA.md)                      | Multi   | Cross-Attn   | Video DiT | 2025 |
 | [CoVAR](WAM-Survey/CoVAR.md)                            | Multi   | Cross-Attn   | DiT       | 2025 |
@@ -253,7 +253,7 @@ Measures luminance, contrast, and structure jointly. Range $[-1, 1]$; higher is 
 Learned Perceptual Image Patch Similarity:
 
 $$
-\text{LPIPS}(x, y) = \sum_l \frac{1}{H_l W_l} \sum_{h,w} \left\| w_l \odot \left( \hat{f}_l(x)_{hw} - \hat{f}_l(y)_{hw} \right) \right\|_2^2
+\text{LPIPS}(x, y) = \sum_l \frac{1}{H_l W_l} \sum_{h,w} \lVert w_l \odot \bigl( \hat{f}_l^{hw}(x) - \hat{f}_l^{hw}(y) \bigr) \rVert_2^2
 $$
 
 Uses pretrained deep network features to measure perceptual similarity. Lower is better. More aligned with human judgment than PSNR/SSIM for natural images. $\hat{f}_l$ — normalized feature map at layer $l$; $w_l$ — learned per-layer weights.
@@ -261,7 +261,7 @@ Uses pretrained deep network features to measure perceptual similarity. Lower is
 DreamSim similarity (human-calibrated perceptual distance):
 
 $$
-\text{DreamSim}(x, y) = 1 - \| E(x) - E(y) \|_2
+\text{DreamSim}(x, y) = 1 - \lVert E(x) - E(y) \rVert_2
 $$
 
 Embedding distance in a space specifically fine-tuned on human perceptual similarity judgments. More reliable than LPIPS for comparing generated robot manipulation frames where subtle motion differences matter.
@@ -269,7 +269,7 @@ Embedding distance in a space specifically fine-tuned on human perceptual simila
 DINO feature consistency (semantic alignment):
 
 $$
-\text{DINO}(g_t, r_t) = \frac{\langle f(g_t), f(r_t) \rangle}{\|f(g_t)\|_2 \cdot \|f(r_t)\|_2}
+\text{DINO}(g_t, r_t) = \frac{\langle f(g_t), f(r_t) \rangle}{\lVert f(g_t) \rVert_2 \cdot \lVert f(r_t) \rVert_2}
 $$
 
 Cosine similarity of DINO features between generated frame $g_t$ and reference frame $r_t$. Measures whether the generated frame is semantically consistent (same objects, same scene layout) even if pixel-level details differ.
@@ -277,7 +277,7 @@ Cosine similarity of DINO features between generated frame $g_t$ and reference f
 Fréchet Video Distance (video-level distribution quality):
 
 $$
-\text{FVD} = \|\mu_r - \mu_g\|_2^2 + \text{Tr}\left(\Sigma_r + \Sigma_g - 2(\Sigma_r \Sigma_g)^{1/2}\right)
+\text{FVD} = \lVert \mu_r - \mu_g \rVert_2^2 + \operatorname{Tr}\!\left(\Sigma_r + \Sigma_g - 2(\Sigma_r \Sigma_g)^{1/2}\right)
 $$
 
 Measures the distance between the distribution of real videos and generated videos in a feature space. Lower is better. Analogous to FID for images but captures temporal consistency. $\mu_r, \mu_g$ — mean feature vectors; $\Sigma_r, \Sigma_g$ — covariance matrices.
