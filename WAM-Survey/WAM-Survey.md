@@ -22,6 +22,7 @@ Browse paper notes, category directories, and sub-topic entries.
 - [CoVAR](CoVAR.md)
 - [CosmosPolicy](CosmosPolicy.md)
 - [Dream2Flow](Dream2Flow.md)
+- [DreamDojo](DreamDojo.md)
 - [DreamZero](DreamZero.md)
 - [Dreamitate](Dreamitate.md)
 - [F1](F1.md)

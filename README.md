@@ -179,6 +179,8 @@ Beyond architectures that learn $p(o', a \mid o, l)$ jointly, the survey identif
 
 This four-role framing is useful because it covers systems that do not fit cleanly into Cascaded or Joint WAM architectures but still use predictive world modeling to improve robot learning.
 
+A notable recent example is [DreamDojo](WAM-Survey/DreamDojo.md) (Feb 2026), a foundation world model ($p(o' \mid o, a)$) pretrained on 44,711 hours of egocentric human video via self-supervised continuous latent actions. After embodiment-specific post-training it fills all three non-imitation roles simultaneously: (3) reward/evaluation — policy checkpoint ranking at r = 0.995 Pearson correlation with real-world success; (4) evaluation — live teleoperation preview at 10.81 FPS; and planning — +17% task success from best-of-N model-based action selection.
+
 ---
 
 
@@ -225,6 +227,7 @@ UMI-style collection dramatically lowers the hardware barrier by replacing a ful
 | Ego4D | 3670 hours | First-person view | Broad daily activities, weak action labels |
 | HOI4D | 2.4M frames | RGBD | Human-object interaction with 3D annotations |
 | Something-Something | 220K videos | Third-person | Object manipulation, good for temporal reasoning |
+| DreamDojo-HV ([DreamDojo](WAM-Survey/DreamDojo.md)) | 43,827 hours | Egocentric (diverse) | Largest WM pretraining corpus; 6,015 unique skills, 1,135k scenes; 15× Ego4D by duration |
 
 The key data challenge for WAMs is that robot teleoperation data (which has clean action labels) is scarce, while video data (which has no action labels) is abundant. WAMs that can learn from unlabeled video — using the world model objective as self-supervision — have a natural path to leverage the internet-scale video corpus.
 
@@ -322,11 +325,11 @@ The survey concludes with seven research challenges that define the frontier of 
 
 3. **Architecture coupling trade-off**: Unified Stream is simpler but visual and action tokens compete for attention capacity. Multi-Stream adds coupling complexity (cross-attention, hidden state sharing) and introduces design choices that are not yet well understood. The optimal coupling strategy likely depends on task properties (e.g., precision vs. diversity of actions).
 
-4. **Cross-embodiment generalization**: Current WAMs are mostly trained and evaluated on a single robot morphology. The embodied data landscape (Figure 6) shows that human egocentric video is abundant but has high transfer difficulty. Bridging this gap — using human video to train robot WAMs — requires solving the morphological correspondence problem.
+4. **Cross-embodiment generalization**: Current WAMs are mostly trained and evaluated on a single robot morphology. The embodied data landscape (Figure 6) shows that human egocentric video is abundant but has high transfer difficulty. Bridging this gap — using human video to train robot WAMs — requires solving the morphological correspondence problem. [DreamDojo](WAM-Survey/DreamDojo.md) directly tackles this via a continuous latent action VAE that learns embodiment-agnostic proxy labels from human video, then adapts to specific robots via lightweight post-training.
 
 5. **Long-horizon planning**: Prediction error accumulates over time in both the world model and the action policy. Cascaded WAMs that generate multi-step video plans face compounding hallucination. Joint WAMs trained on short action chunks (typically T=8–16 steps) struggle to compose into coherent long-horizon task execution.
 
-6. **Data quality and annotation**: The largest available video datasets (Ego4D, Something-Something) lack action annotations. Pseudo-labeling with inverse dynamics models introduces noise. Robot teleoperation data is accurate but expensive to scale beyond ~1M trajectories. A practical data strategy for WAMs requires resolving this annotation bottleneck.
+6. **Data quality and annotation**: The largest available video datasets (Ego4D, Something-Something) lack action annotations. Pseudo-labeling with inverse dynamics models introduces noise. Robot teleoperation data is accurate but expensive to scale beyond ~1M trajectories. A practical data strategy for WAMs requires resolving this annotation bottleneck. [DreamDojo](WAM-Survey/DreamDojo.md)'s self-supervised latent action VAE (32-dim $\beta$-VAE bottleneck on consecutive frame pairs) demonstrates that this bottleneck can be bypassed for world model pretraining — achieving near-parity with ground-truth robot action labels (PSNR 20.913 vs 20.960) at 44k-hour scale.
 
 7. **Safety and alignment**: A WAM that can simulate dangerous future states (e.g., collision, human injury) creates new safety risks if the generated plans are executed without verification. WAMs need constraint mechanisms — either in the world model (rejecting physically infeasible or unsafe predictions) or in the action policy (action safety filters).
 
